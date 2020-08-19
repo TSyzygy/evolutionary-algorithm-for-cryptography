@@ -7,12 +7,48 @@
     <meta name="description" content="A web-based evolutionary algorithm for decrypting ciphers, written in Javascript. A variety of ciphers are supported and it is fully customisable.">
     <meta name="author" content="TSyzygy">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <base href>
+    <!--<base href="">-->
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="/assets/fonts/fonts.css">
+    <link rel="stylesheet" href="../textStyle.css">
+    <link rel="stylesheet" href="../assets/fonts/fonts.css">
+    <script src="evolution-control.js"></script>
   </head>
   <body>
-    <h1 style="font-family: Playfair">Evolutionary Algorithm</h1>
-    <p>Hello world</p>
+    <header>
+      <h1>Evolutionary Algorithm for Cryptography</h1>
+    </header>
+    <section id="program">
+      <div id="selectPopulation">
+        <div id="savedPopulations">
+          <h4>Saved populations:</h4>
+          <p>No saved populations</p>
+          <table>
+            <tr>
+              <th>Name</th>
+              <th>Cipher Type</th>
+              <th>Generations Passed</th>
+            </tr>
+            <tr>
+              <td>A name</td>
+              <td>Vigenere</td>
+              <td>1045</td>
+            </tr>
+          </table>
+        </div>
+        <div id="openPopulations">
+          <h4>Open populations:</h4>
+          <p>No open populations</p>
+          <table style="display: none;">
+            <tr>
+              <th>Name</th>
+              <th>Cipher Type</th>
+              <th>Generations Pasaed</th>
+              <th>Status</th>
+            </tr>
+          </table>
+        </div>
+        <button type="button" id="addPopulation">+ New population</button>
+      </div>
+    </section>
   </body>
 </html>
