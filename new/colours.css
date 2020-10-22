@@ -1,0 +1,12 @@
+:root {
+  --primary-color-lighter: #ccf;
+  --primary-color-light: #bbf;
+  --primary-color: #aaf;
+  --primary-color-dark: #88f;
+  --primary-color-darker: #66f;
+
+  --secondary-color-light: #edb;
+  --secondary-color: #dca;
+  --secondary-color-dark: #cb9;
+  --secondary-color-darker: #ba8;
+}

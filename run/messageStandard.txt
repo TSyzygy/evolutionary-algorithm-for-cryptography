@@ -1,5 +1,0 @@
-Messages from control to worker:
-
-{
-  "type": "setup" or "newGeneration",
-}

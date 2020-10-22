@@ -1,0 +1,365 @@
+body {
+  font-size: 15px;
+  height: 100vh;
+  margin: 0;
+}
+
+:root {
+  --sidebar-width: 200px;
+  --status-height: 40px;
+
+  --primary-color-lighter: #ccf;
+  --primary-color-light: #bbf;
+  --primary-color: #aaf;
+  --primary-color-dark: #88f;
+  --primary-color-darker: #66f;
+
+  --secondary-color-light: #edb;
+  --secondary-color: #dca;
+  --secondary-color-dark: #cb9;
+  --secondary-color-darker: #ba8;
+}
+
+/* TEXT STYLES */
+
+h1 {
+  font-family: Inter, Helvetica;
+  font-weight: 400;
+  font-size: 1.4rem;
+  margin: 0;
+}
+
+h2 {
+  font-family: Inter, Helvetica;
+  font-weight: 400;
+  font-size: 1.2rem;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+h3 {
+  font-family: Inter, Helvetica;
+  font-weight: 200;
+  font-style: italic;
+  font-size: 1rem;
+}
+
+h4 {
+  font-family: Inter, Helvetica;
+  font-weight: 500;
+  font-size: 1rem;
+  margin: 12px 0;
+}
+
+h5 {
+  font-family: Inter, Helvetica;
+  font-weight: 400;
+  font-size: 1rem;
+  margin: 8px 0;
+}
+
+p, label {
+  font-family: Inter, Helvetica;
+  font-weight: 300;
+  margin: 12px 0;
+}
+
+code, .monospace {
+  font-family: RobotoMono;
+  word-break: break-all;
+}
+
+table {
+  font-family: Inter, Helvetica;
+  font-size: 0.9rem;
+  font-weight: 250;
+  text-align: left;
+}
+
+th {
+  font-weight: 500;
+}
+
+button {
+  display: inline-block;
+  border: none;
+  cursor: pointer;
+  font-family: Inter, Helvetica;
+  font-weight: 300;
+  font-size: 1em;
+  text-align: center;
+  color: black;
+  background-color: inherit;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+button:hover {
+  color: black;
+}
+
+
+/* LAYOUT */
+
+#sidebar {
+  height: 100%;
+  width: var(--sidebar-width);
+  background-color: var(--primary-color);
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+#sidebar > div {
+  padding: 12px;
+  overflow: auto;
+}
+
+#sidebar button#add-population {
+  width: 24px;
+  height: 24px;
+  float: right;
+  padding: 0;
+  margin: 12px 0;
+  border-radius: 4px;
+  background-color: var(--primary-color);
+}
+
+#sidebar button#add-population:hover {
+  background-color: var(--primary-color-dark)
+}
+
+#sidebar #populations button {
+  width: 100%;
+  border-radius: 4px;
+  text-align: left;
+  background-color: var(--primary-color);
+  margin: 2px -6px;
+}
+
+#sidebar #populations button:hover {
+  background-color: var(--primary-color-light);
+}
+
+#sidebar > button {
+  background-color: var(--primary-color-lighter);
+  margin: 6px 0;
+}
+
+#sidebar > button:hover, #sidebar > button:active {
+  background-color: var(--primary-color-light);
+}
+
+
+#main {
+  height: 100%;
+  width: calc(100% - var(--sidebar-width));
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+
+#status {
+  width: 100%;
+  background-color: #DDD;
+  display: inline-block;
+}
+
+#status h3 {
+  margin: 0;
+  padding: 4px;
+}
+
+#pages {
+  height: 100%;
+  width: 100%;
+}
+
+#population-pages section {
+  height: 100%;
+  width: 100%;
+  display: none;
+}
+
+#population-pages section.open {
+  display: block;
+}
+
+#population-pages section > div {
+  padding: 12px;
+}
+
+
+/* MODALS */
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  height: 100%;
+  width: 100%;
+  background-color: #0004;
+}
+
+.modal.open {
+  display: block;
+}
+
+.modal > div {
+  height: 100%;
+  width: 100%;
+  background-color: var(--secondary-color-light);
+}
+
+/* On non-mobile devices, modal is not full screen */
+@media only screen and (min-width: 700px) and (min-height: 360px) {
+
+  .modal > div {
+    width: 70%;
+    height: 60vh;
+    margin: 20vh auto;
+    border: 2px solid #444;
+    border-radius: 3px;
+  }
+
+}
+
+#population-modal #population-modal-pages {
+  height: 100%;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+#population-modal #population-modal-pages > div {
+  display: none;
+  height: 100%;
+}
+
+#population-modal #population-modal-pages > div.open {
+  display: block;
+}
+
+#population-modal ::-webkit-scrollbar {
+  width: 10px
+}
+
+#population-modal ::-webkit-scrollbar-track {
+  background: inherit;
+}
+
+#population-modal ::-webkit-scrollbar-thumb {
+  background: var(--secondary-color);
+  border-radius: 5px;
+}
+
+#population-modal ::-webkit-scrollbar-thumb:hover {
+  background: var(--secondary-color-darker);
+  border-radius: 5px;
+}
+
+#population-modal #new-population form {
+  display: flex;
+  flex-direction: column;
+}
+
+#population-modal form > div:nth-child(1) {
+  width: 100%;
+  display: flex;
+}
+
+#population-modal form > div:nth-child(1) label {
+  flex-shrink: 0;
+  margin: 0;
+}
+
+#population-modal form > div:nth-child(1) label h4 {
+  margin: 0;
+  padding: 3px 3px 3px 0;
+}
+
+#population-modal form > div:nth-child(1) span {
+  flex-shrink: 1;
+  flex-grow: 1;
+  padding-right: 12px;
+}
+
+#population-modal input[type="text"], #population-modal input[type="number"] {
+  border: none;
+  width: 100%;
+  font-family: Inter, Helvetica;
+  font-weight: 300;
+  font-size: 1em;
+  padding: 3px;
+  margin: 0;
+  box-sizing: border-box;
+  border-radius: 3px;
+  background-color: var(--secondary-color);
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  transition: background-color 0.2s;
+}
+
+#population-modal input:hover {
+  background-color: var(--secondary-color-dark);
+}
+
+#population-modal input:focus {
+  background-color: var(--secondary-color-dark);
+  outline: none;
+}
+
+#population-modal input::placeholder {
+  color: inherit;
+}
+
+#population-modal input#population-name {
+  height: 20px;
+  max-width: 360px;
+  box-sizing: content-box;
+}
+
+#population-modal input#population-description {
+  margin: 4px 0;
+}
+
+#population-modal form > div:nth-child(2) {
+  width: 100%;
+  margin-top: 4px;
+  box-sizing: border-box;
+  overflow: auto;
+  flex-grow: 1;
+}
+
+#population-modal .close {
+  width: 26px;
+  height: 26px;
+  border-radius: 3px;
+}
+
+#population-modal .close:hover {
+  background-color: var(--secondary-color);
+}
+
+#population-modal p {
+  margin: 4px 0;
+}
+
+#population-modal p#population-id-name {
+  font-size: 0.8rem;
+}
+
+#population-modal #algorithm-options div {
+  margin: 10px 0;
+  max-width: 300px;
+}
+
+#population-modal #algorithm-options label {
+  margin: 0;
+  padding: 3px 0;
+}
+
+#population-modal #algorithm-options input {
+  float: right;
+  width: 80px;
+}
