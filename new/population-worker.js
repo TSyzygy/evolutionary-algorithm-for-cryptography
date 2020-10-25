@@ -4,25 +4,24 @@
 // IIFE
 const cipherFunctionGenerators = (function () {
   // Prevents cipherFunctionGenerators from changing the worker's onmessage handler
-  var onmessage;
+  var onmessage, globalThis;
 
   return {
     async vigenere(messages, { keylength, n }) {
-      const convertMessage = (message) =>
+      const convertMessage = message =>
         message
           .toUpperCase()
           .split("")
-          .reduce((t, c) => {
+          .flatMap(c => {
             var i = alphabet.indexOf(c);
-            if (i > -1) t.push(i);
-            return t;
-          }, []);
+            return i > -1 ? [i] : [];
+          });
 
       if (!(1 <= n <= 6)) {
         throw Error("n out of range");
       }
 
-      var alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
         alphabetLength = 26,
         scores = await getAsset("ngrams/" + n + ".json"),
         scoreMessage =
@@ -34,8 +33,9 @@ const cipherFunctionGenerators = (function () {
                 return message.reduce(
                   (t, c, i) => t + scores[c + key[i % keylength]]
                 );
-              },
-        fitness,
+              };
+
+      var fitness,
         randomCandidate,
         permuteCandidate;
 
@@ -85,7 +85,8 @@ const cipherFunctionGenerators = (function () {
 // IIFE used to prevent cipherFunctionGenerators from changing evolution variables / running internal functions. The getAsset function is accessible by cipherFunctionGenerators
 const { getAsset } = (function () {
   // PRIVATE VARIABLES
-  var candidates = [],
+  var running = false,
+    candidates = [],
     knownScores = {},
     newKnownScores = {},
     fitness,
@@ -132,8 +133,8 @@ const { getAsset } = (function () {
       if (candidates.length > maxPopulationSize) candidates.shift();
     }
     // If the candidate is not currently a candidate but had been in the past, it must be worse than all current candidates so is ignored.
-  }
-  z;
+  };
+
   // Evolve the population by one generation
   function nextGeneration() {
     newKnownScores = {};
@@ -151,7 +152,7 @@ const { getAsset } = (function () {
   // Continues evolving the population until "stop" message received.
   function run() {
     nextGeneration();
-    nextGenTimeout = setTimeout(run, 0); // Any new instructions from control (such as "stop") will be dealt with before running next generation
+    nextGenTimeout = setTimeout(run); // Any new instructions from control (such as "stop") will be dealt with before running next generation
   }
 
   // Sends a status update to control
@@ -198,7 +199,6 @@ const { getAsset } = (function () {
 
     // Once config complete, message events toggle the population on/off.
     onmessage = function ({ data: instruction }) {
-      console.log("A");
       if (running && instruction == "stop") {
         clearTimeout(nextGenTimeout);
       } else if (!running && instruction == "run") {
@@ -208,8 +208,6 @@ const { getAsset } = (function () {
       }
       running = !running;
     };
-
-    console.log("B", Date.now(), onmessage);
 
     postMessage("config-complete");
     postStatusUpdate();

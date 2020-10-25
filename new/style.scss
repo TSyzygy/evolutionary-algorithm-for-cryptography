@@ -233,9 +233,50 @@ select {
     display: none;
     height: 100%;
     padding: 12px;
+    box-sizing: border-box;
 
     &.open {
       display: block;
+    }
+  }
+
+  button:hover {
+    background-color: #ddd;
+  }
+}
+
+.population-page {
+  display: flex;
+  flex-direction: column;
+
+  .info {
+
+  }
+}
+
+.controls {
+
+  button {
+
+  }
+
+  &[data-state="running"], &[data-state="stepping"] {
+    .run {
+      display: none;
+    }
+
+    .stop {
+      display: block;
+    }
+  }
+
+  &[data-state="stopped"] {
+    .run {
+      display: block;
+    }
+
+    .stop {
+      display: none;
     }
   }
 }
@@ -339,6 +380,8 @@ select {
 
     > div {
       height: 100%;
+      padding: 16px;
+      box-sizing: border-box;
     }
   }
 
@@ -361,11 +404,9 @@ select {
 }
 
 #add-population-form {
-  height: 100%;
-  padding: 16px;
-  box-sizing: border-box;
   display: flex;
   flex-direction: column;
+  height: 100%;
 
   h4 {
     margin: 0;
@@ -380,6 +421,14 @@ select {
   }
 
   input {
+    &[type="text"] {
+      margin: 0;
+    }
+
+    &[type="number"] {
+      margin: auto 0;
+    }
+
     &[type="text"],
     &[type="number"] {
       border: none;
@@ -387,7 +436,6 @@ select {
       font-weight: 300;
       font-size: 1em;
       padding: 3px;
-      margin: 0;
       box-sizing: border-box;
       border-radius: 3px;
       background-color: var(--secondary-color);
@@ -405,7 +453,7 @@ select {
       }
 
       &::placeholder {
-        color: inherit;
+        color: #444;
       }
     }
 
@@ -427,7 +475,6 @@ select {
 #add-population-main {
   width: 100%;
   margin: 4px 0;
-  padding: 4px 8px 4px 0;
   box-sizing: border-box;
   overflow: auto;
   flex-grow: 1;

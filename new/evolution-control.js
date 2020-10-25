@@ -16,7 +16,7 @@
           [any]
         }
       },
-      "evolution": {
+      evolution: {
         "maxPopulationSize": Number,
         "childrenPerParent": Number,
         "randomPerGeneration": Number,
@@ -26,11 +26,11 @@
     history: [
       {
         candidates: Array,
-        newKnownScores: {key: Number, [...]},
         calculationTime: Number
       },
       [...]
     ],
+    knownScores: {key: Number, [...]},
     timeSaved: Number
   },
   configured: false,
@@ -68,13 +68,14 @@ class Population {
           worker.onmessage = function ({
             data: { candidates, newKnownScores },
           }) {
+
             // Adds the newly discovered scores to the knownScores object
             for (let key in newKnownScores) {
               knownScores[key] = newKnownScores[key];
             }
 
             if (current.state == "finishing") {
-              current.state == "idle";
+              current.state = "idle";
             }
 
             history.push({
@@ -83,8 +84,6 @@ class Population {
             });
 
             current.genNum++;
-
-            // updatePopulationDisplay(); TODO
           };
         }
       };
@@ -143,7 +142,10 @@ class Population {
 const
   populations = [],
   newPopulation = function (populationData) {
-    populations.push(new Population(populationData));
+    console.log(JSON.stringify(populationData));
+    var population = new Population(populationData);
+    populations.push(population);
+    return population;
   };
 
 /*

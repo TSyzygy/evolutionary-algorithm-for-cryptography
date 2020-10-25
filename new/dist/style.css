@@ -206,9 +206,30 @@ select {
   display: none;
   height: 100%;
   padding: 12px;
+  box-sizing: border-box;
 }
 #population-pages section.open {
   display: block;
+}
+#population-pages button:hover {
+  background-color: #ddd;
+}
+
+.population-page {
+  display: flex;
+  flex-direction: column;
+}
+.controls[data-state=running] .run, .controls[data-state=stepping] .run {
+  display: none;
+}
+.controls[data-state=running] .stop, .controls[data-state=stepping] .stop {
+  display: block;
+}
+.controls[data-state=stopped] .run {
+  display: block;
+}
+.controls[data-state=stopped] .stop {
+  display: none;
 }
 
 #close-sidebar {
@@ -318,14 +339,14 @@ select {
 }
 .modal > div > div {
   height: 100%;
+  padding: 16px;
+  box-sizing: border-box;
 }
 
 #add-population-form {
-  height: 100%;
-  padding: 16px;
-  box-sizing: border-box;
   display: flex;
   flex-direction: column;
+  height: 100%;
 }
 #add-population-form h4 {
   margin: 0;
@@ -333,13 +354,18 @@ select {
 #add-population-form label {
   margin-right: 4px;
 }
+#add-population-form input[type=text] {
+  margin: 0;
+}
+#add-population-form input[type=number] {
+  margin: auto 0;
+}
 #add-population-form input[type=text], #add-population-form input[type=number] {
   border: none;
   font-family: Inter, Helvetica;
   font-weight: 300;
   font-size: 1em;
   padding: 3px;
-  margin: 0;
   box-sizing: border-box;
   border-radius: 3px;
   background-color: var(--secondary-color);
@@ -354,7 +380,7 @@ select {
   outline: none;
 }
 #add-population-form input[type=text]::placeholder, #add-population-form input[type=number]::placeholder {
-  color: inherit;
+  color: #444;
 }
 #add-population-form input.monospace {
   font-family: RobotoMono, monospace;
@@ -370,7 +396,6 @@ select {
 #add-population-main {
   width: 100%;
   margin: 4px 0;
-  padding: 4px 8px 4px 0;
   box-sizing: border-box;
   overflow: auto;
   flex-grow: 1;

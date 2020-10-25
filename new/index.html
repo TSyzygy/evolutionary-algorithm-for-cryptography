@@ -51,13 +51,24 @@
           </div>
         </section>
 
-
         <!-- template for population pages -->
         <template id="population-page-template">
           <section>
-            <div>
-              <h2></h2>
-              <p></p>
+            <div class="population-page">
+              <div class="info">
+                <h2 class="name"></h2>
+                <p class="description"></p>
+                <div class="controls" data-state="stopped">
+                  <button type="button" class="run">Run &rtrif;</button>
+                  <button type="button" class="stop">Stop &squ;</button>
+                  <button type="button" class="step">Step &plus;</button>
+                </div>
+              </div>
+              <div class="best-candidate">
+                <p>Key: <code class="best-key"></code></p>
+                <p>Score: <code class="best-score"></code></p>
+                <p>Decryption: <code class="best-decryption"></code></p>
+              </div>
             </div>
           </section>
         </template>
@@ -202,11 +213,11 @@
                     <div data-cipher-name="vigenere">
                       <div class="data-entry">
                         <label for="vigenere-keylength">Keylength:</label>
-                        <input type="number" id="vigenere-keylength" name="keylength" max="100" min="2" value="8">
+                        <input type="number" name="keylength" class="required-for-cipher" max="100" min="2" value="8">
                       </div>
                       <div class="data-entry">
-                        <label for="vigenere-fitness-method">Fitness evaluation method:</label>
-                        <select id="vigenere-fitness-method" name="vigenere-fitness-method">
+                        <label for="n">Fitness evaluation method:</label>
+                        <select name="n" class="required-for-cipher">
                           <option value="">Select fitness method...</option>
                           <option value="1">Letter frequencies (fastest)</option>
                           <option value="2">Bigram score</option>
@@ -221,7 +232,7 @@
                   </div>
                 </div>
 
-                <button type="submit">Create population &rarr;</button>
+                <button type="submit" id="add-population-submit">Create population &rarr;</button>
               </div>
             </div>
 
@@ -236,9 +247,9 @@
     </section>
 
     <script src="functionality-checks.js"></script>
-    <script src="interface.js"></script>
     <script src="evolution-control.js"></script>
     <script src="assets.js"></script>
+    <script src="interface.js"></script>
 
   </body>
 </html>

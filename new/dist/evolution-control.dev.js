@@ -15,7 +15,7 @@
           [any]
         }
       },
-      "evolution": {
+      evolution: {
         "maxPopulationSize": Number,
         "childrenPerParent": Number,
         "randomPerGeneration": Number,
@@ -25,11 +25,11 @@
     history: [
       {
         candidates: Array,
-        newKnownScores: {key: Number, [...]},
         calculationTime: Number
       },
       [...]
     ],
+    knownScores: {key: Number, [...]},
     timeSaved: Number
   },
   configured: false,
@@ -91,14 +91,14 @@ function () {
             }
 
             if (current.state == "finishing") {
-              current.state == "idle";
+              current.state = "idle";
             }
 
             history.push({
               candidates: candidates,
               newKnownScores: Object.keys(newKnownScores)
             });
-            current.genNum++; // updatePopulationDisplay(); TODO
+            current.genNum++;
           };
         }
       };
@@ -166,7 +166,10 @@ function () {
 
 var populations = [],
     newPopulation = function newPopulation(populationData) {
-  populations.push(new Population(populationData));
+  console.log(JSON.stringify(populationData));
+  var population = new Population(populationData);
+  populations.push(population);
+  return population;
 };
 /*
 function newPopulation (populationData) {

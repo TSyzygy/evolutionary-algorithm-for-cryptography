@@ -11,7 +11,7 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
 var cipherFunctionGenerators = function () {
   // Prevents cipherFunctionGenerators from changing the worker's onmessage handler
-  var onmessage;
+  var onmessage, globalThis;
   return {
     vigenere: function vigenere(messages, _ref) {
       var keylength, n, convertMessage, alphabet, alphabetLength, scores, scoreMessage, fitness, randomCandidate, permuteCandidate, message;
@@ -22,11 +22,10 @@ var cipherFunctionGenerators = function () {
               keylength = _ref.keylength, n = _ref.n;
 
               convertMessage = function convertMessage(message) {
-                return message.toUpperCase().split("").reduce(function (t, c) {
+                return message.toUpperCase().split("").flatMap(function (c) {
                   var i = alphabet.indexOf(c);
-                  if (i > -1) t.push(i);
-                  return t;
-                }, []);
+                  return i > -1 ? [i] : [];
+                });
               };
 
               if (1 <= n <= 6) {
@@ -116,7 +115,8 @@ var cipherFunctionGenerators = function () {
 
 var _ref2 = function () {
   // PRIVATE VARIABLES
-  var candidates = [],
+  var running = false,
+      candidates = [],
       knownScores = {},
       newKnownScores = {},
       fitness,
@@ -155,7 +155,7 @@ var _ref2 = function () {
 
   }
 
-  z; // Evolve the population by one generation
+  ; // Evolve the population by one generation
 
   function nextGeneration() {
     newKnownScores = {};
@@ -196,7 +196,7 @@ var _ref2 = function () {
 
   function run() {
     nextGeneration();
-    nextGenTimeout = setTimeout(run, 0); // Any new instructions from control (such as "stop") will be dealt with before running next generation
+    nextGenTimeout = setTimeout(run); // Any new instructions from control (such as "stop") will be dealt with before running next generation
   } // Sends a status update to control
 
 
@@ -248,7 +248,6 @@ var _ref2 = function () {
 
             onmessage = function onmessage(_ref5) {
               var instruction = _ref5.data;
-              console.log("A");
 
               if (running && instruction == "stop") {
                 clearTimeout(nextGenTimeout);
@@ -261,11 +260,10 @@ var _ref2 = function () {
               running = !running;
             };
 
-            console.log("B", Date.now(), onmessage);
             postMessage("config-complete");
             postStatusUpdate();
 
-          case 18:
+          case 17:
           case "end":
             return _context2.stop();
         }
