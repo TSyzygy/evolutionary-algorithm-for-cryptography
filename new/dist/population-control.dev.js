@@ -4,7 +4,7 @@
 {
   data: { // Can be kept when saved/transferred
     name: String,
-    id: String,
+    description: String,
     config: { // Used by the population-worker
       messages: [
         String, [...]
@@ -39,14 +39,6 @@
 
 */
 
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
-
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
-
-function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) { return; } var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
-
-function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -58,6 +50,7 @@ var Population =
 function () {
   function Population(_ref) {
     var name = _ref.name,
+        description = _ref.description,
         config = _ref.config,
         history = _ref.history,
         knownScores = _ref.knownScores;
@@ -127,17 +120,43 @@ function () {
 
 
     this.open = false;
-    this.page = populationPageTemplate.content.firstElementChild.cloneNode(true);
+    var page = this.page = populationPageTemplate.content.firstElementChild.cloneNode(true),
+        displayPoints = this.displayPoints = Array.prototype.reduce.call(page.querySelectorAll("[data-dp]"), function (t, c) {
+      return t[c.dataset.dp] = c, t;
+    }, {}),
+        _config$cipher = config.cipher,
+        cipherName = _config$cipher.name,
+        cipherOptions = _config$cipher.options,
+        evolutionConfig = config.evolution; // Name and description
 
-    var _page$querySelector$c = _slicedToArray(page.querySelector(".controls").children, 3);
+    displayPoints.name.innerText = name;
+    displayPoints.description.innerText = description; // Cipher config
 
-    page.runButton = _page$querySelector$c[0];
-    page.stopButton = _page$querySelector$c[1];
-    page.stepButton = _page$querySelector$c[2];
-    // Adds sidebar button
-    this.button = document.createElement("button"), button.setAttribute("type", "button");
-    button.innerText = populationName;
-    button.addEventListener("click", this.openPage);
+    displayPoints.cipherName = cipherName;
+
+    for (var optionName in cipherOptions) {
+      var p = document.createElement("p"),
+          c = document.createElement("code");
+      p.innerText = optionName + ": ";
+      c.innerText = cipherOptions[optionName];
+    } // Evolution config
+
+
+    displayPoints.populationSize = evolutionConfig.populationSize;
+    displayPoints.childrenPerParent = evolutionConfig.childrenPerParent;
+    displayPoints.randomPerGeneration = evolutionConfig.randomPerGeneration;
+    displayPoints.allowDuplicates = evolutionConfig.allowDuplicates ? "YES" : "NO";
+    populationPages.appendChild(page); // Adds sidebar button
+
+    var button = this.button = document.createElement("button");
+    button.setAttribute("type", "button");
+    button.innerText = name; // Sets up event listener to open this population on sidebar button click
+
+    var thisPopulation = this;
+    button.addEventListener("click", function () {
+      this.classList.add("open");
+      thisPopulation.openPage();
+    });
     populationButtons.appendChild(button);
   }
 
@@ -185,18 +204,26 @@ function () {
   }, {
     key: "updatePage",
     value: function updatePage() {
-      var page = this.page;
+      // TODO
+      var page = this.page,
+          displayPoints = this.displayPoints;
     }
   }, {
     key: "openPage",
     value: function openPage() {
-      console.log(this);
+      if (openPopulation) {
+        openPopulation.closePage();
+      }
+
+      ;
       this.page.classList.add("open");
       this.open = true;
+      openPopulation = this;
     }
   }, {
     key: "closePage",
     value: function closePage() {
+      this.button.classList.remove("open");
       this.page.classList.remove("open");
       this.open = false;
     }
@@ -206,18 +233,21 @@ function () {
 }();
 
 var populations = [];
+var openPopulation = null;
 /* newPopulation = function (populationData) {
   var population = new Population(populationData);
   populations.push(population);
   return population;
-};*/
+}; */
 
-function setupPopulation(populationInfo) {
+function setupPopulation(populationData) {
   console.log(JSON.stringify(populationData));
   var population = new Population(populationData);
   populations.push(population);
-  population.open();
+  population.openPage();
 }
+
+;
 /*
 function newPopulation (populationData) {
   var n = populations.length,

@@ -56,18 +56,35 @@
           <section>
             <div class="population-page">
               <div class="info">
-                <h2 class="name"></h2>
-                <p class="description"></p>
-                <div class="controls" data-state="stopped">
-                  <button type="button" class="run">Run &rtrif;</button>
-                  <button type="button" class="stop">Stop &squ;</button>
-                  <button type="button" class="step">Step &plus;</button>
+                <h2 data-dp="name"></h2>
+                <p data-dp="description"></p>
+                <div class="controls">
+                  <button type="button" data-dp="run">Run &rtrif;</button>
+                  <button type="button" data-dp="stop">Stop &squ;</button>
+                  <button type="button" data-dp="step">Step &plus;</button>
                 </div>
               </div>
               <div class="best-candidate">
-                <p>Key: <code class="best-key"></code></p>
-                <p>Score: <code class="best-score"></code></p>
-                <p>Decryption: <code class="best-decryption"></code></p>
+                <p>Key: <code data-dp="bestKey"></code></p>
+                <p>Score: <code data-dp="bestScore"></code></p>
+                <p>Decryption: <code data-dp="bestDecryption"></code></p>
+              </div>
+              <div class="config">
+                <div class="cipher-config">
+                  <p data-dp="cipherName"></p>
+                  <div data-dp="cipherOptions">
+
+                  </div>
+                </div>
+                <div class="evolution">
+                  <p>Population size: <code data-dp="populationSize"></code></p>
+                  <p>Children per parent: <code data-dp="childrenPerParent"></code></p>
+                  <p>Random per generation: <code data-dp="randomPerGeneration"></code></p>
+                  <p>Allow duplicates: <code data-dp="allowDuplicates"></code></p>
+                </div>
+                <div class="messages" data-dp="messages">
+
+                </div>
               </div>
             </div>
           </section>
@@ -247,7 +264,7 @@
     </section>
 
     <script src="functionality-checks.js"></script>
-    <script src="evolution-control.js"></script>
+    <script src="population-control.js"></script>
     <script src="assets.js"></script>
     <script src="interface.js"></script>
 

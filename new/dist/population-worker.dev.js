@@ -122,7 +122,7 @@ var _ref2 = function () {
       fitness,
       randomCandidate,
       permuteCandidate,
-      maxPopulationSize,
+      populationSize,
       childrenPerParent,
       randomPerGeneration,
       allowDuplicates,
@@ -137,7 +137,7 @@ var _ref2 = function () {
     if (existingLocation > -1) {
       if (allowDuplicates) {
         candidates.splice(existingLocation, 0, candidate);
-        if (candidates.length > evolutionConfig.maxPopulationSize) candidates.shift();
+        if (candidates.length > evolutionConfig.populationSize) candidates.shift();
       }
     } // Adds the candidate if it has not been evaluated before
     else if (!knownScores.hasOwnProperty(candidate)) {
@@ -150,7 +150,7 @@ var _ref2 = function () {
 
 
         candidates.splice(i, 0, candidate);
-        if (candidates.length > maxPopulationSize) candidates.shift();
+        if (candidates.length > populationSize) candidates.shift();
       } // If the candidate is not currently a candidate but had been in the past, it must be worse than all current candidates so is ignored.
 
   }
@@ -226,7 +226,7 @@ var _ref2 = function () {
         switch (_context2.prev = _context2.next) {
           case 0:
             _ref3$data = _ref3.data, _ref3$data$config = _ref3$data.config, messages = _ref3$data$config.messages, _ref3$data$config$cip = _ref3$data$config.cipher, name = _ref3$data$config$cip.name, options = _ref3$data$config$cip.options, evolution = _ref3$data$config.evolution, importCandidates = _ref3$data.candidates, importKnownScores = _ref3$data.knownScores;
-            maxPopulationSize = evolution.maxPopulationSize;
+            populationSize = evolution.populationSize;
             childrenPerParent = evolution.childrenPerParent;
             randomPerGeneration = evolution.randomPerGeneration;
             allowDuplicates = evolution.allowDuplicates;
@@ -241,7 +241,7 @@ var _ref2 = function () {
             importCandidates.forEach(evaluateCandidate);
             knownScores = importKnownScores;
 
-            while (candidates.length < maxPopulationSize) {
+            while (candidates.length < populationSize) {
               evaluateCandidate(randomCandidate());
             } // Once config complete, message events toggle the population on/off.
 

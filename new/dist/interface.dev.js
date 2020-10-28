@@ -1,13 +1,5 @@
 "use strict";
 
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
-
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
-
-function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) { return; } var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
-
-function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
-
 var // sidebar
 openSidebarButton = document.getElementById("open-sidebar"),
     sidebar = document.getElementById("sidebar"),
@@ -36,11 +28,11 @@ openAddPopulationModalButton = document.getElementById("open-add-population-moda
     cipherSpecificPages = newPopulationMenu.querySelector("#cipher-specific-options"),
     cipherSpecificPagesCollection = cipherSpecificPages.children; // addPopulationSubmitButton = newPopulationMenu.querySelector("#add-population-submit");
 
-var numPopulations = 0,
-    currentPopulationNum = -1,
-    numMessageInputs = 1,
+var // currentPopulationNum = -1,
+numMessageInputs = 1,
     currentCipherPage = null; // populations
 
+/*
 function closeCurrentPopulation() {
   if (currentPopulationNum > -1) {
     populationPagesCollection[currentPopulationNum].classList.remove("open");
@@ -52,6 +44,7 @@ function closeCurrentPopulation() {
 function openPopulationPage(populationNum) {
   // Closes old population
   closeCurrentPopulation();
+
   currentPopulationNum = populationNum;
   populationPagesCollection[currentPopulationNum].classList.add("open");
   populationButtonsCollection[currentPopulationNum].classList.add("open");
@@ -61,40 +54,49 @@ function addPopulationPage(population) {
   // TODO: when populations deleted, if none are left then display this message
   document.getElementById("no-populations-message").style.display = "none";
 
-  var page = populationPageTemplate.content.cloneNode(true),
-      _page$querySelector$c = _slicedToArray(page.querySelector(".controls").children, 3),
-      runButton = _page$querySelector$c[0],
-      stopButton = _page$querySelector$c[1],
-      stepButton = _page$querySelector$c[2]; // Add name and description
+  const page = populationPageTemplate.content.cloneNode(true),
+    [
+      runButton,
+      stopButton,
+      stepButton
+    ] = page.querySelector(".controls").children;
 
-
+  // Add name and description
   page.querySelector(".name").innerText = population.name;
-  page.querySelector(".description").innerText = population.description; // Setup control button event listeners
+  page.querySelector(".description").innerText = population.description;
 
+  // Setup control button event listeners
   runButton.addEventListener("click", function () {
     population.run();
   });
+
   populationPages.appendChild(page);
 }
 
 function updatePopulationPage(n) {
-  var population = populations[n],
-      name = population.name,
-      config = population.config,
-      knownScores = population.knownScores,
-      history = population.history,
-      _population$current = population.current,
-      genNum = _population$current.genNum,
-      state = _population$current.state,
-      currentPopulation = history[genNum - 1].candidates,
-      bestKey = currentPopulation[0],
-      page = populationPagesCollection[n],
-      bestCandidateDisplay = page.querySelector(".best-candidate");
+  const
+    population = populations[n],
+    {
+      name,
+      config,
+      knownScores,
+      history,
+      current: {
+        genNum,
+        state
+      }
+    } = population,
+    currentPopulation = history[genNum - 1].candidates,
+    bestKey = currentPopulation[0],
+    page = populationPagesCollection[n],
+    bestCandidateDisplay = page.querySelector(".best-candidate");
+
   bestCandidateDisplay.querySelector(".best-key").innerHTML = bestKey;
   bestCandidateDisplay.querySelector(".best-score").innerHTML = knownScores[bestKey];
   bestCandidateDisplay.querySelector(".best-decryption").innerHTML = "Decryption not yet implemented for this cipher :|";
-} // sidebar
-
+}
+*/
+// sidebar
 
 function openSidebar() {
   sidebar.classList.add("open");
@@ -107,10 +109,11 @@ function closeSidebar() {
 }
 
 closeSidebarButton.addEventListener("click", closeSidebar);
-
+/*
 function addSidebarButton(populationName) {
-  var button = document.createElement("button"),
-      populationNum = numPopulations;
+  const
+    button = document.createElement("button"),
+    populationNum = numPopulations;
   button.setAttribute("type", "button");
   button.innerText = populationName;
   button.addEventListener("click", function () {
@@ -118,8 +121,9 @@ function addSidebarButton(populationName) {
     closeSidebar();
   });
   populationButtons.appendChild(button);
-} // add-population-modal
-
+}
+*/
+// add-population-modal
 
 function openAddPopulationModal() {
   addPopulationMenu.classList.add("open");
@@ -241,7 +245,7 @@ addPopulationForm.addEventListener("submit", function () {
         }, {})
       },
       evolution: {
-        maxPopulationSize: elements["population-size"].value,
+        populationSize: elements["population-size"].value,
         childrenPerParent: elements["children-per-parent"].value,
         randomPerGeneration: elements["random-per-generation"].value,
         duplicatesAllowed: elements["duplicates-allowed"].checked
@@ -253,15 +257,7 @@ addPopulationForm.addEventListener("submit", function () {
   setupPopulation(populationInfo);
   closeAddPopulationModal();
   this.reset();
-});
-
-function setupPopulation(populationInfo) {
-  var population = newPopulation(populationInfo);
-  addSidebarButton(populationInfo.name);
-  addPopulationPage(population);
-  openPopulationPage(numPopulations++);
-} // TEMPORARY
-
+}); // TEMPORARY
 
 setupPopulation({
   "name": "Test 1",
@@ -276,7 +272,7 @@ setupPopulation({
       }
     },
     "evolution": {
-      "maxPopulationSize": "20",
+      "populationSize": "20",
       "childrenPerParent": "2",
       "randomPerGeneration": "5",
       "duplicatesAllowed": false

@@ -92,7 +92,7 @@ const { getAsset } = (function () {
     fitness,
     randomCandidate,
     permuteCandidate,
-    maxPopulationSize,
+    populationSize,
     childrenPerParent,
     randomPerGeneration,
     allowDuplicates,
@@ -108,7 +108,7 @@ const { getAsset } = (function () {
     if (existingLocation > -1) {
       if (allowDuplicates) {
         candidates.splice(existingLocation, 0, candidate);
-        if (candidates.length > evolutionConfig.maxPopulationSize)
+        if (candidates.length > evolutionConfig.populationSize)
           candidates.shift();
       }
     }
@@ -130,7 +130,7 @@ const { getAsset } = (function () {
       // Adds to candidates list and removes worst candidate if length exceeds maximum
       candidates.splice(i, 0, candidate);
 
-      if (candidates.length > maxPopulationSize) candidates.shift();
+      if (candidates.length > populationSize) candidates.shift();
     }
     // If the candidate is not currently a candidate but had been in the past, it must be worse than all current candidates so is ignored.
   };
@@ -177,7 +177,7 @@ const { getAsset } = (function () {
   }) {
     // Evolution options
     ({
-      maxPopulationSize,
+      populationSize,
       childrenPerParent,
       randomPerGeneration,
       allowDuplicates,
@@ -194,7 +194,7 @@ const { getAsset } = (function () {
     importCandidates.forEach(evaluateCandidate);
     knownScores = importKnownScores;
 
-    while (candidates.length < maxPopulationSize)
+    while (candidates.length < populationSize)
       evaluateCandidate(randomCandidate());
 
     // Once config complete, message events toggle the population on/off.

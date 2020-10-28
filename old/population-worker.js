@@ -61,7 +61,7 @@ function randRange(min, max) {
 
 // POPULATION
 
-var candidates, knownScores, fitness, randomCandidate, permuteCandidate, maxPopulationSize, childrenPerParent, randomPerGeneration, allowDuplicates;
+var candidates, knownScores, fitness, randomCandidate, permuteCandidate, populationSize, childrenPerParent, randomPerGeneration, allowDuplicates;
 
 const instructions = {
 
@@ -73,7 +73,7 @@ const instructions = {
     ({fitness, randomCandidate, permuteCandidate} = cipherFunctionGenerators[name](options));
 
     // Evolution options
-    ({maxPopulationSize, childrenPerParent, randomPerGeneration, allowDuplicates} = evolution);
+    ({populationSize, childrenPerParent, randomPerGeneration, allowDuplicates} = evolution);
 
   },
 
@@ -85,7 +85,7 @@ const instructions = {
   
     // Adds to candidates list and removes worst candidate if length exceeds maximum
     candidates.splice(i, 0, candidate);
-    if (candidates.length > maxPopulationSize) candidates.shift();
+    if (candidates.length > populationSize) candidates.shift();
   },
 
   // Evolve the population by one generation
@@ -96,7 +96,7 @@ const instructions = {
       if (candidates.indexOf(candidate) > -1)
         if (evolutionConfig.allowDuplicates) {
           candidates.splice(candidates.indexOf(candidate), 0, candidate);
-          if (candidates.length > evolutionConfig.maxPopulationSize) candidates.shift()
+          if (candidates.length > evolutionConfig.populationSize) candidates.shift()
         }
       // Adds the candidate if it has not been evaluated before
       else if (!knownScores.hasOwnProperty(candidate)) {
@@ -145,7 +145,7 @@ onmessage = function ({data: {config, candidates: importCandidates = [], knownSc
   configure(config);
   importCandidates.foreach(evaluateCandidate);
   knownScores = importKnownScores;
-  while (candidates.length < maxPopulationSize) evaluateCandidate(randomCandidate());
+  while (candidates.length < populationSize) evaluateCandidate(randomCandidate());
 
   // In future, all messages are sent as an instruction to be execute, optionally with data.
   // Instruction can be "configure", "step", "run", or "stop".
@@ -191,7 +191,7 @@ onmessage = function ({data: {config, candidates: importCandidates = [], knownSc
     while (i < numCandidates && score > this.knownScores[candidates[i]]) i++;
 
     candidates.splice(i, 0, candidate);
-    if (candidates.length > this.maxPopulationSize) candidates.shift()
+    if (candidates.length > this.populationSize) candidates.shift()
 
     return score
   }, */
@@ -203,7 +203,7 @@ function evaluateCandidate (candidate) {
   if (candidates.indexOf(candidate) > -1)
     if (evolutionConfig.allowDuplicates) {
       candidates.splice(candidates.indexOf(candidate), 0, candidate);
-      if (candidates.length > evolutionConfig.maxPopulationSize) candidates.shift()
+      if (candidates.length > evolutionConfig.populationSize) candidates.shift()
     }
 
   // Adds the candidate if it has not been evaluated before
@@ -215,7 +215,7 @@ function evaluateCandidate (candidate) {
 
     // Adds to candidates list and removes worst candidate if length exceeds maximum
     candidates.splice(i, 0, candidate);
-    if (candidates.length > maxPopulationSize) candidates.shift();
+    if (candidates.length > populationSize) candidates.shift();
 
     return score
   }

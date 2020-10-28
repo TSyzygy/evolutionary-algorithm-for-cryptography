@@ -40,13 +40,13 @@ const // sidebar
 // addPopulationSubmitButton = newPopulationMenu.querySelector("#add-population-submit");
 
 var
-  numPopulations = 0,
-  currentPopulationNum = -1,
+  // currentPopulationNum = -1,
   numMessageInputs = 1,
   currentCipherPage = null;
 
 // populations
 
+/*
 function closeCurrentPopulation() {
   if (currentPopulationNum > -1) {
     populationPagesCollection[currentPopulationNum].classList.remove("open");
@@ -109,6 +109,7 @@ function updatePopulationPage(n) {
   bestCandidateDisplay.querySelector(".best-score").innerHTML = knownScores[bestKey];
   bestCandidateDisplay.querySelector(".best-decryption").innerHTML = "Decryption not yet implemented for this cipher :|";
 }
+*/
 
 // sidebar
 
@@ -122,6 +123,7 @@ function closeSidebar() {
 }
 closeSidebarButton.addEventListener("click", closeSidebar);
 
+/*
 function addSidebarButton(populationName) {
   const
     button = document.createElement("button"),
@@ -134,6 +136,7 @@ function addSidebarButton(populationName) {
   });
   populationButtons.appendChild(button);
 }
+*/
 
 // add-population-modal
 
@@ -264,7 +267,7 @@ addPopulationForm.addEventListener("submit", function () {
           )
         },
         evolution: {
-          maxPopulationSize: elements["population-size"].value,
+          populationSize: elements["population-size"].value,
           childrenPerParent: elements["children-per-parent"].value,
           randomPerGeneration: elements["random-per-generation"].value,
           duplicatesAllowed: elements["duplicates-allowed"].checked
@@ -280,18 +283,12 @@ addPopulationForm.addEventListener("submit", function () {
   this.reset();
 });
 
-function setupPopulation(populationInfo) {
-  var population = newPopulation(populationInfo);
-  addSidebarButton(populationInfo.name);
-  addPopulationPage(population);
-  openPopulationPage(numPopulations++);
-}
 
 
 
 // TEMPORARY
 
-setupPopulation({ "name": "Test 1", "description": "", "config": { "messages": ["Message"], "cipher": { "name": "vigenere", "options": { "keylength": "8", "n": "1" } }, "evolution": { "maxPopulationSize": "20", "childrenPerParent": "2", "randomPerGeneration": "5", "duplicatesAllowed": false } }, "history": [], "knownScores": {} })
+setupPopulation({ "name": "Test 1", "description": "", "config": { "messages": ["Message"], "cipher": { "name": "vigenere", "options": { "keylength": "8", "n": "1" } }, "evolution": { "populationSize": "20", "childrenPerParent": "2", "randomPerGeneration": "5", "duplicatesAllowed": false } }, "history": [], "knownScores": {} })
 
 /* TEMPORARY
 
