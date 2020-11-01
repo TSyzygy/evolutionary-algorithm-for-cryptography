@@ -14,12 +14,28 @@ var cipherFunctionGenerators = function () {
   var onmessage, globalThis;
   return {
     vigenere: function vigenere(messages, _ref) {
-      var keylength, n, convertMessage, alphabet, alphabetLength, scores, scoreMessage, fitness, randomCandidate, permuteCandidate, message;
+      var keylength, n, alphabet, alphabetLength, scores, convertMessage, scoreMessage, fitness, randomCandidate, permuteCandidate, message;
       return regeneratorRuntime.async(function vigenere$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
               keylength = _ref.keylength, n = _ref.n;
+
+              if (1 <= n <= 6) {
+                _context.next = 3;
+                break;
+              }
+
+              throw Error("n out of range");
+
+            case 3:
+              alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ";
+              alphabetLength = 26;
+              _context.next = 7;
+              return regeneratorRuntime.awrap(getAsset("ngrams/" + n + ".json"));
+
+            case 7:
+              scores = _context.sent;
 
               convertMessage = function convertMessage(message) {
                 return message.toUpperCase().split("").flatMap(function (c) {
@@ -28,28 +44,51 @@ var cipherFunctionGenerators = function () {
                 });
               };
 
-              if (1 <= n <= 6) {
-                _context.next = 4;
-                break;
-              }
-
-              throw Error("n out of range");
-
-            case 4:
-              alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-              alphabetLength = 26;
-              _context.next = 8;
-              return regeneratorRuntime.awrap(getAsset("ngrams/" + n + ".json"));
-
-            case 8:
-              scores = _context.sent;
               scoreMessage = n > 1 // Ngram score
-              ? function (message, key) {} // TODO
-              // Letter score
+              ? function (message, key) {
+                var keylength = key.length;
+                var gram = message.slice(0, n),
+                    p = 0,
+                    score = 0;
+                var _iteratorNormalCompletion = true;
+                var _didIteratorError = false;
+                var _iteratorError = undefined;
+
+                try {
+                  for (var _iterator = message[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                    var _char = _step.value;
+                    gram.shift();
+                    gram.push(alphabet[_char + key[p]]);
+                    score += scores[gram.join("")] || 0;
+
+                    if (++p == keylength) {
+                      p = 0;
+                    }
+
+                    ;
+                  }
+                } catch (err) {
+                  _didIteratorError = true;
+                  _iteratorError = err;
+                } finally {
+                  try {
+                    if (!_iteratorNormalCompletion && _iterator["return"] != null) {
+                      _iterator["return"]();
+                    }
+                  } finally {
+                    if (_didIteratorError) {
+                      throw _iteratorError;
+                    }
+                  }
+                }
+
+                ;
+                return score / message.length;
+              } // Letter score
               : function (message, key) {
-                return message.reduce(function (t, c, i) {
-                  return t + scores[c + key[i % keylength]];
-                });
+                return message.reduce(function (t, c, p) {
+                  return t + scores[c + key[p % keylength]];
+                }) / message.length;
               };
 
               // If multiple messages provided
@@ -125,8 +164,7 @@ var _ref2 = function () {
       populationSize,
       childrenPerParent,
       randomPerGeneration,
-      allowDuplicates,
-      nextGenTimeout; // PRIVATE CONSTANTS
+      allowDuplicates; // PRIVATE CONSTANTS
 
   var localAssets = {}; // PRIVATE FUNCTIONS
 
@@ -159,29 +197,29 @@ var _ref2 = function () {
 
   function nextGeneration() {
     newKnownScores = {};
-    var _iteratorNormalCompletion = true;
-    var _didIteratorError = false;
-    var _iteratorError = undefined;
+    var _iteratorNormalCompletion2 = true;
+    var _didIteratorError2 = false;
+    var _iteratorError2 = undefined;
 
     try {
-      for (var _iterator = candidates[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-        var parent = _step.value;
+      for (var _iterator2 = candidates[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+        var parent = _step2.value;
 
         for (var _n = 0; _n < childrenPerParent; _n++) {
           evaluateCandidate(permuteCandidate(parent));
         }
       }
     } catch (err) {
-      _didIteratorError = true;
-      _iteratorError = err;
+      _didIteratorError2 = true;
+      _iteratorError2 = err;
     } finally {
       try {
-        if (!_iteratorNormalCompletion && _iterator["return"] != null) {
-          _iterator["return"]();
+        if (!_iteratorNormalCompletion2 && _iterator2["return"] != null) {
+          _iterator2["return"]();
         }
       } finally {
-        if (_didIteratorError) {
-          throw _iteratorError;
+        if (_didIteratorError2) {
+          throw _iteratorError2;
         }
       }
     }
@@ -191,13 +229,17 @@ var _ref2 = function () {
     }
 
     postStatusUpdate();
-  } // Continues evolving the population until "stop" message received.
 
-
+    if (running) {
+      setTimeout(nextGeneration);
+    }
+  }
+  /* Continues evolving the population until "stop" message received.
   function run() {
     nextGeneration();
     nextGenTimeout = setTimeout(run); // Any new instructions from control (such as "stop") will be dealt with before running next generation
-  } // Sends a status update to control
+  } */
+  // Sends a status update to control
 
 
   function postStatusUpdate() {
@@ -247,17 +289,9 @@ var _ref2 = function () {
 
 
             onmessage = function onmessage(_ref5) {
-              var instruction = _ref5.data;
-
-              if (running && instruction == "stop") {
-                clearTimeout(nextGenTimeout);
-              } else if (!running && instruction == "run") {
-                run();
-              } else {
-                console.log("Recieved instruction same as current state");
-              }
-
-              running = !running;
+              var run = _ref5.data;
+              running = run;
+              nextGeneration();
             };
 
             postMessage("config-complete");

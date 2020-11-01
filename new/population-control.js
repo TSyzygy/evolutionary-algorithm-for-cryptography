@@ -42,94 +42,148 @@
 
 class Population {
   constructor({ name, description, config, history, knownScores }) {
+    const thisPopulation = this,
+      worker = (this.worker = new Worker("population-worker.js")),
+      page = (this.page = populationPageTemplate.content.firstElementChild.cloneNode(
+        true
+      )),
+      toggleButton = (this.toggleButton = page.querySelector(".toggle-button")),
+      stepButton = (this.stepButton = page.querySelector(".step-button")),
+      navButtons = page.querySelector("nav").children,
+      // subPages = (this.subPages = page.querySelectorAll("#population-page > div")),
+      displayPoints = (this.displayPoints = Array.prototype.reduce.call(
+        page.querySelectorAll("[data-dp]"),
+        (t, c) => ((t[c.dataset.dp] = c), t),
+        {}
+      )),
+      messagesDisplay = displayPoints.messages,
+      { name: cipherName, options: cipherOptions } = config.cipher,
+      {
+        populationSize,
+        childrenPerParent,
+        randomPerGeneration,
+        allowDuplicates,
+      } = config.evolution;
+
     this.name = name;
     this.config = config;
     this.knownScores = knownScores;
     this.history = history;
-    // Must be object so can be referenced from inside worker.onmessage functions
-    var
-      current = (this.current = {
-        genNum: history.length,
-        state: "opening",
-      }),
-      worker = (this.worker = new Worker("population-worker.js"));
+    this.open = false;
+    this.genNum = history.length;
+    this.state = "opening";
+    this.convertKey = cipherKeyConverters[cipherName];
 
     worker.onmessage = function () {
       worker.onmessage = function ({ data }) {
         if (data.message == "asset-request") {
-          current.state = "waiting";
+          thisPopulation.state = "waiting";
           getAsset(data.path).then((asset) => {
             worker.postMessage(asset);
-            current.state = "configuring";
+            thisPopulation.state = "configuring";
           });
         } else if (data == "config-complete") {
-          current.state = "idle";
+          thisPopulation.state = "idle";
 
           worker.onmessage = function ({
             data: { candidates, newKnownScores },
           }) {
-
             // Adds the newly discovered scores to the knownScores object
-            for (let key in newKnownScores) {
-              knownScores[key] = newKnownScores[key];
-            }
-
-            if (current.state == "finishing") {
-              current.state = "idle";
-            }
+            Object.assign(knownScores, newKnownScores);
 
             history.push({
               candidates,
               newKnownScores: Object.keys(newKnownScores),
             });
 
-            current.genNum++;
+            thisPopulation.genNum++;
+
+            thisPopulation.updatePage();
           };
         }
       };
 
-      var genNum = current.genNum;
+      var genNum = thisPopulation.genNum;
       worker.postMessage({
         config,
         candidates: genNum ? history[genNum - 1].candidates : [], // Latest array of candidates, or if new population, an empty list
         knownScores,
       });
 
-      current.state = "configuring";
+      thisPopulation.state = "configuring";
     };
 
     worker.onerror = function (e) {
       throw e;
     };
 
-    // Adds population page
-    this.open = false;
+    // Control buttons
+    toggleButton.addEventListener("click", function () {
+      if (thisPopulation.state == "running") {
+        thisPopulation.stop();
+      } else if (thisPopulation.state == "idle") {
+        thisPopulation.run();
+      }
+    });
 
-    var
-      page = (this.page = populationPageTemplate.content.firstElementChild.cloneNode(true)),
-      displayPoints = (this.displayPoints = Array.prototype.reduce.call(page.querySelectorAll("[data-dp]"), (t, c) => (t[c.dataset.dp] = c, t), {})),
-      {name: cipherName, options: cipherOptions} = config.cipher,
-      evolutionConfig = config.evolution;
-    
-    // Name and description
+    stepButton.addEventListener("click", function () {
+      thisPopulation.stop(); // Stop acts as a step
+    });
+
+    // Nav buttons
+    this.openSubPage = page.querySelector("div.config");
+    this.openNavButton = page.querySelector("nav button[data-target='config']");
+
+    for (let navButton of navButtons) {
+      const targetSubPage = page.querySelector(
+        "div." + navButton.dataset.target
+      );
+      navButton.addEventListener("click", function () {
+        thisPopulation.openSubPage.classList.remove("open");
+        targetSubPage.classList.add("open");
+        thisPopulation.openSubPage = targetSubPage;
+
+        thisPopulation.openNavButton.classList.remove("open");
+        this.classList.add("open");
+        thisPopulation.openNavButton = this;
+      });
+    }
+
+    // Name, gen num and description
     displayPoints.name.innerText = name;
     displayPoints.description.innerText = description;
 
     // Cipher config
     displayPoints.cipherName = cipherName;
     for (let optionName in cipherOptions) {
-      var p = document.createElement("p"),
-        c = document.createElement("code");
-      p.innerText = optionName + ": ";
-      c.innerText = cipherOptions[optionName];
+      const row = document.createElement("tr"),
+        nameCell = document.createElement("td"),
+        valueCell = document.createElement("td");
+      nameCell.innerText = optionName + ":";
+      valueCell.innerText = cipherOptions[optionName];
+
+      row.appendChild(nameCell);
+      row.appendChild(valueCell);
+      displayPoints.cipherOptions.appendChild(row);
     }
 
     // Evolution config
-    displayPoints.populationSize = evolutionConfig.populationSize;
-    displayPoints.childrenPerParent = evolutionConfig.childrenPerParent;
-    displayPoints.randomPerGeneration = evolutionConfig.randomPerGeneration;
-    displayPoints.allowDuplicates = evolutionConfig.allowDuplicates ? "YES" : "NO";
+    displayPoints.populationSize.innerText = populationSize;
+    displayPoints.childrenPerParent.innerText = childrenPerParent;
+    displayPoints.randomPerGeneration.innerText = randomPerGeneration;
+    displayPoints.allowDuplicates.innerText = allowDuplicates ? "YES" : "NO";
 
+    // Messages
+    var messageDecrypters = (this.messageDecypters = []);
+    const messageDecrypterGenerator = cipherDecrypterGenerators[cipherName];
+    for (let message of config.messages) {
+      messageDecrypters.push(messageDecrypterGenerator(message, cipherOptions));
+      const e = document.createElement("code");
+      e.innerText = message;
+      messagesDisplay.appendChild(e);
+    }
+
+    // Adds population page
     populationPages.appendChild(page);
 
     // Adds sidebar button
@@ -138,19 +192,45 @@ class Population {
     button.innerText = name;
 
     // Sets up event listener to open this population on sidebar button click
-    const thisPopulation = this;
     button.addEventListener("click", function () {
-      this.classList.add("open");
       thisPopulation.openPage();
     });
     populationButtons.appendChild(button);
   }
 
+  /**
+   * @param {string} newState
+   */
+  set state(newState) {
+    this._state = this.displayPoints.state.innerText = this.page.dataset.state = newState;
+    if (newState == "idle") {
+      this.toggleButton.removeAttribute("disabled");
+      this.stepButton.removeAttribute("disabled");
+    } else if (newState == "running") {
+      this.toggleButton.removeAttribute("disabled");
+      this.stepButton.setAttribute("disabled", "");
+    } else {
+      this.toggleButton.setAttribute("disabled", "");
+      this.stepButton.setAttribute("disabled", "");
+    }
+  }
+
+  get state() {
+    return this._state;
+  }
+
+  set genNum(newGenNum) {
+    this._genNum = this.displayPoints.genNum.innerText = newGenNum;
+  }
+
+  get genNum() {
+    return this._genNum;
+  }
+
   run() {
-    var current = this.current;
-    if (current.state == "idle") {
-      current.state = "running";
-      this.worker.postMessage("run");
+    if (this.state == "idle") {
+      this.worker.postMessage(true);
+      this.state = "running";
       return true;
     } else {
       return false;
@@ -158,43 +238,30 @@ class Population {
   }
 
   stop() {
-    var current = this.current;
-    if (current.state == "running") {
-      current.state = "finishing";
-      this.worker.postMessage("stop");
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  step() {
-    var current = this.current;
-    if (current.state == "idle") {
-      current.state = "finishing";
-      var worker = this.worker;
-      worker.postMessage("run");
-      worker.postMessage("stop");
-      return true;
-    } else {
-      return false;
-    }
+    this.worker.postMessage(false);
+    this.state = "idle";
   }
 
   updatePage() {
     // TODO
-    var
-      page = this.page,
-      displayPoints = this.displayPoints;
+    const displayPoints = this.displayPoints,
+      {candidates} = this.history[this.genNum - 1],
+      bestKey = candidates[0];
+
+    displayPoints.bestKey.innerText = this.convertKey(bestKey);
+    displayPoints.bestScore.innerText = this.knownScores[bestKey];
+    displayPoints.bestDecryption.innerText = this.messageDecypters[0](bestKey);
   }
 
   openPage() {
     if (openPopulation) {
       openPopulation.closePage();
-    };
+    }
+    this.button.classList.add("open");
     this.page.classList.add("open");
     this.open = true;
     openPopulation = this;
+    closeSidebar();
   }
 
   closePage() {
@@ -214,11 +281,11 @@ var openPopulation = null;
 }; */
 
 function setupPopulation(populationData) {
-  console.log(JSON.stringify(populationData));
+  // console.log(JSON.stringify(populationData));
   var population = new Population(populationData);
   populations.push(population);
   population.openPage();
-};
+}
 
 /*
 function newPopulation (populationData) {

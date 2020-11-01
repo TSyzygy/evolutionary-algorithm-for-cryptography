@@ -23,15 +23,15 @@ h2 {
 h3 {
   font-family: Inter, Helvetica;
   font-weight: 200;
-  font-style: italic;
-  font-size: 1rem;
+  font-size: 1.2rem;
+  margin: 0;
 }
 
 h4 {
   font-family: Inter, Helvetica;
   font-weight: 500;
   font-size: 1rem;
-  margin: 12px 0;
+  margin: 0;
 }
 
 h5 {
@@ -58,14 +58,18 @@ table {
   font-size: 0.9rem;
   font-weight: 250;
   text-align: left;
+  border-spacing: 0 4px;
 }
 
 th {
   font-weight: 500;
 }
 
+td {
+  padding: 0 4px 0 0;
+}
+
 button {
-  display: inline-block;
   border: none;
   margin: 0;
   cursor: pointer;
@@ -186,8 +190,8 @@ select {
 }
 
 #top {
+  flex-shrink: 0;
   display: flex;
-  height: 40px;
   background-color: #ddd;
 }
 
@@ -201,8 +205,11 @@ select {
 }
 #population-pages {
   flex-grow: 1;
+  overflow: auto;
+  counter-reset: page-num;
 }
 #population-pages section {
+  counter-increment: page-num;
   display: none;
   height: 100%;
   padding: 12px;
@@ -211,25 +218,75 @@ select {
 #population-pages section.open {
   display: block;
 }
-#population-pages button:hover {
-  background-color: #ddd;
+#population-pages section[data-state=running] .run-text {
+  display: none;
 }
-
+#population-pages section[data-state=running] .stop-text {
+  display: block;
+}
 .population-page {
   display: flex;
   flex-direction: column;
 }
-.controls[data-state=running] .run, .controls[data-state=stepping] .run {
+.population-page h2::before {
+  content: counter(page-num, decimal-leading-zero);
+  font-family: RobotoMono, monospace;
+  background-color: #ddd;
+  border-radius: 4px;
+  padding: 2px;
+  margin-right: 8px;
+}
+.population-page nav {
+  overflow-x: auto;
+  white-space: nowrap;
+  margin: 8px 0;
+}
+.population-page nav button:hover {
+  border-bottom: solid 3px var(--primary-color-light);
+}
+.population-page nav button:active, .population-page nav button.open {
+  border-bottom: solid 3px var(--primary-color-dark);
+}
+.population-page .stop-text {
   display: none;
 }
-.controls[data-state=running] .stop, .controls[data-state=stepping] .stop {
-  display: block;
-}
-.controls[data-state=stopped] .run {
-  display: block;
-}
-.controls[data-state=stopped] .stop {
+
+.sub-pages > div {
   display: none;
+}
+.sub-pages > div.open {
+  display: block;
+}
+.sub-pages > div > div {
+  margin: 8px 0;
+}
+
+@media only screen and (min-width: 1000px) and (min-height: 600px) {
+  .population-page nav {
+    display: none;
+  }
+
+  .sub-pages > div {
+    display: block;
+    background-color: #eee;
+    padding: 8px;
+    margin: 8px 0;
+  }
+}
+.title {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.controls {
+  margin: 0;
+}
+.controls button:hover {
+  background-color: #ddd;
+}
+
+.cipher-config td {
+  text-transform: capitalize;
 }
 
 #close-sidebar {

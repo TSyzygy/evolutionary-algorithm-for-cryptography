@@ -47,7 +47,7 @@
             <button id="open-sidebar">Menu</button>
           </div>
           <div id="status">
-            <h4>Status</h3>
+            <h2>Status</h2>
           </div>
         </section>
 
@@ -55,37 +55,83 @@
         <template id="population-page-template">
           <section>
             <div class="population-page">
-              <div class="info">
+
+              <div class="title">
                 <h2 data-dp="name"></h2>
-                <p data-dp="description"></p>
                 <div class="controls">
-                  <button type="button" data-dp="run">Run &rtrif;</button>
-                  <button type="button" data-dp="stop">Stop &squ;</button>
-                  <button type="button" data-dp="step">Step &plus;</button>
+                  <button type="button" class="toggle-button"><span class="run-text">Run &rtrif;</span class="stop-text"><span class="stop-text">Stop &squf;</span></button>
+                  <button type="button" class="step-button">Step &plus;</button>
+                </div>
+                <div class="current">
+                  <p>Gen <code data-dp="genNum">0</code>, <span data-dp="state"></span></p>
                 </div>
               </div>
-              <div class="best-candidate">
-                <p>Key: <code data-dp="bestKey"></code></p>
-                <p>Score: <code data-dp="bestScore"></code></p>
-                <p>Decryption: <code data-dp="bestDecryption"></code></p>
-              </div>
-              <div class="config">
-                <div class="cipher-config">
-                  <p data-dp="cipherName"></p>
-                  <div data-dp="cipherOptions">
 
+              <nav>
+                <button data-target="config" class="open">Config</button>
+                <button data-target="best-candidate">Best candidate</button>
+                <button data-target="history">History</button>
+              </nav>
+
+              <div class="sub-pages">
+                <div class="config open">
+                  <h3>Config</h3>
+                  <div class="description">
+                    <h4>Description</h4>
+                    <p data-dp="description"></p>
+                  </div>
+                  <div class="cipher-config">
+                    <h4>Cipher config</h4>
+                    <p data-dp="cipherName"></p>
+                    <table data-dp="cipherOptions">
+                      
+                    </table>
+                  </div>
+                  <div class="evolution">
+                    <h4>Evolution config</h4>
+                    <table>
+                      <tr>
+                        <td>Population size:</td>
+                        <td data-dp="populationSize"></td>
+                      </tr>
+                      <tr>
+                        <td>Children per parent:</td>
+                        <td data-dp="childrenPerParent"></td>
+                      </tr>
+                      <tr>
+                        <td>Random per generation:</td>
+                        <td data-dp="randomPerGeneration"></td>
+                      </tr>
+                      <tr>
+                        <td>Allow duplicates:</td>
+                        <td data-dp="allowDuplicates"></td>
+                      </tr>
+                    </table>
+                    <!--<p>Population size: <code data-dp="populationSize"></code></p>
+                    <p>Children per parent: <code data-dp="childrenPerParent"></code></p>
+                    <p>Random per generation: <code data-dp="randomPerGeneration"></code></p>
+                    <p>Allow duplicates: <code data-dp="allowDuplicates"></code></p>-->
+                  </div>
+                  <div class="messages">
+                    <h4>Messages</h4>
+                    <div data-dp="messages">
+  
+                    </div>
                   </div>
                 </div>
-                <div class="evolution">
-                  <p>Population size: <code data-dp="populationSize"></code></p>
-                  <p>Children per parent: <code data-dp="childrenPerParent"></code></p>
-                  <p>Random per generation: <code data-dp="randomPerGeneration"></code></p>
-                  <p>Allow duplicates: <code data-dp="allowDuplicates"></code></p>
+  
+                <div class="best-candidate">
+                  <h3>Best candidate</h3>
+                  <p>Key: <code data-dp="bestKey"></code></p>
+                  <p>Score: <code data-dp="bestScore"></code></p>
+                  <p>Decryption: <code data-dp="bestDecryption"></code></p>
                 </div>
-                <div class="messages" data-dp="messages">
-
+  
+                <div class="history">
+                  <h3>History</h3>
                 </div>
               </div>
+
             </div>
           </section>
         </template>
@@ -224,17 +270,19 @@
                       <option value="">Choose cipher...</option>
                       <option value="vigenere">Vigenere</option>
                       <option value="transposition">Transposition</option>
+                      <option value="monoalphabetic">Monoalphabetic substitution</option>
                     </select>
                   </div>
                   <div id="cipher-specific-options">
+
                     <div data-cipher-name="vigenere">
                       <div class="data-entry">
                         <label for="vigenere-keylength">Keylength:</label>
-                        <input type="number" name="keylength" class="required-for-cipher" max="100" min="2" value="8">
+                        <input type="number" name="keylength" id="vigenere-keylength" class="required-for-cipher" max="100" min="2" value="8">
                       </div>
                       <div class="data-entry">
-                        <label for="n">Fitness evaluation method:</label>
-                        <select name="n" class="required-for-cipher">
+                        <label for="vigenere-n">Fitness evaluation method:</label>
+                        <select name="n" id="vigenere-n" class="required-for-cipher">
                           <option value="">Select fitness method...</option>
                           <option value="1">Letter frequencies (fastest)</option>
                           <option value="2">Bigram score</option>
@@ -243,9 +291,15 @@
                         </select>
                       </div>
                     </div>
+
                     <div data-cipher-name="transposition">
                       <p>The transposition cipher is not yet implemented, sorry.</p>
                     </div>
+
+                    <div data-cipher-name="monoalphabetic">
+                      <p>The monoalphabetic substitution cipher is not yet implemented, sorry.</p>
+                    </div>
+
                   </div>
                 </div>
 
@@ -264,6 +318,7 @@
     </section>
 
     <script src="functionality-checks.js"></script>
+    <script src="cipher-decrypters.js"></script>
     <script src="population-control.js"></script>
     <script src="assets.js"></script>
     <script src="interface.js"></script>

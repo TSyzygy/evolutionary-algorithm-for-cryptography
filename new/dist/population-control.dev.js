@@ -57,77 +57,126 @@ function () {
 
     _classCallCheck(this, Population);
 
+    var thisPopulation = this,
+        worker = this.worker = new Worker("population-worker.js"),
+        page = this.page = populationPageTemplate.content.firstElementChild.cloneNode(true),
+        toggleButton = this.toggleButton = page.querySelector(".toggle-button"),
+        stepButton = this.stepButton = page.querySelector(".step-button"),
+        navButtons = page.querySelector("nav").children,
+        displayPoints = this.displayPoints = Array.prototype.reduce.call(page.querySelectorAll("[data-dp]"), function (t, c) {
+      return t[c.dataset.dp] = c, t;
+    }, {}),
+        messagesDisplay = displayPoints.messages,
+        _config$cipher = config.cipher,
+        cipherName = _config$cipher.name,
+        cipherOptions = _config$cipher.options,
+        _config$evolution = config.evolution,
+        populationSize = _config$evolution.populationSize,
+        childrenPerParent = _config$evolution.childrenPerParent,
+        randomPerGeneration = _config$evolution.randomPerGeneration,
+        allowDuplicates = _config$evolution.allowDuplicates;
     this.name = name;
     this.config = config;
     this.knownScores = knownScores;
-    this.history = history; // Must be object so can be referenced from inside worker.onmessage functions
-
-    var current = this.current = {
-      genNum: history.length,
-      state: "opening"
-    },
-        worker = this.worker = new Worker("population-worker.js");
+    this.history = history;
+    this.open = false;
+    this.genNum = history.length;
+    this.state = "opening";
+    this.convertKey = cipherKeyConverters[cipherName];
 
     worker.onmessage = function () {
       worker.onmessage = function (_ref2) {
         var data = _ref2.data;
 
         if (data.message == "asset-request") {
-          current.state = "waiting";
+          thisPopulation.state = "waiting";
           getAsset(data.path).then(function (asset) {
             worker.postMessage(asset);
-            current.state = "configuring";
+            thisPopulation.state = "configuring";
           });
         } else if (data == "config-complete") {
-          current.state = "idle";
+          thisPopulation.state = "idle";
 
           worker.onmessage = function (_ref3) {
             var _ref3$data = _ref3.data,
                 candidates = _ref3$data.candidates,
                 newKnownScores = _ref3$data.newKnownScores;
-
             // Adds the newly discovered scores to the knownScores object
-            for (var key in newKnownScores) {
-              knownScores[key] = newKnownScores[key];
-            }
-
-            if (current.state == "finishing") {
-              current.state = "idle";
-            }
-
+            Object.assign(knownScores, newKnownScores);
             history.push({
               candidates: candidates,
               newKnownScores: Object.keys(newKnownScores)
             });
-            current.genNum++;
+            thisPopulation.genNum++;
+            thisPopulation.updatePage();
           };
         }
       };
 
-      var genNum = current.genNum;
+      var genNum = thisPopulation.genNum;
       worker.postMessage({
         config: config,
         candidates: genNum ? history[genNum - 1].candidates : [],
         // Latest array of candidates, or if new population, an empty list
         knownScores: knownScores
       });
-      current.state = "configuring";
+      thisPopulation.state = "configuring";
     };
 
     worker.onerror = function (e) {
       throw e;
-    }; // Adds population page
+    }; // Control buttons
 
 
-    this.open = false;
-    var page = this.page = populationPageTemplate.content.firstElementChild.cloneNode(true),
-        displayPoints = this.displayPoints = Array.prototype.reduce.call(page.querySelectorAll("[data-dp]"), function (t, c) {
-      return t[c.dataset.dp] = c, t;
-    }, {}),
-        _config$cipher = config.cipher,
-        cipherName = _config$cipher.name,
-        cipherOptions = _config$cipher.options,
-        evolutionConfig = config.evolution; // Name and description
+    toggleButton.addEventListener("click", function () {
+      if (thisPopulation.state == "running") {
+        thisPopulation.stop();
+      } else if (thisPopulation.state == "idle") {
+        thisPopulation.run();
+      }
+    });
+    stepButton.addEventListener("click", function () {
+      thisPopulation.stop(); // Stop acts as a step
+    }); // Nav buttons
+
+    this.openSubPage = page.querySelector("div.config");
+    this.openNavButton = page.querySelector("nav button[data-target='config']");
+    var _iteratorNormalCompletion = true;
+    var _didIteratorError = false;
+    var _iteratorError = undefined;
+
+    try {
+      var _loop = function _loop() {
+        var navButton = _step.value;
+        var targetSubPage = page.querySelector("div." + navButton.dataset.target);
+        navButton.addEventListener("click", function () {
+          thisPopulation.openSubPage.classList.remove("open");
+          targetSubPage.classList.add("open");
+          thisPopulation.openSubPage = targetSubPage;
+          thisPopulation.openNavButton.classList.remove("open");
+          this.classList.add("open");
+          thisPopulation.openNavButton = this;
+        });
+      };
+
+      for (var _iterator = navButtons[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+        _loop();
+      } // Name, gen num and description
+
+    } catch (err) {
+      _didIteratorError = true;
+      _iteratorError = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion && _iterator["return"] != null) {
+          _iterator["return"]();
+        }
+      } finally {
+        if (_didIteratorError) {
+          throw _iteratorError;
+        }
+      }
+    }
 
     displayPoints.name.innerText = name;
     displayPoints.description.innerText = description; // Cipher config
@@ -135,39 +184,74 @@ function () {
     displayPoints.cipherName = cipherName;
 
     for (var optionName in cipherOptions) {
-      var p = document.createElement("p"),
-          c = document.createElement("code");
-      p.innerText = optionName + ": ";
-      c.innerText = cipherOptions[optionName];
+      var row = document.createElement("tr"),
+          nameCell = document.createElement("td"),
+          valueCell = document.createElement("td");
+      nameCell.innerText = optionName + ":";
+      valueCell.innerText = cipherOptions[optionName];
+      row.appendChild(nameCell);
+      row.appendChild(valueCell);
+      displayPoints.cipherOptions.appendChild(row);
     } // Evolution config
 
 
-    displayPoints.populationSize = evolutionConfig.populationSize;
-    displayPoints.childrenPerParent = evolutionConfig.childrenPerParent;
-    displayPoints.randomPerGeneration = evolutionConfig.randomPerGeneration;
-    displayPoints.allowDuplicates = evolutionConfig.allowDuplicates ? "YES" : "NO";
+    displayPoints.populationSize.innerText = populationSize;
+    displayPoints.childrenPerParent.innerText = childrenPerParent;
+    displayPoints.randomPerGeneration.innerText = randomPerGeneration;
+    displayPoints.allowDuplicates.innerText = allowDuplicates ? "YES" : "NO"; // Messages
+
+    var messageDecrypters = this.messageDecypters = [];
+    var messageDecrypterGenerator = cipherDecrypterGenerators[cipherName];
+    var _iteratorNormalCompletion2 = true;
+    var _didIteratorError2 = false;
+    var _iteratorError2 = undefined;
+
+    try {
+      for (var _iterator2 = config.messages[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+        var message = _step2.value;
+        messageDecrypters.push(messageDecrypterGenerator(message, cipherOptions));
+        var e = document.createElement("code");
+        e.innerText = message;
+        messagesDisplay.appendChild(e);
+      } // Adds population page
+
+    } catch (err) {
+      _didIteratorError2 = true;
+      _iteratorError2 = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion2 && _iterator2["return"] != null) {
+          _iterator2["return"]();
+        }
+      } finally {
+        if (_didIteratorError2) {
+          throw _iteratorError2;
+        }
+      }
+    }
+
     populationPages.appendChild(page); // Adds sidebar button
 
     var button = this.button = document.createElement("button");
     button.setAttribute("type", "button");
     button.innerText = name; // Sets up event listener to open this population on sidebar button click
 
-    var thisPopulation = this;
     button.addEventListener("click", function () {
-      this.classList.add("open");
       thisPopulation.openPage();
     });
     populationButtons.appendChild(button);
   }
+  /**
+   * @param {string} newState
+   */
+
 
   _createClass(Population, [{
     key: "run",
     value: function run() {
-      var current = this.current;
-
-      if (current.state == "idle") {
-        current.state = "running";
-        this.worker.postMessage("run");
+      if (this.state == "idle") {
+        this.worker.postMessage(true);
+        this.state = "running";
         return true;
       } else {
         return false;
@@ -176,37 +260,19 @@ function () {
   }, {
     key: "stop",
     value: function stop() {
-      var current = this.current;
-
-      if (current.state == "running") {
-        current.state = "finishing";
-        this.worker.postMessage("stop");
-        return true;
-      } else {
-        return false;
-      }
-    }
-  }, {
-    key: "step",
-    value: function step() {
-      var current = this.current;
-
-      if (current.state == "idle") {
-        current.state = "finishing";
-        var worker = this.worker;
-        worker.postMessage("run");
-        worker.postMessage("stop");
-        return true;
-      } else {
-        return false;
-      }
+      this.worker.postMessage(false);
+      this.state = "idle";
     }
   }, {
     key: "updatePage",
     value: function updatePage() {
       // TODO
-      var page = this.page,
-          displayPoints = this.displayPoints;
+      var displayPoints = this.displayPoints,
+          candidates = this.history[this.genNum - 1].candidates,
+          bestKey = candidates[0];
+      displayPoints.bestKey.innerText = this.convertKey(bestKey);
+      displayPoints.bestScore.innerText = this.knownScores[bestKey];
+      displayPoints.bestDecryption.innerText = this.messageDecypters[0](bestKey);
     }
   }, {
     key: "openPage",
@@ -215,10 +281,11 @@ function () {
         openPopulation.closePage();
       }
 
-      ;
+      this.button.classList.add("open");
       this.page.classList.add("open");
       this.open = true;
       openPopulation = this;
+      closeSidebar();
     }
   }, {
     key: "closePage",
@@ -226,6 +293,33 @@ function () {
       this.button.classList.remove("open");
       this.page.classList.remove("open");
       this.open = false;
+    }
+  }, {
+    key: "state",
+    set: function set(newState) {
+      this._state = this.displayPoints.state.innerText = this.page.dataset.state = newState;
+
+      if (newState == "idle") {
+        this.toggleButton.removeAttribute("disabled");
+        this.stepButton.removeAttribute("disabled");
+      } else if (newState == "running") {
+        this.toggleButton.removeAttribute("disabled");
+        this.stepButton.setAttribute("disabled", "");
+      } else {
+        this.toggleButton.setAttribute("disabled", "");
+        this.stepButton.setAttribute("disabled", "");
+      }
+    },
+    get: function get() {
+      return this._state;
+    }
+  }, {
+    key: "genNum",
+    set: function set(newGenNum) {
+      this._genNum = this.displayPoints.genNum.innerText = newGenNum;
+    },
+    get: function get() {
+      return this._genNum;
     }
   }]);
 
@@ -241,13 +335,11 @@ var openPopulation = null;
 }; */
 
 function setupPopulation(populationData) {
-  console.log(JSON.stringify(populationData));
+  // console.log(JSON.stringify(populationData));
   var population = new Population(populationData);
   populations.push(population);
   population.openPage();
 }
-
-;
 /*
 function newPopulation (populationData) {
   var n = populations.length,

@@ -8,31 +8,42 @@ const cipherFunctionGenerators = (function () {
 
   return {
     async vigenere(messages, { keylength, n }) {
-      const convertMessage = message =>
-        message
-          .toUpperCase()
-          .split("")
-          .flatMap(c => {
-            var i = alphabet.indexOf(c);
-            return i > -1 ? [i] : [];
-          });
-
       if (!(1 <= n <= 6)) {
         throw Error("n out of range");
       }
 
-      const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
         alphabetLength = 26,
         scores = await getAsset("ngrams/" + n + ".json"),
+        convertMessage = message =>
+          message
+            .toUpperCase()
+            .split("")
+            .flatMap(c => {
+              var i = alphabet.indexOf(c);
+              return i > -1 ? [i] : [];
+            }),
         scoreMessage =
           n > 1 // Ngram score
             ? function (message, key) {
-                // TODO
+                const keylength = key.length;
+                var gram = message.slice(0, n),
+                  p = 0,
+                  score = 0;
+                for (let char of message) {
+                  gram.shift();
+                  gram.push(alphabet[char + key[p]]);
+                  score += scores[gram.join("")] || 0;
+                  if (++p == keylength) {
+                    p = 0;
+                  };
+                };
+                return score / message.length;
               } // Letter score
             : function (message, key) {
                 return message.reduce(
-                  (t, c, i) => t + scores[c + key[i % keylength]]
-                );
+                  (t, c, p) => t + scores[c + key[p % keylength]]
+                ) / message.length;
               };
 
       var fitness,
@@ -95,8 +106,7 @@ const { getAsset } = (function () {
     populationSize,
     childrenPerParent,
     randomPerGeneration,
-    allowDuplicates,
-    nextGenTimeout;
+    allowDuplicates;
 
   // PRIVATE CONSTANTS
   const localAssets = {};
@@ -147,13 +157,17 @@ const { getAsset } = (function () {
       evaluateCandidate(randomCandidate());
 
     postStatusUpdate();
+
+    if (running) {
+      setTimeout(nextGeneration);
+    }
   }
 
-  // Continues evolving the population until "stop" message received.
+  /* Continues evolving the population until "stop" message received.
   function run() {
     nextGeneration();
     nextGenTimeout = setTimeout(run); // Any new instructions from control (such as "stop") will be dealt with before running next generation
-  }
+  } */
 
   // Sends a status update to control
   function postStatusUpdate() {
@@ -198,15 +212,9 @@ const { getAsset } = (function () {
       evaluateCandidate(randomCandidate());
 
     // Once config complete, message events toggle the population on/off.
-    onmessage = function ({ data: instruction }) {
-      if (running && instruction == "stop") {
-        clearTimeout(nextGenTimeout);
-      } else if (!running && instruction == "run") {
-        run();
-      } else {
-        console.log("Recieved instruction same as current state");
-      }
-      running = !running;
+    onmessage = function ({ data: run }) {
+      running = run;
+      nextGeneration();
     };
 
     postMessage("config-complete");

@@ -24,15 +24,15 @@ h2 {
 h3 {
   font-family: Inter, Helvetica;
   font-weight: 200;
-  font-style: italic;
-  font-size: 1rem;
+  font-size: 1.2rem;
+  margin: 0;
 }
 
 h4 {
   font-family: Inter, Helvetica;
   font-weight: 500;
   font-size: 1rem;
-  margin: 12px 0;
+  margin: 0;
 }
 
 h5 {
@@ -59,14 +59,18 @@ table {
   font-size: 0.9rem;
   font-weight: 250;
   text-align: left;
+  border-spacing: 0 4px;
 }
 
 th {
   font-weight: 500;
 }
 
+td {
+  padding: 0 4px 0 0;
+}
+
 button {
-  display: inline-block;
   border: none;
   margin: 0;
   cursor: pointer;
@@ -206,8 +210,8 @@ select {
 // Top bar
 
 #top {
+  flex-shrink: 0;
   display: flex;
-  height: 40px;
   background-color: #ddd;
 }
 
@@ -228,8 +232,12 @@ select {
 
 #population-pages {
   flex-grow: 1;
+  overflow: auto;
+  counter-reset: page-num;
 
   section {
+    counter-increment: page-num;
+
     display: none;
     height: 100%;
     padding: 12px;
@@ -238,10 +246,22 @@ select {
     &.open {
       display: block;
     }
-  }
 
-  button:hover {
-    background-color: #ddd;
+    &[data-state="running"] {
+      .run-text {
+        display: none;
+      }
+  
+      .stop-text {
+        display: block;
+      }
+    }
+  
+    &[data-state="finishing"] {
+      .toggle-button, .step-button {
+        
+      }
+    }
   }
 }
 
@@ -249,36 +269,76 @@ select {
   display: flex;
   flex-direction: column;
 
-  .info {
+  h2::before {
+    content: counter(page-num, decimal-leading-zero);
+    font-family: RobotoMono, monospace;
+    background-color: #ddd;
+    border-radius: 4px;
+    padding: 2px;
+    margin-right: 8px;
+  }
 
+  nav {
+    overflow-x: auto;
+    white-space: nowrap;
+    margin: 8px 0;
+
+    button {
+      &:hover {
+        border-bottom: solid 3px var(--primary-color-light)
+      }
+
+      &:active, &.open {
+        border-bottom: solid 3px var(--primary-color-dark)
+      }
+    }
+  }
+
+  .stop-text {
+    display: none;
   }
 }
 
+.sub-pages > div {
+  display: none;
+
+  &.open {
+    display: block;
+  }
+
+  > div {
+    margin: 8px 0;
+  }
+}
+
+@media only screen and (min-width: 1000px) and (min-height: 600px) {
+  .population-page nav {
+    display: none;
+  }
+  
+  .sub-pages > div {
+    display: block;
+    background-color: #eee;
+    padding: 8px;
+    margin: 8px 0;
+  }
+}
+
+.title {
+  display: flex;
+  flex-wrap: wrap;
+}
+
 .controls {
+  margin: 0;
 
-  button {
-
+  button:hover {
+    background-color: #ddd;
   }
+}
 
-  &[data-state="running"], &[data-state="stepping"] {
-    .run {
-      display: none;
-    }
-
-    .stop {
-      display: block;
-    }
-  }
-
-  &[data-state="stopped"] {
-    .run {
-      display: block;
-    }
-
-    .stop {
-      display: none;
-    }
-  }
+.cipher-config td {
+  text-transform: capitalize;
 }
 
 #close-sidebar {
