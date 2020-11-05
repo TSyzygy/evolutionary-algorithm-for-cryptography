@@ -1,4 +1,5 @@
-const letter = [
+const alphabet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"],
+  letter = [
     "A",
     "B",
     "C",
@@ -160,22 +161,46 @@ const letter = [
   },
   cipherDecrypterGenerators = {
     vigenere(message, config) {
-      const convertedMessage = message.split("").map((c) => value.hasOwnProperty(c) ? value[c] : c),
+      const convertedMessage = message
+          .split("")
+          .map((c) => (value.hasOwnProperty(c) ? value[c] : c)),
         keylength = config.keylength;
       return (key) => {
         var p = 0;
-        return convertedMessage.reduce(
-          (plaintext, val) => {
-            if (p == keylength) p = 0;
-            return plaintext + (typeof val == "number" ? letter[val + key[p++]] : val);
-          },
+        return convertedMessage.reduce((plaintext, val) => {
+          if (p == keylength) p = 0;
+          return (
+            plaintext + (typeof val == "number" ? letter[val + key[p++]] : val)
+          );
+        }, "");
+      };
+    },
+    monoalphabetic(message) {
+      const convertedMessage = message
+          .split("")
+          .map((c) => (value.hasOwnProperty(c) ? value[c] : c));
+      return (key) =>
+        convertedMessage.reduce(
+          (plaintext, val) =>
+            plaintext +
+            (typeof val == "number"
+              ? val >= 52
+                ? key[val - 52].toLowerCase()
+                : key[val]
+              : val),
           ""
         );
-      }
     },
   },
   cipherKeyConverters = {
     vigenere(key) {
-      return key.reduce((word, n) => word + letter[26 - n], "")
+      return key.reduce((word, n) => word + letter[26 - n], "");
+    },
+    monoalphabetic(key) {
+      var encryptionKey = "";
+      for (let l of alphabet) {
+        encryptionKey += letter[key.indexOf(l)];
+      };
+      return encryptionKey
     },
   };

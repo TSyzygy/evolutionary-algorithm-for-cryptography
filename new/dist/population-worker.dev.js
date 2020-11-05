@@ -20,21 +20,12 @@ var cipherFunctionGenerators = function () {
           switch (_context.prev = _context.next) {
             case 0:
               keylength = _ref.keylength, n = _ref.n;
-
-              if (1 <= n <= 6) {
-                _context.next = 3;
-                break;
-              }
-
-              throw Error("n out of range");
-
-            case 3:
               alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ";
               alphabetLength = 26;
-              _context.next = 7;
+              _context.next = 5;
               return regeneratorRuntime.awrap(getAsset("ngrams/" + n + ".json"));
 
-            case 7:
+            case 5:
               scores = _context.sent;
 
               convertMessage = function convertMessage(message) {
@@ -64,8 +55,6 @@ var cipherFunctionGenerators = function () {
                     if (++p == keylength) {
                       p = 0;
                     }
-
-                    ;
                   }
                 } catch (err) {
                   _didIteratorError = true;
@@ -82,7 +71,6 @@ var cipherFunctionGenerators = function () {
                   }
                 }
 
-                ;
                 return score / message.length;
               } // Letter score
               : function (message, key) {
@@ -127,9 +115,9 @@ var cipherFunctionGenerators = function () {
                   return Math.floor(Math.random() * (max - min)) + min;
                 }
 
-                var permutedKey = _toConsumableArray(key);
+                var permutedKey = _toConsumableArray(key),
+                    posToChange = randRange(0, keylength);
 
-                var posToChange = randRange(0, keylength);
                 permutedKey[posToChange] += randRange(1, alphabetLength);
                 permutedKey[posToChange] %= alphabetLength;
                 return permutedKey;
@@ -141,9 +129,135 @@ var cipherFunctionGenerators = function () {
                 permuteCandidate: permuteCandidate
               });
 
-            case 14:
+            case 12:
             case "end":
               return _context.stop();
+          }
+        }
+      });
+    },
+    monoalphabetic: function monoalphabetic(messages, _ref2) {
+      var n, alphabet, alphabetLength, scores, convertMessage, scoreMessage, randRange, shuffle, fitness, randomCandidate, permuteCandidate, message;
+      return regeneratorRuntime.async(function monoalphabetic$(_context2) {
+        while (1) {
+          switch (_context2.prev = _context2.next) {
+            case 0:
+              shuffle = function _ref3(a) {
+                var j, x, i;
+
+                for (i = a.length - 1; i > 0; i--) {
+                  j = Math.floor(Math.random() * (i + 1));
+                  x = a[i];
+                  a[i] = a[j];
+                  a[j] = x;
+                }
+
+                return a;
+              };
+
+              n = _ref2.n;
+              alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+              alphabetLength = 26;
+              _context2.next = 6;
+              return regeneratorRuntime.awrap(getAsset("ngrams/" + n + ".json"));
+
+            case 6:
+              scores = _context2.sent;
+
+              convertMessage = function convertMessage(message) {
+                return message.toUpperCase().split("").flatMap(function (c) {
+                  var i = alphabet.indexOf(c);
+                  return i > -1 ? [i] : [];
+                });
+              };
+
+              scoreMessage = function scoreMessage(message, key) {
+                var gram = message.slice(0, n),
+                    score = 0;
+                var _iteratorNormalCompletion2 = true;
+                var _didIteratorError2 = false;
+                var _iteratorError2 = undefined;
+
+                try {
+                  for (var _iterator2 = message[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                    var _char2 = _step2.value;
+                    gram.shift();
+                    gram.push(key[_char2]);
+                    score += scores[gram.join("")] || 0;
+                  }
+                } catch (err) {
+                  _didIteratorError2 = true;
+                  _iteratorError2 = err;
+                } finally {
+                  try {
+                    if (!_iteratorNormalCompletion2 && _iterator2["return"] != null) {
+                      _iterator2["return"]();
+                    }
+                  } finally {
+                    if (_didIteratorError2) {
+                      throw _iteratorError2;
+                    }
+                  }
+                }
+
+                return score / message.length;
+              };
+
+              randRange = function randRange(min, max) {
+                return Math.floor(Math.random() * (max - min)) + min;
+              };
+
+              ;
+
+              // If multiple messages provided
+              if (messages.length > 1) {
+                messages = messages.map(convertMessage); // Converts messages to numerical form
+
+                fitness = function fitness(key) {
+                  return messages.reduce(function (t, message) {
+                    return t + scoreMessage(message, key);
+                  });
+                }; // If only one message provided
+
+              } else {
+                message = convertMessage(messages[0]);
+
+                fitness = function fitness(key) {
+                  return scoreMessage(message, key);
+                };
+              } // Generates random candidate function
+
+
+              randomCandidate = function randomCandidate() {
+                return shuffle(alphabet.split(""));
+              }; // Generates permute candidate function
+
+
+              permuteCandidate = function permuteCandidate(key) {
+                var permutedKey = _toConsumableArray(key),
+                    numSwaps = randRange(0, 4);
+
+                for (var _n = 0; _n < numSwaps; _n++) {
+                  var posA = randRange(0, alphabetLength),
+                      posB = randRange(0, alphabetLength),
+                      // TODO: ensure posA != posB?
+                  temp = permutedKey[posA];
+                  permutedKey[posA] = permutedKey[posB];
+                  permutedKey[posB] = temp;
+                }
+
+                return permutedKey;
+              };
+
+              return _context2.abrupt("return", {
+                fitness: fitness,
+                randomCandidate: randomCandidate,
+                permuteCandidate: permuteCandidate
+              });
+
+            case 15:
+            case "end":
+              return _context2.stop();
           }
         }
       });
@@ -152,7 +266,7 @@ var cipherFunctionGenerators = function () {
 }(); // IIFE used to prevent cipherFunctionGenerators from changing evolution variables / running internal functions. The getAsset function is accessible by cipherFunctionGenerators
 
 
-var _ref2 = function () {
+var _ref4 = function () {
   // PRIVATE VARIABLES
   var running = false,
       candidates = [],
@@ -191,40 +305,39 @@ var _ref2 = function () {
         if (candidates.length > populationSize) candidates.shift();
       } // If the candidate is not currently a candidate but had been in the past, it must be worse than all current candidates so is ignored.
 
-  }
+  } // Evolve the population by one generation
 
-  ; // Evolve the population by one generation
 
   function nextGeneration() {
     newKnownScores = {};
-    var _iteratorNormalCompletion2 = true;
-    var _didIteratorError2 = false;
-    var _iteratorError2 = undefined;
+    var _iteratorNormalCompletion3 = true;
+    var _didIteratorError3 = false;
+    var _iteratorError3 = undefined;
 
     try {
-      for (var _iterator2 = candidates[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-        var parent = _step2.value;
+      for (var _iterator3 = candidates[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+        var parent = _step3.value;
 
-        for (var _n = 0; _n < childrenPerParent; _n++) {
+        for (var _n3 = 0; _n3 < childrenPerParent; _n3++) {
           evaluateCandidate(permuteCandidate(parent));
         }
       }
     } catch (err) {
-      _didIteratorError2 = true;
-      _iteratorError2 = err;
+      _didIteratorError3 = true;
+      _iteratorError3 = err;
     } finally {
       try {
-        if (!_iteratorNormalCompletion2 && _iterator2["return"] != null) {
-          _iterator2["return"]();
+        if (!_iteratorNormalCompletion3 && _iterator3["return"] != null) {
+          _iterator3["return"]();
         }
       } finally {
-        if (_didIteratorError2) {
-          throw _iteratorError2;
+        if (_didIteratorError3) {
+          throw _iteratorError3;
         }
       }
     }
 
-    for (var n = 0; n < randomPerGeneration; n++) {
+    for (var _n2 = 0; _n2 < randomPerGeneration; _n2++) {
       evaluateCandidate(randomCandidate());
     }
 
@@ -260,26 +373,26 @@ var _ref2 = function () {
     };
 
     return onmessage;
-  }(function _callee(_ref3) {
-    var _ref3$data, _ref3$data$config, messages, _ref3$data$config$cip, name, options, evolution, importCandidates, importKnownScores, _ref4;
+  }(function _callee(_ref5) {
+    var _ref5$data, _ref5$data$config, messages, _ref5$data$config$cip, name, options, evolution, importCandidates, importKnownScores, _ref6;
 
-    return regeneratorRuntime.async(function _callee$(_context2) {
+    return regeneratorRuntime.async(function _callee$(_context3) {
       while (1) {
-        switch (_context2.prev = _context2.next) {
+        switch (_context3.prev = _context3.next) {
           case 0:
-            _ref3$data = _ref3.data, _ref3$data$config = _ref3$data.config, messages = _ref3$data$config.messages, _ref3$data$config$cip = _ref3$data$config.cipher, name = _ref3$data$config$cip.name, options = _ref3$data$config$cip.options, evolution = _ref3$data$config.evolution, importCandidates = _ref3$data.candidates, importKnownScores = _ref3$data.knownScores;
+            _ref5$data = _ref5.data, _ref5$data$config = _ref5$data.config, messages = _ref5$data$config.messages, _ref5$data$config$cip = _ref5$data$config.cipher, name = _ref5$data$config$cip.name, options = _ref5$data$config$cip.options, evolution = _ref5$data$config.evolution, importCandidates = _ref5$data.candidates, importKnownScores = _ref5$data.knownScores;
             populationSize = evolution.populationSize;
             childrenPerParent = evolution.childrenPerParent;
             randomPerGeneration = evolution.randomPerGeneration;
             allowDuplicates = evolution.allowDuplicates;
-            _context2.next = 7;
+            _context3.next = 7;
             return regeneratorRuntime.awrap(cipherFunctionGenerators[name](messages, options));
 
           case 7:
-            _ref4 = _context2.sent;
-            fitness = _ref4.fitness;
-            randomCandidate = _ref4.randomCandidate;
-            permuteCandidate = _ref4.permuteCandidate;
+            _ref6 = _context3.sent;
+            fitness = _ref6.fitness;
+            randomCandidate = _ref6.randomCandidate;
+            permuteCandidate = _ref6.permuteCandidate;
             importCandidates.forEach(evaluateCandidate);
             knownScores = importKnownScores;
 
@@ -288,8 +401,8 @@ var _ref2 = function () {
             } // Once config complete, message events toggle the population on/off.
 
 
-            onmessage = function onmessage(_ref5) {
-              var run = _ref5.data;
+            onmessage = function onmessage(_ref7) {
+              var run = _ref7.data;
               running = run;
               nextGeneration();
             };
@@ -299,7 +412,7 @@ var _ref2 = function () {
 
           case 17:
           case "end":
-            return _context2.stop();
+            return _context3.stop();
         }
       }
     });
@@ -309,9 +422,9 @@ var _ref2 = function () {
   return {
     getAsset: function getAsset(path) {
       var splitPath, directory, fileName;
-      return regeneratorRuntime.async(function getAsset$(_context3) {
+      return regeneratorRuntime.async(function getAsset$(_context4) {
         while (1) {
-          switch (_context3.prev = _context3.next) {
+          switch (_context4.prev = _context4.next) {
             case 0:
               // Navigates to the correct directory in local data
               splitPath = path.split("/");
@@ -319,11 +432,11 @@ var _ref2 = function () {
                 return t.hasOwnProperty(v) ? t[v] : t[v] = {};
               }, localAssets);
               fileName = splitPath[splitPath.length - 1];
-              return _context3.abrupt("return", directory.hasOwnProperty(fileName) ? directory[fileName] // If the asset is not already stored locally, requests it from control
+              return _context4.abrupt("return", directory.hasOwnProperty(fileName) ? directory[fileName] // If the asset is not already stored locally, requests it from control
               : new Promise(function (resolve) {
                 // Waits for a message returning the data
-                onmessage = function onmessage(_ref6) {
-                  var asset = _ref6.data;
+                onmessage = function onmessage(_ref8) {
+                  var asset = _ref8.data;
                   // Once asset is recieved from control, saves it locally in case of future use and resolves the promise
                   resolve(directory[fileName] = asset);
                 }; // Posts a message requesting the desired data
@@ -337,14 +450,14 @@ var _ref2 = function () {
 
             case 4:
             case "end":
-              return _context3.stop();
+              return _context4.stop();
           }
         }
       });
     }
   };
 }(),
-    getAsset = _ref2.getAsset; // Once initial setup is complete, tells control that it is ready to receive config
+    getAsset = _ref4.getAsset; // Once initial setup is complete, tells control that it is ready to receive config
 
 
 postMessage({

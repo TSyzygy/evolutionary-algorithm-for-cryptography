@@ -8,18 +8,18 @@ const cipherFunctionGenerators = (function () {
 
   return {
     async vigenere(messages, { keylength, n }) {
-      if (!(1 <= n <= 6)) {
+      /* if (!(1 <= n <= 6)) {
         throw Error("n out of range");
-      }
+      } */
 
       const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
         alphabetLength = 26,
         scores = await getAsset("ngrams/" + n + ".json"),
-        convertMessage = message =>
+        convertMessage = (message) =>
           message
             .toUpperCase()
             .split("")
-            .flatMap(c => {
+            .flatMap((c) => {
               var i = alphabet.indexOf(c);
               return i > -1 ? [i] : [];
             }),
@@ -36,19 +36,19 @@ const cipherFunctionGenerators = (function () {
                   score += scores[gram.join("")] || 0;
                   if (++p == keylength) {
                     p = 0;
-                  };
-                };
+                  }
+                }
                 return score / message.length;
               } // Letter score
             : function (message, key) {
-                return message.reduce(
-                  (t, c, p) => t + scores[c + key[p % keylength]]
-                ) / message.length;
+                return (
+                  message.reduce(
+                    (t, c, p) => t + scores[c + key[p % keylength]]
+                  ) / message.length
+                );
               };
 
-      var fitness,
-        randomCandidate,
-        permuteCandidate;
+      var fitness, randomCandidate, permuteCandidate;
 
       // If multiple messages provided
       if (messages.length > 1) {
@@ -77,10 +77,90 @@ const cipherFunctionGenerators = (function () {
           return Math.floor(Math.random() * (max - min)) + min;
         }
 
-        var permutedKey = [...key];
-        var posToChange = randRange(0, keylength);
+        var permutedKey = [...key],
+          posToChange = randRange(0, keylength);
         permutedKey[posToChange] += randRange(1, alphabetLength);
         permutedKey[posToChange] %= alphabetLength;
+        return permutedKey;
+      };
+
+      return {
+        fitness,
+        randomCandidate,
+        permuteCandidate,
+      };
+    },
+
+    async monoalphabetic(messages, { n }) {
+      const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        alphabetLength = 26,
+        scores = await getAsset("ngrams/" + n + ".json"),
+        convertMessage = (message) =>
+          message
+            .toUpperCase()
+            .split("")
+            .flatMap((c) => {
+              var i = alphabet.indexOf(c);
+              return i > -1 ? [i] : [];
+            }),
+        scoreMessage = function (message, key) {
+          var gram = message.slice(0, n),
+            score = 0;
+          for (let char of message) {
+            gram.shift();
+            gram.push(key[char]);
+            score += scores[gram.join("")] || 0;
+          }
+          return score / message.length;
+        },
+        // Gets a random number between min and max-1
+        randRange = function (min, max) {
+          return Math.floor(Math.random() * (max - min)) + min;
+        };
+
+      /**
+       * Shuffles array in place.
+       * @param {Array} a items An array containing the items.
+       */
+      function shuffle(a) {
+        var j, x, i;
+        for (i = a.length - 1; i > 0; i--) {
+            j = Math.floor(Math.random() * (i + 1));
+            x = a[i];
+            a[i] = a[j];
+            a[j] = x;
+        }
+        return a;
+      };
+
+      var fitness, randomCandidate, permuteCandidate;
+
+      // If multiple messages provided
+      if (messages.length > 1) {
+        messages = messages.map(convertMessage);
+        // Converts messages to numerical form
+        fitness = (key) =>
+          messages.reduce((t, message) => t + scoreMessage(message, key));
+        // If only one message provided
+      } else {
+        var message = convertMessage(messages[0]);
+        fitness = (key) => scoreMessage(message, key);
+      }
+
+      // Generates random candidate function
+      randomCandidate = () => shuffle(alphabet.split(""));
+
+      // Generates permute candidate function
+      permuteCandidate = function (key) {
+        const permutedKey = [...key],
+          numSwaps = randRange(0, 4);
+        for (let n = 0; n < numSwaps; n++) {
+          var posA = randRange(0, alphabetLength),
+            posB = randRange(0, alphabetLength), // TODO: ensure posA != posB?
+            temp = permutedKey[posA];
+          permutedKey[posA] = permutedKey[posB];
+          permutedKey[posB] = temp;
+        }
         return permutedKey;
       };
 
@@ -143,7 +223,7 @@ const { getAsset } = (function () {
       if (candidates.length > populationSize) candidates.shift();
     }
     // If the candidate is not currently a candidate but had been in the past, it must be worse than all current candidates so is ignored.
-  };
+  }
 
   // Evolve the population by one generation
   function nextGeneration() {

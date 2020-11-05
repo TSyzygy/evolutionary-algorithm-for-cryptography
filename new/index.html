@@ -297,7 +297,15 @@
                     </div>
 
                     <div data-cipher-name="monoalphabetic">
-                      <p>The monoalphabetic substitution cipher is not yet implemented, sorry.</p>
+                      <div class="data-entry">
+                        <label for="monoalphabetic-n">Fitness evaluation method:</label>
+                        <select name="n" id="monoalphabetic-n" class="required-for-cipher">
+                          <option value="">Select fitness method...</option>
+                          <option value="2">Bigram score</option>
+                          <option value="3">Trigram score</option>
+                          <option value="4">Quadgram score (recommended)</option>
+                        </select>
+                      </div>
                     </div>
 
                   </div>
