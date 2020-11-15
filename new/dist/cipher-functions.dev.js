@@ -125,27 +125,17 @@ var alphabet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
     var keylength = config.keylength;
     return function (text) {
       var key = [];
-
-      for (char in text.toUpperCase()) {
-        if (value.hasOwnProperty(char) > -1) {
-          key.append(value[char]);
-        }
-      }
-
-      return key.length == keylength ? key : false;
-    };
-  },
-  monoalphabetic: function monoalphabetic(_config) {
-    return function (text) {
-      var decryptionkey = "";
       var _iteratorNormalCompletion2 = true;
       var _didIteratorError2 = false;
       var _iteratorError2 = undefined;
 
       try {
-        for (var _iterator2 = alphabet[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-          var l = _step2.value;
-          decryptionkey += letter[text.indexOf(l)];
+        for (var _iterator2 = text.toUpperCase()[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+          var _char = _step2.value;
+
+          if (value.hasOwnProperty(_char)) {
+            key.push(26 - value[_char]);
+          }
         }
       } catch (err) {
         _didIteratorError2 = true;
@@ -162,7 +152,110 @@ var alphabet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
         }
       }
 
+      return key.length == keylength ? key : false;
+    };
+  },
+  monoalphabetic: function monoalphabetic(_config) {
+    return function (text) {
+      var encryptionKey = [],
+          decryptionKey = [],
+          lastLetterIndex,
+          lastLetter;
+      /*
+      text = text.split("").filter(c => alphabet.indexOf(c) > -1);
+       for (let l of alphabet) {
+        decryptionkey += letter[text.indexOf(l)];
+      }
       return decryptionkey;
+      */
+
+      text = text.toUpperCase().split("");
+      var _iteratorNormalCompletion3 = true;
+      var _didIteratorError3 = false;
+      var _iteratorError3 = undefined;
+
+      try {
+        for (var _iterator3 = text[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+          var _char2 = _step3.value;
+
+          if ((lastLetterIndex = alphabet.indexOf(_char2)) > -1) {
+            if (encryptionKey.indexOf(_char2) == -1) {
+              encryptionKey.push(_char2);
+            } else {
+              // If a character appears twice
+              return false;
+            }
+
+            ;
+          }
+
+          ;
+        }
+      } catch (err) {
+        _didIteratorError3 = true;
+        _iteratorError3 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion3 && _iterator3["return"] != null) {
+            _iterator3["return"]();
+          }
+        } finally {
+          if (_didIteratorError3) {
+            throw _iteratorError3;
+          }
+        }
+      }
+
+      ; // If no valid characters given
+
+      if (!lastLetterIndex) {
+        return false;
+      }
+
+      ; // Adds all the remaining letters, starting from the last letter given
+
+      while (encryptionKey.length < 26) {
+        if (++lastLetterIndex == 26) {
+          lastLetterIndex = 0;
+        }
+
+        ;
+        lastLetter = alphabet[lastLetterIndex]; // If the letter now reached is not already in the encryptionKey, adds it
+
+        if (encryptionKey.indexOf(lastLetter) == -1) {
+          encryptionKey.push(lastLetter);
+        }
+
+        ;
+      }
+
+      ;
+      var _iteratorNormalCompletion4 = true;
+      var _didIteratorError4 = false;
+      var _iteratorError4 = undefined;
+
+      try {
+        for (var _iterator4 = alphabet[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+          var l = _step4.value;
+          decryptionKey.push(letter[encryptionKey.indexOf(l)]);
+        }
+      } catch (err) {
+        _didIteratorError4 = true;
+        _iteratorError4 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion4 && _iterator4["return"] != null) {
+            _iterator4["return"]();
+          }
+        } finally {
+          if (_didIteratorError4) {
+            throw _iteratorError4;
+          }
+        }
+      }
+
+      ;
+      return decryptionKey;
     };
   }
 };

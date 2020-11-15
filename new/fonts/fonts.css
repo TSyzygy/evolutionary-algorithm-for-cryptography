@@ -1,4 +1,6 @@
+/*
 @supports (font-variation-settings: "wdth" 200) {
+  
   @font-face {
     font-family: Inter;
     src: url("Inter-VariableFont_slnt,wght.ttf");
@@ -7,10 +9,9 @@
   @font-face {
     font-family: Inter;
     src: url("Inter-VariableFont_slnt,wght.ttf");
-    font-style: oblique 12deg; /* Number of degrees seems to be arbitrary */
+    font-style: oblique 12deg; // Number of degrees seems to be arbitrary 
   }
 
-  /*
   @font-face {
     font-family: Playfair;
     src: url("PlayfairDisplay-VariableFont_wght.ttf");
@@ -21,7 +22,6 @@
     src: url("PlayfairDisplay-Italic-VariableFont_wght.ttf");
     font-style: italic;
   }
-  */
 
   @font-face {
     font-family: RobotoMono;
@@ -34,11 +34,22 @@
     font-style: italic;
   }
 
-  /*
   @font-face {
     font-family: RobotoSlab;
     src: url("RobotoSlab-VariableFont_wght.ttf");
     font-style: normal;
   }
-  */
+}
+*/
+
+@font-face {
+  font-family: Inter;
+  src: url("Inter-Light-slnt=0.ttf");
+  font-style: normal;
+}
+
+@font-face {
+  font-family: RobotoMono;
+  src: url("RobotoMono-Light.ttf");
+  font-style: normal;
 }

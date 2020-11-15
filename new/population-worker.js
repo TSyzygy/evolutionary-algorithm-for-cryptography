@@ -8,10 +8,6 @@ const cipherFunctionGenerators = (function () {
 
   return {
     async vigenere(messages, { keylength, n }) {
-      /* if (!(1 <= n <= 6)) {
-        throw Error("n out of range");
-      } */
-
       const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
         alphabetLength = 26,
         scores = await getAsset("ngrams/" + n + ".json"),
@@ -48,7 +44,7 @@ const cipherFunctionGenerators = (function () {
                 );
               };
 
-      var fitness, randomCandidate, permuteCandidate;
+      var fitness, randomCandidate, permuteCandidate /*, candidateToString */;
 
       // If multiple messages provided
       if (messages.length > 1) {
@@ -58,7 +54,7 @@ const cipherFunctionGenerators = (function () {
           messages.reduce((t, message) => t + scoreMessage(message, key));
         // If only one message provided
       } else {
-        var message = convertMessage(messages[0]);
+        const message = convertMessage(messages[0]);
         fitness = (key) => scoreMessage(message, key);
       }
 
@@ -84,10 +80,13 @@ const cipherFunctionGenerators = (function () {
         return permutedKey;
       };
 
+      // candidateToString = (key) => key.join(",");
+
       return {
         fitness,
         randomCandidate,
         permuteCandidate,
+        // candidateToString,
       };
     },
 
@@ -105,11 +104,13 @@ const cipherFunctionGenerators = (function () {
             }),
         scoreMessage = function (message, key) {
           var gram = message.slice(0, n),
-            score = 0;
+            score = 0,
+            g;
           for (let char of message) {
             gram.shift();
             gram.push(key[char]);
-            score += scores[gram.join("")] || 0;
+            g = gram.join("");
+            if (scores.hasOwnProperty(g)) score += scores[g];
           }
           return score / message.length;
         },
@@ -125,15 +126,15 @@ const cipherFunctionGenerators = (function () {
       function shuffle(a) {
         var j, x, i;
         for (i = a.length - 1; i > 0; i--) {
-            j = Math.floor(Math.random() * (i + 1));
-            x = a[i];
-            a[i] = a[j];
-            a[j] = x;
+          j = Math.floor(Math.random() * (i + 1));
+          x = a[i];
+          a[i] = a[j];
+          a[j] = x;
         }
         return a;
-      };
+      }
 
-      var fitness, randomCandidate, permuteCandidate;
+      var fitness, randomCandidate, permuteCandidate /*, candidateToString */;
 
       // If multiple messages provided
       if (messages.length > 1) {
@@ -164,10 +165,13 @@ const cipherFunctionGenerators = (function () {
         return permutedKey;
       };
 
+      // candidateToString = (key) => key.join("");
+
       return {
         fitness,
         randomCandidate,
         permuteCandidate,
+        // candidateToString,
       };
     },
   };
@@ -183,6 +187,7 @@ const { getAsset } = (function () {
     fitness,
     randomCandidate,
     permuteCandidate,
+    // candidateToString,
     populationSize,
     childrenPerParent,
     randomPerGeneration,
@@ -205,10 +210,11 @@ const { getAsset } = (function () {
 
     // Adds the candidate if it has not been evaluated before
     else if (!knownScores.hasOwnProperty(candidate)) {
-      var numCandidates = candidates.length,
-        score = (newKnownScores[candidate] = knownScores[candidate] = fitness(
-          candidate
-        ));
+      const numCandidates = candidates.length,
+        score = (knownScores[candidate] = fitness(candidate));
+
+      // Rounds the score to be sent to control to save space in exports
+      newKnownScores[candidate] = Math.round(score);
 
       // Finds position in ordered list of candidates
       for (
@@ -238,9 +244,7 @@ const { getAsset } = (function () {
 
     postStatusUpdate();
 
-    if (running) {
-      setTimeout(nextGeneration);
-    }
+    if (running) setTimeout(nextGeneration);
   }
 
   /* Continues evolving the population until "stop" message received.
@@ -283,6 +287,7 @@ const { getAsset } = (function () {
       fitness,
       randomCandidate,
       permuteCandidate,
+      // candidateToString,
     } = await cipherFunctionGenerators[name](messages, options));
 
     importCandidates.forEach(evaluateCandidate);

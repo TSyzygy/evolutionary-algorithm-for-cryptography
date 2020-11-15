@@ -121,12 +121,14 @@ var cipherFunctionGenerators = function () {
                 permutedKey[posToChange] += randRange(1, alphabetLength);
                 permutedKey[posToChange] %= alphabetLength;
                 return permutedKey;
-              };
+              }; // candidateToString = (key) => key.join(",");
+
 
               return _context.abrupt("return", {
                 fitness: fitness,
                 randomCandidate: randomCandidate,
-                permuteCandidate: permuteCandidate
+                permuteCandidate: permuteCandidate // candidateToString,
+
               });
 
             case 12:
@@ -173,7 +175,8 @@ var cipherFunctionGenerators = function () {
 
               scoreMessage = function scoreMessage(message, key) {
                 var gram = message.slice(0, n),
-                    score = 0;
+                    score = 0,
+                    g;
                 var _iteratorNormalCompletion2 = true;
                 var _didIteratorError2 = false;
                 var _iteratorError2 = undefined;
@@ -183,7 +186,8 @@ var cipherFunctionGenerators = function () {
                     var _char2 = _step2.value;
                     gram.shift();
                     gram.push(key[_char2]);
-                    score += scores[gram.join("")] || 0;
+                    g = gram.join("");
+                    if (scores.hasOwnProperty(g)) score += scores[g];
                   }
                 } catch (err) {
                   _didIteratorError2 = true;
@@ -206,8 +210,6 @@ var cipherFunctionGenerators = function () {
               randRange = function randRange(min, max) {
                 return Math.floor(Math.random() * (max - min)) + min;
               };
-
-              ;
 
               // If multiple messages provided
               if (messages.length > 1) {
@@ -247,15 +249,17 @@ var cipherFunctionGenerators = function () {
                 }
 
                 return permutedKey;
-              };
+              }; // candidateToString = (key) => key.join("");
+
 
               return _context2.abrupt("return", {
                 fitness: fitness,
                 randomCandidate: randomCandidate,
-                permuteCandidate: permuteCandidate
+                permuteCandidate: permuteCandidate // candidateToString,
+
               });
 
-            case 15:
+            case 14:
             case "end":
               return _context2.stop();
           }
@@ -275,7 +279,8 @@ var _ref4 = function () {
       fitness,
       randomCandidate,
       permuteCandidate,
-      populationSize,
+      // candidateToString,
+  populationSize,
       childrenPerParent,
       randomPerGeneration,
       allowDuplicates; // PRIVATE CONSTANTS
@@ -294,7 +299,9 @@ var _ref4 = function () {
     } // Adds the candidate if it has not been evaluated before
     else if (!knownScores.hasOwnProperty(candidate)) {
         var numCandidates = candidates.length,
-            score = newKnownScores[candidate] = knownScores[candidate] = fitness(candidate); // Finds position in ordered list of candidates
+            score = knownScores[candidate] = fitness(candidate); // Rounds the score to be sent to control to save space in exports
+
+        newKnownScores[candidate] = Math.round(score); // Finds position in ordered list of candidates
 
         for (var i = 0; i < numCandidates && score > knownScores[candidates[i]]; i++) {
           ;
@@ -342,10 +349,7 @@ var _ref4 = function () {
     }
 
     postStatusUpdate();
-
-    if (running) {
-      setTimeout(nextGeneration);
-    }
+    if (running) setTimeout(nextGeneration);
   }
   /* Continues evolving the population until "stop" message received.
   function run() {

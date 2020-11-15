@@ -20,21 +20,16 @@
 
       <div id="sidebar" class="open">
         <section>
-          <button id="close-sidebar">&times;</button>
-          <h1>Evolutionary Algorithm for Cryptography</h1>
-          <button type="button" id="open-add-population-modal">&plus;</button>
-          <h4>Populations:</h4>
-          <p id="no-populations-message">No populations</p>
-          <div id="population-buttons">
-            <!--
-              <button type="button">Population 1</button>
-              <button type="button" class="open">Population 2</button>
-              <button type="button">Population 3</button>
-              <button type="button">Population 4</button>
-              <button type="button">Population 5</button>
-              <button type="button">Population 6</button>
-            -->
+          <div>
+            <h1>Evolutionary Algorithm for Cryptography</h1>
+            <button type="button" class="square" id="close-sidebar">&times;</button>
           </div>
+          <div>
+            <h4>Populations:</h4>
+            <button type="button" class="square" id="open-add-population-modal">&plus;</button>
+          </div>
+          <nav id="population-buttons"></nav>
+          <p id="no-populations-message">No populations.</p>
         </section>
       </div>
 
@@ -56,7 +51,7 @@
           <section>
             <div class="population-page">
 
-              <div class="title">
+              <div class="top-bar">
                 <h2 data-dp="name"></h2>
                 <div class="controls">
                   <button type="button" class="toggle-button"><span class="run-text">Run &rtrif;</span class="stop-text"><span class="stop-text">Stop &squf;</span></button>
@@ -69,8 +64,8 @@
 
               <nav>
                 <button data-target="config" class="open">Config</button>
-                <button data-target="best-candidate">Best candidate</button>
-                <button data-target="history">History</button>
+                <button data-target="decryptions">Decryptions</button>
+                <button data-target="population">Population</button>
               </nav>
 
               <div class="sub-pages">
@@ -107,10 +102,6 @@
                         <td data-dp="allowDuplicates"></td>
                       </tr>
                     </table>
-                    <!--<p>Population size: <code data-dp="populationSize"></code></p>
-                    <p>Children per parent: <code data-dp="childrenPerParent"></code></p>
-                    <p>Random per generation: <code data-dp="randomPerGeneration"></code></p>
-                    <p>Allow duplicates: <code data-dp="allowDuplicates"></code></p>-->
                   </div>
                   <div class="messages">
                     <h4>Messages</h4>
@@ -118,17 +109,39 @@
   
                     </div>
                   </div>
+                  <div class="export">
+                    <h4>Export</h4>
+                    <p>Config only: </p>
+                    <button type="button" data-dp="downloadConfig" disabled>Download .json file</button>
+                    <button type="button" data-dp="copyConfig" disabled>
+                      <span class="default">Copy JSON to clipboard</span>
+                      <span class="success">Copied!</span>
+                      <span class="failure">Copy failed</span>
+                    </button>
+                    <p>Config and population history: </p>
+                    <button type="button" data-dp="downloadPopulation" disabled>Download .json file</button>
+                    <button type="button" data-dp="copyPopulation" disabled>
+                      <span class="default">Copy JSON to clipboard</span>
+                      <span class="success">Copied!</span>
+                      <span class="failure">Copy failed</span>
+                    </button>
+                    <!--<p>Export config only: </p><input type="text" data-dp="configExport" value="Waiting for initialisation to finish" disabled>
+                    <p>Export config and population history: </p><input type="text" data-dp="populationExport" value="Click to generate export" disabled>-->
+                  </div>
                 </div>
   
-                <div class="best-candidate">
-                  <h3>Best candidate</h3>
-                  <p>Key: <code data-dp="bestKey"></code></p>
-                  <p>Score: <code data-dp="bestScore"></code></p>
-                  <p>Decryption: <code data-dp="bestDecryption"></code></p>
+                <div class="decryptions">
+                  <h3>Decryptions</h3>
+                  <p>Key: <input type="text" data-dp="keyInput" class="monospace" width="100px"></p>
+                  <p>Score: <code data-dp="keyScore"></code></p>
+                  <p>Decryption:</p>
+                  <div data-dp="keyDecryptions">
+                    
+                  </div>
                 </div>
   
-                <div class="history">
-                  <h3>History</h3>
+                <div class="population">
+                  <h3>Population</h3>
                 </div>
               </div>
 
@@ -137,38 +150,7 @@
         </template>
 
         <div id="population-pages">
-          <!--
-            <section>
-            <div>
-              <h2>Population 1</h2>
-              <p>Some information!</p>
-            </div>
-            </section>
-            <section class="open">
-              <div>
-                <h2>Population 2</h2>
-                <p>Some information!</p>
-              </div>
-            </section>
-            <section>
-              <div>
-                <h2>Population 3</h2>
-                <p>Some information!</p>
-              </div>
-            </section>
-            <section>
-              <div>
-                <h2>Population 4</h2>
-                <p>Some information!</p>
-              </div>
-            </section>
-            <section>
-              <div>
-                <h2>Population 5</h2>
-                <p>Some information!</p>
-              </div>
-            </section>
-          -->
+          
         </div>
 
       </div>
@@ -184,19 +166,19 @@
           <form id="add-population-form" name="new-population-form" autocomplete="off" autocapitalize="words" onsubmit="return false">
 
             <header>
-              <button type="reset" id="close-add-population-modal">&times;</button>
               <h4>Add population</h4>
+              <button type="reset" class="square" id="close-add-population-modal">&times;</button>
             </header>
 
             <div id="add-population-main">
               <div id="add-population-menu" class="modal-page open">
-                <h5>Create population from blank</h5>
                 <div id="create-population">
+                  <h5>Create population from blank</h5>
                   <button type="button" id="open-new-population-menu">New population &rarr;</button><br>
                   <button type="button" disabled>New populations in bulk &rarr;</button>
                 </div>
-                <h5>Import population</h5>
                 <div id="import-population">
+                  <h5>Import population</h5>
                   <div id="population-from-file">
                     <label for="population-file-import">From file: </label>
                     <input type="file" id="population-file-import" accept=".json">
@@ -204,15 +186,15 @@
                   </div>
                   <div id="population-from-text">
                     <label for="population-text-input">From text: </label>
-                    <input type="text" id="population-text-input" class="monospace">
+                    <input type="text" id="population-text-input" class="monospace small">
                     <button type="button" disabled>Next &rarr;</button>
                   </div>
                 </div>
               </div>
     
               <div id="new-population-menu" class="modal-page">
-                <h5>Population info</h5>
                 <div>
+                  <h5>Population info</h5>
                   <div class="data-entry">
                     <label for="population-name-input">Name: </label><input type="text" id="population-name-input" name="name" maxlength="32" required>
                   </div>
@@ -221,8 +203,8 @@
                   </div>
                 </div>
                 
-                <h5>Algorithm options</h5>
                 <div id="algorithm-options">
+                  <h5>Algorithm options</h5>
                   <div class="data-entry">
                     <label for="population-size">Population size: </label>
                     <input type="number" id="population-size" name="population-size" max="1000" min="1" value="20" required>
@@ -241,20 +223,20 @@
                   </div>
                 </div>
 
-                <h5>Message(s) for decryption</h5>
                 <div id="messages-for-decryption">
+                  <h5>Message(s) for decryption</h5>
                   <p>Enter up to 12 messages. The algorithm will search for a decryption which applies best to all of them. If they are encrypted in different ways, a separate population must be made for each message.</p>
                   <div>
                     <div id="messages">
                       <div>
-                        <input type="text" placeholder="message" class="monospace" required>
+                        <input type="text" placeholder="message" class="monospace small" required>
                         <p><span class="monospace">0000</span> chars</p>
                       </div>
                     </div>
                     <button type="button" id="add-message">&plus; Add message</button>
                     <template id="message-input-template">
                       <div>
-                        <input type="text" placeholder="message" class="monospace" required>
+                        <input type="text" placeholder="message" class="monospace small" required>
                         <button type="button">&times;</button>
                         <p><span class="monospace">0000</span> chars</p>
                       </div>
@@ -262,8 +244,8 @@
                   </div>
                 </div>
 
-                <h5>Cipher options</h5>
                 <div id="cipher-options">
+                  <h5>Cipher options</h5>
                   <div id="cipher-choices"  class="data-entry">
                     <label for="cipher-name">Cipher type:</label>
                     <select id="cipher-name" name="cipher-name" required>
@@ -271,6 +253,8 @@
                       <option value="vigenere">Vigenere</option>
                       <option value="transposition">Transposition</option>
                       <option value="monoalphabetic">Monoalphabetic substitution</option>
+                      <option value="one-time-pad">One-time pad</option>
+                      <option value="hill">Hill</option>
                     </select>
                   </div>
                   <div id="cipher-specific-options">
@@ -288,12 +272,26 @@
                           <option value="2">Bigram score</option>
                           <option value="3">Trigram score</option>
                           <option value="4">Quadgram score (most reliable)</option>
+                          <option value="5">Quintgram score</option>
                         </select>
                       </div>
                     </div>
 
                     <div data-cipher-name="transposition">
-                      <p>The transposition cipher is not yet implemented, sorry.</p>
+                      <div class="data-entry">
+                        <label for="transposition-keylength">Keylength:</label>
+                        <input type="number" name="keylength" id="transposition-keylength" class="required-for-cipher" max="100" min="2" value="8">
+                      </div>
+                      <div class="data-entry">
+                        <label for="transposition-n">Fitness evaluation method:</label>
+                        <select name="n" id="transposition-n" class="required-for-cipher">
+                          <option value="">Select fitness method...</option>
+                          <option value="2">Bigram score</option>
+                          <option value="3">Trigram score</option>
+                          <option value="4">Quadgram score (recommended)</option>
+                          <option value="5">Quintgram score</option>
+                        </select>
+                      </div>
                     </div>
 
                     <div data-cipher-name="monoalphabetic">
@@ -304,14 +302,26 @@
                           <option value="2">Bigram score</option>
                           <option value="3">Trigram score</option>
                           <option value="4">Quadgram score (recommended)</option>
+                          <option value="5">Quintgram score</option>
                         </select>
                       </div>
+                    </div>
+
+                    <div data-cipher-name="one-time-pad">
+                      <p>One-time pad not yet implemented</p>
+                    </div>
+
+                    <div data-cipher-name="hill">
+                      <p>Hill cipher not yet implemented</p>
                     </div>
 
                   </div>
                 </div>
 
-                <button type="submit" id="add-population-submit">Create population &rarr;</button>
+                <div>
+                  <h5>Finish</h5>
+                  <button type="submit" id="add-population-submit">Create population &rarr;</button>
+                </div>
               </div>
             </div>
 
@@ -326,7 +336,7 @@
     </section>
 
     <script src="functionality-checks.js"></script>
-    <script src="cipher-decrypters.js"></script>
+    <script src="cipher-functions.js"></script>
     <script src="population-control.js"></script>
     <script src="assets.js"></script>
     <script src="interface.js"></script>

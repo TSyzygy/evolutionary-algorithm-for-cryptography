@@ -1,19 +1,19 @@
 body {
   font-size: 15px;
+  font-family: Inter, Helvetica;
+  font-weight: 300;
   height: 100vh;
   margin: 0;
 }
 
 /* TEXT STYLES */
 h1 {
-  font-family: Inter, Helvetica;
   font-weight: 400;
   font-size: 1.4rem;
   margin: 0;
 }
 
 h2 {
-  font-family: Inter, Helvetica;
   font-weight: 400;
   font-size: 1.2rem;
   margin: 0;
@@ -21,28 +21,24 @@ h2 {
 }
 
 h3 {
-  font-family: Inter, Helvetica;
   font-weight: 200;
   font-size: 1.2rem;
   margin: 0;
 }
 
 h4 {
-  font-family: Inter, Helvetica;
   font-weight: 500;
   font-size: 1rem;
-  margin: 0;
+  margin: auto 0;
 }
 
 h5 {
-  font-family: Inter, Helvetica;
   font-weight: 400;
   font-size: 1rem;
-  margin: 8px 0;
+  margin: 4px 0;
 }
 
 p, label {
-  font-family: Inter, Helvetica;
   font-weight: 300;
   margin: 4px 0;
 }
@@ -50,13 +46,14 @@ p, label {
 code,
 .monospace {
   font-family: RobotoMono, monospace;
+}
+
+.break-all {
   word-break: break-all;
 }
 
 table {
-  font-family: Inter, Helvetica;
   font-size: 0.9rem;
-  font-weight: 250;
   text-align: left;
   border-spacing: 0 4px;
 }
@@ -71,30 +68,68 @@ td {
 
 button {
   border: none;
+  border-radius: 4px;
   margin: 0;
   cursor: pointer;
   font-family: Inter, Helvetica;
-  font-weight: 300;
   font-size: 1em;
   text-align: center;
   color: #000;
-  background-color: inherit;
+  background-color: #0000;
   -webkit-appearance: none;
   -moz-appearance: none;
 }
-button :hover {
-  color: #000;
+button:hover {
+  color: inherit;
+  background-color: #0002;
+}
+button:disabled:hover {
+  background-color: initial;
 }
 button:disabled {
   color: #666;
 }
-
-input[type=number] {
-  width: 80px;
+button.square {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  flex-shrink: 0;
 }
 
-input::placeholder, ::-webkit-input-placeholder, ::-moz-placeholder {
-  color: #888;
+input[type=text] {
+  margin: 0;
+}
+input[type=number] {
+  margin: auto 0;
+  width: 80px;
+}
+input[type=text], input[type=number] {
+  border: none;
+  font-family: Inter, Helvetica;
+  font-weight: 300;
+  font-size: 1em;
+  padding: 3px;
+  box-sizing: border-box;
+  border-radius: 4px;
+  background-color: #0001;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  transition: background-color 0.2s;
+}
+input[type=text]:hover, input[type=text]:focus, input[type=number]:hover, input[type=number]:focus {
+  background-color: #0002;
+}
+input[type=text]:focus, input[type=number]:focus {
+  outline: none;
+}
+input[type=text]::placeholder, input[type=number]::placeholder {
+  color: #444;
+}
+input.monospace {
+  font-family: RobotoMono, monospace;
+}
+input.small {
+  font-size: 12px;
 }
 
 select {
@@ -117,30 +152,25 @@ select {
   z-index: 1;
   height: 100%;
   width: 100%;
-  background-color: #0004;
+  background-color: #0002;
 }
 #sidebar section {
   height: 100%;
   padding: 12px;
   box-sizing: border-box;
-  background-color: var(--primary-color);
   overflow: auto;
+  background-color: var(--primary-color);
+}
+#sidebar div {
+  display: flex;
+  margin-bottom: 8px;
+}
+#sidebar div h1, #sidebar div h4 {
+  flex-grow: 1;
+  margin: auto 0;
 }
 #sidebar.open {
   display: block;
-}
-
-#open-add-population-modal {
-  width: 24px;
-  height: 24px;
-  float: right;
-  padding: 0;
-  margin: 12px 0;
-  border-radius: 4px;
-  background-color: var(--primary-color);
-}
-#open-add-population-modal:hover {
-  background-color: var(--primary-color-dark);
 }
 
 #population-buttons {
@@ -148,9 +178,8 @@ select {
 }
 #population-buttons button {
   width: 100%;
-  border-radius: 4px;
   text-align: left;
-  background-color: var(--primary-color);
+  background-color: #fff0;
   margin: 2px 0;
   padding: 2px 0;
   text-overflow: ellipsis;
@@ -169,18 +198,24 @@ select {
   counter-increment: popNum;
   content: counter(popNum, decimal-leading-zero);
   font-family: RobotoMono, monospace;
-  background-color: var(--primary-color-light);
+  background-color: #fff2;
   border-radius: 4px;
   padding: 2px;
   margin-right: 8px;
 }
 #population-buttons button:hover {
-  background-color: var(--primary-color-light);
+  background-color: #fff2;
   /*
   &::after {
     visibility: visible;
   }
   */
+}
+#population-buttons + p {
+  display: none;
+}
+#population-buttons:empty + p {
+  display: block;
 }
 
 #main {
@@ -193,16 +228,23 @@ select {
   flex-shrink: 0;
   display: flex;
   background-color: #ddd;
+  padding: 8px 12px;
 }
 
 #open-sidebar-container {
-  margin: 5px;
-  border-right: 1px #AAA solid;
+  border-right: 1px #aaa solid;
+  padding-right: 8px;
+  margin-right: 8px;
+}
+
+#open-sidebar {
+  height: 100%;
 }
 
 #status {
   flex-grow: 1;
 }
+
 #population-pages {
   flex-grow: 1;
   overflow: auto;
@@ -218,34 +260,44 @@ select {
 #population-pages section.open {
   display: block;
 }
+#population-pages section h2::before {
+  content: counter(page-num, decimal-leading-zero);
+  font-family: RobotoMono, monospace;
+  background-color: #ccc;
+  border-radius: 4px;
+  padding: 2px;
+  margin-right: 8px;
+}
 #population-pages section[data-state=running] .run-text {
   display: none;
 }
 #population-pages section[data-state=running] .stop-text {
   display: block;
 }
+#population-pages section[data-state=running] h2::before {
+  background-color: #3e5;
+}
+#population-pages section[data-state=waiting] h2::before, #population-pages section[data-state=configuring] h2::before, #population-pages section[data-state=opening] h2::before {
+  background-color: #e85;
+}
+
 .population-page {
   display: flex;
   flex-direction: column;
-}
-.population-page h2::before {
-  content: counter(page-num, decimal-leading-zero);
-  font-family: RobotoMono, monospace;
-  background-color: #ddd;
-  border-radius: 4px;
-  padding: 2px;
-  margin-right: 8px;
 }
 .population-page nav {
   overflow-x: auto;
   white-space: nowrap;
   margin: 8px 0;
 }
+.population-page nav button {
+  border-bottom: solid 4px #fff;
+}
 .population-page nav button:hover {
-  border-bottom: solid 3px var(--primary-color-light);
+  border-color: var(--primary-color);
 }
 .population-page nav button:active, .population-page nav button.open {
-  border-bottom: solid 3px var(--primary-color-dark);
+  border-color: var(--primary-color);
 }
 .population-page .stop-text {
   display: none;
@@ -258,7 +310,7 @@ select {
   display: block;
 }
 .sub-pages > div > div {
-  margin: 8px 0;
+  margin-top: 8px;
 }
 
 @media only screen and (min-width: 1000px) and (min-height: 600px) {
@@ -269,39 +321,52 @@ select {
   .sub-pages > div {
     display: block;
     background-color: #eee;
+    border-radius: 4px;
     padding: 8px;
-    margin: 8px 0;
+    margin-top: 8px;
   }
 }
-.title {
+.top-bar {
   display: flex;
   flex-wrap: wrap;
 }
-
-.controls {
-  margin: 0;
+.top-bar .controls {
+  margin: auto 8px;
 }
-.controls button:hover {
-  background-color: #ddd;
+.top-bar .current {
+  margin: auto 0;
 }
 
 .cipher-config td {
   text-transform: capitalize;
 }
 
+.export button span.success, .export button span.failure {
+  display: none;
+}
+.export button.success {
+  background-color: #3e5;
+}
+.export button.success span.default {
+  display: none;
+}
+.export button.success span.success {
+  display: block;
+}
+.export button.failure {
+  background-color: #e85;
+}
+.export button.failure span.default {
+  display: none;
+}
+.export button.failure span.failure {
+  display: block;
+}
+
 #close-sidebar {
   display: none;
 }
 
-/*
-@media only screen and (max-width: 499px) {
-  #sidebar {
-    &.focus {
-      display: block
-    }
-  }
-}
-*/
 @media only screen and (min-width: 500px) {
   #sidebar section {
     width: 200px;
@@ -309,22 +374,13 @@ select {
 
   #close-sidebar {
     display: block;
-    width: 26px;
-    height: 26px;
-    border-radius: 3px;
-    float: right;
   }
   #close-sidebar:hover {
-    background-color: var(--primary-color-dark);
+    background-color: #0002;
   }
 
   #population-buttons button.open {
-    background-color: var(--primary-color-light);
-    /*
-    &::after {
-      visibility: visible;
-    }
-    */
+    background-color: #fff2;
   }
 }
 @media only screen and (min-width: 700px) {
@@ -383,7 +439,7 @@ select {
   /* On mobile devices, modal is full screen */
   height: 100%;
   width: 100%;
-  background-color: var(--secondary-color-light);
+  background-color: var(--secondary-color);
 }
 @media only screen and (min-width: 700px) and (min-height: 360px) {
   .modal > div {
@@ -391,7 +447,7 @@ select {
     height: 60vh;
     margin: 20vh auto;
     border: 2px solid #444;
-    border-radius: 3px;
+    border-radius: 4px;
   }
 }
 .modal > div > div {
@@ -405,49 +461,15 @@ select {
   flex-direction: column;
   height: 100%;
 }
-#add-population-form h4 {
-  margin: 0;
+#add-population-form header {
+  flex-shrink: 0;
+  display: flex;
+}
+#add-population-form header h4 {
+  flex-grow: 1;
 }
 #add-population-form label {
   margin-right: 4px;
-}
-#add-population-form input[type=text] {
-  margin: 0;
-}
-#add-population-form input[type=number] {
-  margin: auto 0;
-}
-#add-population-form input[type=text], #add-population-form input[type=number] {
-  border: none;
-  font-family: Inter, Helvetica;
-  font-weight: 300;
-  font-size: 1em;
-  padding: 3px;
-  box-sizing: border-box;
-  border-radius: 3px;
-  background-color: var(--secondary-color);
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  transition: background-color 0.2s;
-}
-#add-population-form input[type=text]:hover, #add-population-form input[type=text]:focus, #add-population-form input[type=number]:hover, #add-population-form input[type=number]:focus {
-  background-color: var(--secondary-color-dark);
-}
-#add-population-form input[type=text]:focus, #add-population-form input[type=number]:focus {
-  outline: none;
-}
-#add-population-form input[type=text]::placeholder, #add-population-form input[type=number]::placeholder {
-  color: #444;
-}
-#add-population-form input.monospace {
-  font-family: RobotoMono, monospace;
-  font-size: 12px;
-}
-#add-population-form button {
-  border-radius: 3px;
-}
-#add-population-form button:hover {
-  background-color: var(--secondary-color);
 }
 
 #add-population-main {
@@ -456,17 +478,21 @@ select {
   box-sizing: border-box;
   overflow: auto;
   flex-grow: 1;
-  border-top: 1px solid var(--secondary-color-darker);
-  border-bottom: 1px solid var(--secondary-color-darker);
+  border-top: 1px solid #0002;
+  border-bottom: 1px solid #0002;
 }
 
 .modal-page {
   height: 100%;
   display: none;
   overflow: auto;
+  padding-right: 8px;
 }
 .modal-page.open {
   display: block;
+}
+.modal-page > div {
+  margin: 8px 0;
 }
 
 #import-population div {
@@ -480,16 +506,6 @@ select {
 #import-population input {
   width: 0;
   flex-grow: 1;
-}
-
-#close-add-population-modal {
-  width: 26px;
-  height: 26px;
-  border-radius: 3px;
-  float: right;
-}
-#close-add-population-modal:hover {
-  background-color: var(--secondary-color);
 }
 
 div.data-entry {
@@ -517,8 +533,8 @@ div.data-entry input[type=text] {
   counter-increment: messageNum;
   content: counter(messageNum, decimal-leading-zero);
   font-family: RobotoMono, monospace;
-  background-color: var(--secondary-color);
-  border-radius: 3px;
+  background-color: #0002;
+  border-radius: 4px;
   padding: 2px;
   margin-right: 4px;
   font-weight: 300;

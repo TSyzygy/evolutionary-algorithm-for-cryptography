@@ -1,5 +1,7 @@
 body {
   font-size: 15px;
+  font-family: Inter, Helvetica;
+  font-weight: 300;
   height: 100vh;
   margin: 0;
 }
@@ -7,14 +9,12 @@ body {
 /* TEXT STYLES */
 
 h1 {
-  font-family: Inter, Helvetica;
   font-weight: 400;
   font-size: 1.4rem;
   margin: 0;
 }
 
 h2 {
-  font-family: Inter, Helvetica;
   font-weight: 400;
   font-size: 1.2rem;
   margin: 0;
@@ -22,28 +22,24 @@ h2 {
 }
 
 h3 {
-  font-family: Inter, Helvetica;
   font-weight: 200;
   font-size: 1.2rem;
   margin: 0;
 }
 
 h4 {
-  font-family: Inter, Helvetica;
   font-weight: 500;
   font-size: 1rem;
-  margin: 0;
+  margin: auto 0;
 }
 
 h5 {
-  font-family: Inter, Helvetica;
   font-weight: 400;
   font-size: 1rem;
-  margin: 8px 0;
+  margin: 4px 0;
 }
 
 p, label {
-  font-family: Inter, Helvetica;
   font-weight: 300;
   margin: 4px 0;
 }
@@ -51,13 +47,14 @@ p, label {
 code,
 .monospace {
   font-family: RobotoMono, monospace;
+}
+
+.break-all {
   word-break: break-all;
 }
 
 table {
-  font-family: Inter, Helvetica;
   font-size: 0.9rem;
-  font-weight: 250;
   text-align: left;
   border-spacing: 0 4px;
 }
@@ -72,32 +69,83 @@ td {
 
 button {
   border: none;
+  border-radius: 4px;
   margin: 0;
   cursor: pointer;
   font-family: Inter, Helvetica;
-  font-weight: 300;
   font-size: 1em;
   text-align: center;
   color: #000;
-  background-color: inherit;
+  background-color: #0000;
   -webkit-appearance: none;
   -moz-appearance: none;
 
-  :hover {
-    color: #000;
+  &:hover {
+    color: inherit;
+    background-color: #0002;
+  }
+
+  &:disabled:hover {
+    background-color: initial;
   }
 
   &:disabled {
     color: #666;
   }
+
+  &.square {
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    flex-shrink: 0;
+  }
 }
 
-input[type="number"] {
-  width: 80px;
-}
+input {
+  &[type="text"] {
+    margin: 0;
+  }
 
-input::placeholder, ::-webkit-input-placeholder, ::-moz-placeholder {
-  color: #888;
+  &[type="number"] {
+    margin: auto 0;
+    width: 80px;
+  }
+
+  &[type="text"],
+  &[type="number"] {
+    border: none;
+    font-family: Inter, Helvetica;
+    font-weight: 300;
+    font-size: 1em;
+    padding: 3px;
+    box-sizing: border-box;
+    border-radius: 4px;
+    background-color: #0001;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    transition: background-color 0.2s;
+
+    &:hover,
+    &:focus {
+      background-color: #0002;
+    }
+
+    &:focus {
+      outline: none;
+    }
+
+    &::placeholder {
+      color: #444;
+    }
+  }
+
+  &.monospace {
+    font-family: RobotoMono, monospace;
+  }
+
+  &.small {
+    font-size: 12px;
+  }
 }
 
 select {
@@ -123,14 +171,24 @@ select {
   z-index: 1;
   height: 100%;
   width: 100%;
-  background-color: #0004;
+  background-color: #0002;
 
   section {
     height: 100%;
     padding: 12px;
     box-sizing: border-box;
-    background-color: var(--primary-color);
     overflow: auto;
+    background-color: var(--primary-color);
+  }
+
+  div {
+    display: flex;
+    margin-bottom: 8px;
+
+    h1, h4 {
+      flex-grow: 1;
+      margin: auto 0;
+    }
   }
 
   &.open {
@@ -138,30 +196,14 @@ select {
   }
 }
 
-#open-add-population-modal {
-  width: 24px;
-  height: 24px;
-  float: right;
-  padding: 0;
-  margin: 12px 0;
-  border-radius: 4px;
-  background-color: var(--primary-color);
-
-  &:hover {
-    background-color: var(--primary-color-dark);
-  }
-}
-
-
 #population-buttons {
   
   counter-reset: popNum;
 
   button {
     width: 100%;
-    border-radius: 4px;
     text-align: left;
-    background-color: var(--primary-color);
+    background-color: #fff0;
     margin: 2px 0;
     padding: 2px 0;
     text-overflow: ellipsis;
@@ -173,7 +215,7 @@ select {
       counter-increment: popNum;
       content: counter(popNum, decimal-leading-zero);
       font-family: RobotoMono, monospace;
-      background-color: var(--primary-color-light);
+      background-color: #fff2;
       border-radius: 4px;
       padding: 2px;
       margin-right: 8px;
@@ -189,7 +231,7 @@ select {
     */
 
     &:hover {
-      background-color: var(--primary-color-light);
+      background-color: #fff2;
 
       /*
       &::after {
@@ -198,8 +240,15 @@ select {
       */
     }
   }
-}
 
+  + p {
+    display: none;
+  }
+
+  &:empty + p {
+    display: block;
+  }
+}
 
 #main {
   height: 100%;
@@ -213,19 +262,21 @@ select {
   flex-shrink: 0;
   display: flex;
   background-color: #ddd;
+  padding: 8px 12px;
 }
 
 #open-sidebar-container {
-  margin: 5px;
-  border-right: 1px #AAA solid;
+  border-right: 1px #aaa solid;
+  padding-right: 8px;
+  margin-right: 8px;
+}
+
+#open-sidebar {
+  height: 100%;
 }
 
 #status {
   flex-grow: 1;
-
-  h4 {
-
-  }
 }
 
 // Population pages
@@ -247,6 +298,15 @@ select {
       display: block;
     }
 
+    h2::before {
+      content: counter(page-num, decimal-leading-zero);
+      font-family: RobotoMono, monospace;
+      background-color: #ccc;
+      border-radius: 4px;
+      padding: 2px;
+      margin-right: 8px;
+    }
+
     &[data-state="running"] {
       .run-text {
         display: none;
@@ -255,11 +315,15 @@ select {
       .stop-text {
         display: block;
       }
+
+      h2::before {
+        background-color: #3e5;
+      }
     }
   
-    &[data-state="finishing"] {
-      .toggle-button, .step-button {
-        
+    &[data-state="waiting"], &[data-state="configuring"], &[data-state="opening"] {
+      h2::before {
+        background-color: #e85;
       }
     }
   }
@@ -269,27 +333,20 @@ select {
   display: flex;
   flex-direction: column;
 
-  h2::before {
-    content: counter(page-num, decimal-leading-zero);
-    font-family: RobotoMono, monospace;
-    background-color: #ddd;
-    border-radius: 4px;
-    padding: 2px;
-    margin-right: 8px;
-  }
-
   nav {
     overflow-x: auto;
     white-space: nowrap;
     margin: 8px 0;
 
     button {
+      border-bottom: solid 4px #fff;
+
       &:hover {
-        border-bottom: solid 3px var(--primary-color-light)
+        border-color: var(--primary-color);
       }
 
       &:active, &.open {
-        border-bottom: solid 3px var(--primary-color-dark)
+        border-color: var(--primary-color);
       }
     }
   }
@@ -307,7 +364,7 @@ select {
   }
 
   > div {
-    margin: 8px 0;
+    margin-top: 8px;
   }
 }
 
@@ -319,21 +376,22 @@ select {
   .sub-pages > div {
     display: block;
     background-color: #eee;
+    border-radius: 4px;
     padding: 8px;
-    margin: 8px 0;
+    margin-top: 8px;
   }
 }
 
-.title {
+.top-bar {
   display: flex;
   flex-wrap: wrap;
-}
 
-.controls {
-  margin: 0;
-
-  button:hover {
-    background-color: #ddd;
+  .controls {
+    margin: auto 8px;
+  }
+  
+  .current {
+    margin: auto 0;
   }
 }
 
@@ -341,19 +399,38 @@ select {
   text-transform: capitalize;
 }
 
-#close-sidebar {
-  display: none;
-}
+.export {
+  button {
+    span.success, span.failure {
+      display: none;
+    }
 
-/*
-@media only screen and (max-width: 499px) {
-  #sidebar {
-    &.focus {
-      display: block
+    &.success {
+      background-color: #3e5;
+
+      span.default {
+        display: none;
+      }
+      span.success {
+        display: block;
+      }
+    }
+
+    &.failure {
+      background-color: #e85;
+      span.default {
+        display: none;
+      }
+      span.failure {
+        display: block;
+      }
     }
   }
 }
-*/
+
+#close-sidebar {
+  display: none;
+}
 
 @media only screen and (min-width: 500px) {
   #sidebar {
@@ -364,24 +441,13 @@ select {
 
   #close-sidebar {
     display: block;
-    width: 26px;
-    height: 26px;
-    border-radius: 3px;
-    float: right;
-
     &:hover {
-      background-color: var(--primary-color-dark);
+      background-color: #0002;
     }
   }
 
   #population-buttons button.open {
-    background-color: var(--primary-color-light);
-
-    /*
-    &::after {
-      visibility: visible;
-    }
-    */
+    background-color: #fff2;
   }
 }
 
@@ -428,14 +494,14 @@ select {
     /* On mobile devices, modal is full screen */
     height: 100%;
     width: 100%;
-    background-color: var(--secondary-color-light);
+    background-color: var(--secondary-color);
 
     @media only screen and (min-width: 700px) and (min-height: 360px) {
       width: 70%;
       height: 60vh;
       margin: 20vh auto;
       border: 2px solid #444;
-      border-radius: 3px;
+      border-radius: 4px;
     }
 
     > div {
@@ -468,67 +534,17 @@ select {
   flex-direction: column;
   height: 100%;
 
-  h4 {
-    margin: 0;
+  header {
+    flex-shrink: 0;
+    display: flex;
+
+    h4 {
+      flex-grow: 1;
+    }
   }
 
   label {
     margin-right: 4px;
-  }
-
-  footer {
-
-  }
-
-  input {
-    &[type="text"] {
-      margin: 0;
-    }
-
-    &[type="number"] {
-      margin: auto 0;
-    }
-
-    &[type="text"],
-    &[type="number"] {
-      border: none;
-      font-family: Inter, Helvetica;
-      font-weight: 300;
-      font-size: 1em;
-      padding: 3px;
-      box-sizing: border-box;
-      border-radius: 3px;
-      background-color: var(--secondary-color);
-      -webkit-appearance: none;
-      -moz-appearance: none;
-      transition: background-color 0.2s;
-
-      &:hover,
-      &:focus {
-        background-color: var(--secondary-color-dark);
-      }
-
-      &:focus {
-        outline: none;
-      }
-
-      &::placeholder {
-        color: #444;
-      }
-    }
-
-    &.monospace {
-      font-family: RobotoMono, monospace;
-      font-size: 12px;
-    }
-  }
-
-  button {
-    border-radius: 3px;
-
-    &:hover {
-      background-color: var(--secondary-color);
-    }
   }
 }
 
@@ -538,17 +554,22 @@ select {
   box-sizing: border-box;
   overflow: auto;
   flex-grow: 1;
-  border-top: 1px solid var(--secondary-color-darker);
-  border-bottom: 1px solid var(--secondary-color-darker);
+  border-top: 1px solid #0002;
+  border-bottom: 1px solid #0002;
 }
 
 .modal-page {
   height: 100%;
   display: none;
   overflow: auto;
+  padding-right: 8px;
 
   &.open {
     display: block;
+  }
+
+  > div {
+    margin: 8px 0;
   }
 }
 
@@ -568,21 +589,6 @@ select {
     width: 0; // Acts as a minimum width
     flex-grow: 1;
   }
-
-}
-
-#close-add-population-modal {
-  width: 26px;
-  height: 26px;
-  border-radius: 3px;
-  float: right;
-
-  &:hover {
-    background-color: var(--secondary-color);
-  }
-}
-
-#add-population-menu {
 
 }
 
@@ -614,8 +620,8 @@ div.data-entry {
       counter-increment: messageNum;
       content: counter(messageNum, decimal-leading-zero);
       font-family: RobotoMono, monospace;
-      background-color: var(--secondary-color);
-      border-radius: 3px;
+      background-color: #0002;
+      border-radius: 4px;
       padding: 2px;
       margin-right: 4px;
       font-weight: 300;

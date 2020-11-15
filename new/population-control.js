@@ -57,6 +57,7 @@ class Population {
         {}
       )),
       messagesDisplay = displayPoints.messages,
+      keyDecryptions = displayPoints.keyDecryptions,
       { name: cipherName, options: cipherOptions } = config.cipher,
       {
         populationSize,
@@ -72,7 +73,6 @@ class Population {
     this.open = false;
     this.genNum = history.length;
     this.state = "opening";
-    this.convertKey = cipherKeyConverters[cipherName];
 
     worker.onmessage = function () {
       worker.onmessage = function ({ data }) {
@@ -174,14 +174,83 @@ class Population {
     displayPoints.allowDuplicates.innerText = allowDuplicates ? "YES" : "NO";
 
     // Messages
-    var messageDecrypters = (this.messageDecypters = []);
-    const messageDecrypterGenerator = cipherDecrypterGenerators[cipherName];
+    const messageDecrypterGenerator = messageDecrypterGenerators[cipherName],
+      messageDecrypters = (this.messageDecypters = []),
+      textToKey = (this.textToKey = textToKeyGenerators[cipherName](
+        cipherOptions
+      ));
+    this.keyToText = keyToTextGenerators[cipherName](cipherOptions);
+
     for (let message of config.messages) {
+      const m = document.createElement("code"),
+        d = document.createElement("code");
+
       messageDecrypters.push(messageDecrypterGenerator(message, cipherOptions));
-      const e = document.createElement("code");
-      e.innerText = message;
-      messagesDisplay.appendChild(e);
+
+      m.innerText = message;
+      messagesDisplay.appendChild(m);
+
+      d.innerText = "run program to see decryptions";
+      keyDecryptions.appendChild(d);
     }
+
+    const keyInput = displayPoints.keyInput;
+    keyInput.addEventListener("change", function () {
+      const keyEntered = textToKey(this.value);
+      if (keyEntered) {
+        thisPopulation.displayDecryption(keyEntered);
+        this.removeAttribute("invalid");
+      } else {
+        this.setAttribute("invalid", "");
+      }
+    });
+
+    // Sets up exports
+    const {
+      copyConfig,
+      copyPopulation,
+      downloadConfig,
+      downloadPopulation,
+    } = displayPoints;
+
+    function displayCopyMessage(button, success) {
+      const message = success ? "success" : "failure";
+      button.classList.add(message);
+      setTimeout(function () {
+        button.classList.remove(message);
+      }, 3000);
+    }
+
+    function copyText(button, text) {
+      navigator.clipboard
+        .writeText(text)
+        .then(() => {
+          displayCopyMessage(button, true);
+        })
+        .catch((err) => {
+          console.log(err);
+          displayCopyMessage(button, false);
+        });
+    }
+
+    copyConfig.addEventListener("click", function () {
+      copyText(this, JSON.stringify(config));
+    });
+    copyConfig.removeAttribute("disabled");
+
+    copyPopulation.addEventListener("click", function () {
+      copyText(
+        this,
+        JSON.stringify({
+          name: thisPopulation.name, // reference to thisPopulation needed because primitive value, so would be incorrect if changed
+          description: thisPopulation.description, // because primitive value
+          config,
+          history,
+          knownScores,
+        })
+      );
+    });
+    copyPopulation.removeAttribute("disabled");
 
     // Adds population page
     populationPages.appendChild(page);
@@ -199,7 +268,7 @@ class Population {
   }
 
   /**
-   * @param {string} newState
+   * @param {string} newState opening, waiting, configuring, running, or idle
    */
   set state(newState) {
     this._state = this.displayPoints.state.innerText = this.page.dataset.state = newState;
@@ -244,19 +313,11 @@ class Population {
 
   updatePage() {
     // TODO
-    const displayPoints = this.displayPoints,
-      {candidates} = this.history[this.genNum - 1],
-      bestKey = candidates[0];
-
-    displayPoints.bestKey.innerText = this.convertKey(bestKey);
-    displayPoints.bestScore.innerText = this.knownScores[bestKey];
-    displayPoints.bestDecryption.innerText = this.messageDecypters[0](bestKey);
+    this.displayDecryption(this.history[this.genNum - 1].candidates[0]);
   }
 
   openPage() {
-    if (openPopulation) {
-      openPopulation.closePage();
-    }
+    if (openPopulation) openPopulation.closePage();
     this.button.classList.add("open");
     this.page.classList.add("open");
     this.open = true;
@@ -269,16 +330,23 @@ class Population {
     this.page.classList.remove("open");
     this.open = false;
   }
+
+  displayDecryption(key) {
+    const displayPoints = this.displayPoints,
+      bestDecryptions = displayPoints.keyDecryptions.children,
+      messageDecypters = this.messageDecypters;
+
+    displayPoints.keyInput.value = this.keyToText(key);
+    displayPoints.keyScore.innerText = this.knownScores[key] || "unknown";
+
+    for (let m = 0; m < messageDecypters.length; m++) {
+      bestDecryptions[m].innerText = messageDecypters[m](key);
+    }
+  }
 }
 
 const populations = [];
 var openPopulation = null;
-
-/* newPopulation = function (populationData) {
-  var population = new Population(populationData);
-  populations.push(population);
-  return population;
-}; */
 
 function setupPopulation(populationData) {
   // console.log(JSON.stringify(populationData));
@@ -286,91 +354,3 @@ function setupPopulation(populationData) {
   populations.push(population);
   population.openPage();
 }
-
-/*
-function newPopulation (populationData) {
-  var n = populations.length,
-      // page = newPopulationPage(),
-      // button = newPopulationButton(),
-      worker = new Worker("population-worker.js"),
-      population = {
-        data: populationData,
-        state: "opening", // "configuring", "waiting", "idle", "running", "finishing"
-        worker
-      },
-      history = populationData.history;
-
-  // Waits for message from worker to confirm config-ready, then sends the config.
-  worker.onmessage = function () {
-
-    // Changes the onmessage function to be ready to receive asset-requests
-    worker.onmessage = function ({data: {message, path}}) {
-
-      if (message == "asset-request") {
-
-        population.state = "waiting";
-
-        getAsset(path)
-        .then(asset => {
-          worker.postMessage(asset);
-          population.state = "configuring"
-        })
-
-      } else if (message == "config-complete") {
-
-        // Changes the onmessage function to recieve status updates
-        worker.onmessage = function ({data: status}) {
-          history.push(status);
-          // TODO
-          if (openPopulation == n) {
-            viewPopulation(n);
-          }
-        };
-
-        population.state = "idle";
-
-      }
-
-    }
-
-    worker.postMessage({instruction: "config", data: populationData});
-    population.state = "configuring";
-
-  };
-
-  worker.onerror = e => { throw e };
-
-  // Adds the population to the list of populations
-  populations.push(population);
-
-  console.log(population)
-
-  // Opens the population
-  // viewPopulation(n)
-}
-
-function configurePopulation (n, config) {
-  var population = populations[n];
-  population.configured = false;
-  population.worker.postMessage({
-    instruction: "config",
-    data: config
-  });
-  population.data.config = config
-}
-
-function stopPopulation (n) {
-  var population = populations[n];
-  if (population.state == "") {
-    population.worker.postMessage("stop");
-    population.running = false
-  }
-}
-
-function stepPopulation (n) {
-  var population = populations[n];
-  if (population.configured && !population.running) {
-    population.worker.postMessage("step");
-  }
-}
-*/
