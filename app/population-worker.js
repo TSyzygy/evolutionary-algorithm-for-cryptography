@@ -2,7 +2,7 @@
 
 // Functions which generate the cipher-specific functions (fitness, randomCandidate and permuteCandidate)
 // IIFE
-const cipherFunctionGenerators = (function () {
+/* const cipherFunctionGenerators = (function () {
   // Prevents cipherFunctionGenerators from changing the worker's onmessage handler
   var onmessage, globalThis;
 
@@ -23,11 +23,11 @@ const cipherFunctionGenerators = (function () {
           n > 1 // Ngram score
             ? function (message, key) {
                 const keylength = key.length;
-                var gram = message.slice(0, n),
+                var gram = [],
                   p = 0,
                   score = 0;
                 for (let char of message) {
-                  gram.shift();
+                  if (gram.length == n) gram.shift();
                   gram.push(alphabet[char + key[p]]);
                   score += scores[gram.join("")] || 0;
                   if (++p == keylength) {
@@ -37,14 +37,14 @@ const cipherFunctionGenerators = (function () {
                 return score / message.length;
               } // Letter score
             : function (message, key) {
-                return (
+                return 1000 * (
                   message.reduce(
                     (t, c, p) => t + scores[c + key[p % keylength]]
                   ) / message.length
                 );
               };
 
-      var fitness, randomCandidate, permuteCandidate /*, candidateToString */;
+      var fitness, randomCandidate, permuteCandidate, candidateToString;
 
       // If multiple messages provided
       if (messages.length > 1) {
@@ -66,27 +66,25 @@ const cipherFunctionGenerators = (function () {
         return key;
       };
 
+      // Gets a random number between min and max-1
+      function randRange(min, max) {
+        return Math.floor(Math.random() * (max - min)) + min;
+      }
+
       // Generates permute candidate function
       permuteCandidate = function (key) {
-        // Gets a random number between min and max-1
-        function randRange(min, max) {
-          return Math.floor(Math.random() * (max - min)) + min;
-        }
-
-        var permutedKey = [...key],
-          posToChange = randRange(0, keylength);
-        permutedKey[posToChange] += randRange(1, alphabetLength);
-        permutedKey[posToChange] %= alphabetLength;
+        const permutedKey = [...key];
+        permutedKey[randRange(0, keylength)] = randRange(0, alphabetLength);
         return permutedKey;
       };
 
-      // candidateToString = (key) => key.join(",");
+      candidateToString = (key) => key.join(",");
 
       return {
         fitness,
         randomCandidate,
         permuteCandidate,
-        // candidateToString,
+        candidateToString,
       };
     },
 
@@ -103,11 +101,11 @@ const cipherFunctionGenerators = (function () {
               return i > -1 ? [i] : [];
             }),
         scoreMessage = function (message, key) {
-          var gram = message.slice(0, n),
+          var gram = [],
             score = 0,
             g;
           for (let char of message) {
-            gram.shift();
+            if (gram.length == n) gram.shift();
             gram.push(key[char]);
             g = gram.join("");
             if (scores.hasOwnProperty(g)) score += scores[g];
@@ -119,10 +117,7 @@ const cipherFunctionGenerators = (function () {
           return Math.floor(Math.random() * (max - min)) + min;
         };
 
-      /**
-       * Shuffles array in place.
-       * @param {Array} a items An array containing the items.
-       */
+      // Shuffles array in place
       function shuffle(a) {
         var j, x, i;
         for (i = a.length - 1; i > 0; i--) {
@@ -134,7 +129,7 @@ const cipherFunctionGenerators = (function () {
         return a;
       }
 
-      var fitness, randomCandidate, permuteCandidate /*, candidateToString */;
+      var fitness, randomCandidate, permuteCandidate, candidateToString;
 
       // If multiple messages provided
       if (messages.length > 1) {
@@ -142,7 +137,7 @@ const cipherFunctionGenerators = (function () {
         // Converts messages to numerical form
         fitness = (key) =>
           messages.reduce((t, message) => t + scoreMessage(message, key));
-        // If only one message provided
+      // If only one message provided
       } else {
         var message = convertMessage(messages[0]);
         fitness = (key) => scoreMessage(message, key);
@@ -165,17 +160,18 @@ const cipherFunctionGenerators = (function () {
         return permutedKey;
       };
 
-      // candidateToString = (key) => key.join("");
+      candidateToString = (key) => key.join("");
 
       return {
         fitness,
         randomCandidate,
         permuteCandidate,
-        // candidateToString,
+        candidateToString,
       };
     },
   };
 })();
+*/
 
 // IIFE used to prevent cipherFunctionGenerators from changing evolution variables / running internal functions. The getAsset function is accessible by cipherFunctionGenerators
 const { getAsset } = (function () {
@@ -187,7 +183,7 @@ const { getAsset } = (function () {
     fitness,
     randomCandidate,
     permuteCandidate,
-    // candidateToString,
+    candidateToString,
     populationSize,
     childrenPerParent,
     randomPerGeneration,
@@ -199,35 +195,34 @@ const { getAsset } = (function () {
   // PRIVATE FUNCTIONS
   function evaluateCandidate(candidate) {
     // If the key is a current candidate and duplicates are allowed, adds to same location in array
-    let existingLocation = candidates.indexOf(candidate);
+    const candidateString = candidateToString(candidate),
+      existingLocation = candidates.findIndex(match => candidateToString(match) == candidateString);
+
     if (existingLocation > -1) {
-      if (allowDuplicates) {
-        candidates.splice(existingLocation, 0, candidate);
-        if (candidates.length > evolutionConfig.populationSize)
-          candidates.shift();
-      }
+      if (allowDuplicates) candidates.splice(existingLocation, 0, candidate);
     }
 
     // Adds the candidate if it has not been evaluated before
-    else if (!knownScores.hasOwnProperty(candidate)) {
+    else if (!knownScores.hasOwnProperty(candidateString)) {
       const numCandidates = candidates.length,
-        score = (knownScores[candidate] = fitness(candidate));
+        score = (knownScores[candidateString] = fitness(candidate));
 
       // Rounds the score to be sent to control to save space in exports
-      newKnownScores[candidate] = Math.round(score);
+      newKnownScores[candidateString] = Math.round(score);
 
       // Finds position in ordered list of candidates
       for (
         var i = 0;
-        i < numCandidates && score > knownScores[candidates[i]];
+        i < numCandidates && score > knownScores[candidateToString(candidates[i])];
         i++
       );
 
       // Adds to candidates list and removes worst candidate if length exceeds maximum
       candidates.splice(i, 0, candidate);
+    };
 
-      if (candidates.length > populationSize) candidates.shift();
-    }
+    if (candidates.length > populationSize) candidates.shift();
+
     // If the candidate is not currently a candidate but had been in the past, it must be worse than all current candidates so is ignored.
   }
 
@@ -283,12 +278,13 @@ const { getAsset } = (function () {
 
     // Gets cipher functions
     // if (!cipherFunctionGenerators.hasOwnProperty(name)) throw Error("Unrecognised config.cipher.name: " + name);
+    importScripts("ciphers/" + name + "/configure-worker.js");
     ({
       fitness,
       randomCandidate,
       permuteCandidate,
-      // candidateToString,
-    } = await cipherFunctionGenerators[name](messages, options));
+      candidateToString,
+    } = await configure(messages, options));
 
     importCandidates.forEach(evaluateCandidate);
     knownScores = importKnownScores;

@@ -46,6 +46,7 @@ p, label {
 code,
 .monospace {
   font-family: RobotoMono, monospace;
+  word-break: break-word;
 }
 
 .break-all {
@@ -263,7 +264,7 @@ select {
 #population-pages section h2::before {
   content: counter(page-num, decimal-leading-zero);
   font-family: RobotoMono, monospace;
-  background-color: #ccc;
+  background-color: #eee;
   border-radius: 4px;
   padding: 2px;
   margin-right: 8px;

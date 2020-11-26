@@ -180,6 +180,7 @@ class Population {
         cipherOptions
       ));
     this.keyToText = keyToTextGenerators[cipherName](cipherOptions);
+    this.candidateString = candidateStringGenerators[cipherName](cipherOptions);
 
     for (let message of config.messages) {
       const m = document.createElement("code"),
@@ -313,7 +314,7 @@ class Population {
 
   updatePage() {
     // TODO
-    this.displayDecryption(this.history[this.genNum - 1].candidates[0]);
+    this.displayDecryption(this.history[this.genNum - 1].candidates[this.config.evolution.populationSize - 1]);
   }
 
   openPage() {
@@ -329,15 +330,18 @@ class Population {
     this.button.classList.remove("open");
     this.page.classList.remove("open");
     this.open = false;
+    openPopulation = null;
   }
 
   displayDecryption(key) {
     const displayPoints = this.displayPoints,
       bestDecryptions = displayPoints.keyDecryptions.children,
-      messageDecypters = this.messageDecypters;
+      messageDecypters = this.messageDecypters,
+      knownScores = this.knownScores,
+      candidateString = this.candidateString(key);
 
     displayPoints.keyInput.value = this.keyToText(key);
-    displayPoints.keyScore.innerText = this.knownScores[key] || "unknown";
+    displayPoints.keyScore.innerText = knownScores.hasOwnProperty(candidateString) ? knownScores[candidateString] : "unknown";
 
     for (let m = 0; m < messageDecypters.length; m++) {
       bestDecryptions[m].innerText = messageDecypters[m](key);

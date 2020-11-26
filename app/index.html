@@ -312,7 +312,20 @@
                     </div>
 
                     <div data-cipher-name="hill">
-                      <p>Hill cipher not yet implemented</p>
+                      <div class="data-entry">
+                        <label for="hill-m">Matrix size:</label>
+                        <input type="number" name="m" id="hill-m" class="required-for-cipher" max="4" min="2" value="3">
+                      </div>
+                      <div class="data-entry">
+                        <label for="hill-n">Fitness evaluation method:</label>
+                        <select name="n" id="hill-n" class="required-for-cipher">
+                          <option value="">Select fitness method...</option>
+                          <option value="2">Bigram score</option>
+                          <option value="3">Trigram score</option>
+                          <option value="4">Quadgram score (recommended)</option>
+                          <option value="5">Quintgram score</option>
+                        </select>
+                      </div>
                     </div>
 
                   </div>
@@ -337,7 +350,7 @@
 
     <script src="functionality-checks.js"></script>
     <script src="cipher-functions.js"></script>
-    <script src="population-control.js"></script>
+    <script ty src="population-control.js"></script>
     <script src="assets.js"></script>
     <script src="interface.js"></script>
 

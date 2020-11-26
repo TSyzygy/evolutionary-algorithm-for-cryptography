@@ -1,9 +1,9 @@
 "use strict";
 
-const
-  centralAssets = {},
-  // Gets asset from central database
-  getAsset = async function (path) {
+// Gets asset from central database
+const getAsset = (function () {
+  const centralAssets = {};
+  return async function (path) {
     var
       splitPath = path.split("/"),
       directory = splitPath.slice(0, -1).reduce(
@@ -18,3 +18,4 @@ const
       .then(response => response.json())
       .then(json => directory[fileName] = json);
   }
+})();
