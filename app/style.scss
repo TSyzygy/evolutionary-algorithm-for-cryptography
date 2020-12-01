@@ -285,27 +285,26 @@ select {
 #population-pages {
   flex-grow: 1;
   overflow: auto;
-  counter-reset: page-num;
+  counter-reset: pageNum;
 
   section {
-    counter-increment: page-num;
+    counter-increment: pageNum;
 
-    display: none;
-    height: 100%;
-    padding: 12px;
-    box-sizing: border-box;
-
-    &.open {
-      display: block;
+    &.open .population-page {
+      display: flex;
     }
 
     h2::before {
-      content: counter(page-num, decimal-leading-zero);
+      content: counter(pageNum, decimal-leading-zero);
       font-family: RobotoMono, monospace;
       background-color: #eee;
       border-radius: 4px;
       padding: 2px;
       margin-right: 8px;
+    }
+    
+    .stop-text {
+      display: none;
     }
 
     &[data-state="running"] {
@@ -331,8 +330,11 @@ select {
 }
 
 .population-page {
-  display: flex;
+  display: none;
   flex-direction: column;
+  height: 100%;
+  padding: 12px;
+  box-sizing: border-box;
 
   nav {
     overflow-x: auto;
@@ -350,10 +352,6 @@ select {
         border-color: var(--primary-color);
       }
     }
-  }
-
-  .stop-text {
-    display: none;
   }
 }
 

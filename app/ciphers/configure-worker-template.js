@@ -10,7 +10,7 @@ async function configure(messages, { /* Cipher options go here, e.g: */ keylengt
     return Math.floor(Math.random() * max);
   }
 
-  // Return an object with fitness, randomCandidate, permuteCandidate, and candidateToString methods
+  // Return an object with fitness, randomCandidate, permuteCandidate, and keyToString methods
   return {
     // Here is a possible structure for the fitness function, using an IIFE
     fitness: (function () {
@@ -42,7 +42,7 @@ async function configure(messages, { /* Cipher options go here, e.g: */ keylengt
     permuteCandidate(_key) {
       // Permute candidate function goes here
     },
-    candidateToString(_key) {
+    keyToString(_key) {
       // Candidate to string function goes here
       // Candidates which are the same should always result in the same string
       // Different candidates should always result in a different string

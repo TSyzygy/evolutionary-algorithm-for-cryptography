@@ -158,7 +158,7 @@ function configure(messages, _ref) {
 
               return permutedKey;
             },
-            candidateToString: function candidateToString(key) {
+            keyToString: function keyToString(key) {
               // TODO: improve
               return key.join(";");
             }

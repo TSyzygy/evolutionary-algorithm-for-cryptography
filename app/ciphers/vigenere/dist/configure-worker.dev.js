@@ -25,6 +25,7 @@ function configure(messages, _ref) {
 
         case 5:
           scores = _context.sent;
+          ;
           return _context.abrupt("return", {
             fitness: function () {
               function convertMessage(message) {
@@ -86,15 +87,17 @@ function configure(messages, _ref) {
               permutedKey[rand(keylength)] = rand(26);
               return permutedKey;
             },
-            candidateToString: function candidateToString(key) {
+            keyToString: function keyToString(key) {
               return key.join(",");
             }
           });
 
-        case 7:
+        case 8:
         case "end":
           return _context.stop();
       }
     }
   });
 }
+
+;

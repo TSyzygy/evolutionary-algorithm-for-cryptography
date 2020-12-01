@@ -249,25 +249,24 @@ select {
 #population-pages {
   flex-grow: 1;
   overflow: auto;
-  counter-reset: page-num;
+  counter-reset: pageNum;
 }
 #population-pages section {
-  counter-increment: page-num;
-  display: none;
-  height: 100%;
-  padding: 12px;
-  box-sizing: border-box;
+  counter-increment: pageNum;
 }
-#population-pages section.open {
-  display: block;
+#population-pages section.open .population-page {
+  display: flex;
 }
 #population-pages section h2::before {
-  content: counter(page-num, decimal-leading-zero);
+  content: counter(pageNum, decimal-leading-zero);
   font-family: RobotoMono, monospace;
   background-color: #eee;
   border-radius: 4px;
   padding: 2px;
   margin-right: 8px;
+}
+#population-pages section .stop-text {
+  display: none;
 }
 #population-pages section[data-state=running] .run-text {
   display: none;
@@ -283,8 +282,11 @@ select {
 }
 
 .population-page {
-  display: flex;
+  display: none;
   flex-direction: column;
+  height: 100%;
+  padding: 12px;
+  box-sizing: border-box;
 }
 .population-page nav {
   overflow-x: auto;
@@ -299,9 +301,6 @@ select {
 }
 .population-page nav button:active, .population-page nav button.open {
   border-color: var(--primary-color);
-}
-.population-page .stop-text {
-  display: none;
 }
 
 .sub-pages > div {

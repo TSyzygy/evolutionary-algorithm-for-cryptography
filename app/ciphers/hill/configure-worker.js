@@ -10,7 +10,7 @@ async function configure(messages, { m, n }) {
     return Math.floor(Math.random() * max);
   }
 
-  // Return an object with fitness, randomCandidate, permuteCandidate, and candidateToString methods
+  // Return an object with fitness, randomCandidate, permuteCandidate, and keyToString methods
   return {
     // Here is a possible structure for the fitness function, using an IIFE
     fitness: (function () {
@@ -104,7 +104,7 @@ async function configure(messages, { m, n }) {
         row[rand(m)] = rand(26);
       return permutedKey;
     },
-    candidateToString(key) {
+    keyToString(key) {
       // TODO: improve
       return key.join(";");
     },

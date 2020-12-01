@@ -65,7 +65,7 @@ async function configure(messages, { n }) {
       };
       return permutedKey;
     },
-    candidateToString (key) {
+    keyToString (key) {
       return key.join("");
     },
   };

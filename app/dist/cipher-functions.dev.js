@@ -56,7 +56,7 @@ var alphabet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
   y: 76,
   z: 77
 },
-    messageDecrypterGenerators = {
+    MessageDecrypters = {
   vigenere: function vigenere(message, config) {
     var convertedMessage = message.split("").map(function (c) {
       return value.hasOwnProperty(c) ? value[c] : c;
@@ -114,7 +114,7 @@ var alphabet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
     };
   }
 },
-    candidateStringGenerators = {
+    KeyToStrings = {
   vigenere: function vigenere(_config) {
     return function (key) {
       return key.join(",");
@@ -131,7 +131,7 @@ var alphabet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
     };
   }
 },
-    keyToTextGenerators = {
+    KeyToTexts = {
   vigenere: function vigenere(_config) {
     return function (key) {
       return key.reduce(function (word, n) {
@@ -228,7 +228,7 @@ var alphabet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
     };
   }
 },
-    textToKeyGenerators = {
+    TextToKeys = {
   vigenere: function vigenere(_ref2) {
     var keylength = _ref2.keylength;
     return function (text) {

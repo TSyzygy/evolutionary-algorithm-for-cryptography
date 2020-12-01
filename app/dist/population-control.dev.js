@@ -39,6 +39,12 @@
 
 */
 
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function _getRequireWildcardCache() { return cache; }; return cache; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { "default": obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj["default"] = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -49,6 +55,8 @@ var Population =
 /*#__PURE__*/
 function () {
   function Population(_ref) {
+    var _this = this;
+
     var name = _ref.name,
         description = _ref.description,
         config = _ref.config,
@@ -83,10 +91,40 @@ function () {
     this.open = false;
     this.genNum = history.length;
     this.state = "opening";
+    var cipherFunctionImport = Promise.resolve().then(function () {
+      return _interopRequireWildcard(require("".concat("./ciphers/" + cipherName + "/population-functions.js")));
+    }).then(function (_ref2) {
+      var MessageDecrypter = _ref2.MessageDecrypter,
+          KeyToString = _ref2.KeyToString,
+          KeyToText = _ref2.KeyToText,
+          TextToKey = _ref2.TextToKey;
+      console.log("B");
+      var textToKey = _this.textToKey = TextToKey(cipherOptions);
+      _this.messageDecypters = config.messages.map(function (message) {
+        return MessageDecrypter(message, cipherOptions);
+      });
+      _this.keyToText = KeyToText(cipherOptions);
+      _this.keyToString = KeyToString(cipherOptions);
+      var keyInput = displayPoints.keyInput;
+      keyInput.addEventListener("change", function () {
+        var keyEntered = textToKey(this.value);
+
+        if (keyEntered) {
+          thisPopulation.displayDecryption(keyEntered);
+          this.removeAttribute("invalid");
+        } else {
+          this.setAttribute("invalid", "");
+        }
+
+        ;
+      });
+    })["catch"](function (err) {
+      console.log("Error importing cipher functions:", err);
+    });
 
     worker.onmessage = function () {
-      worker.onmessage = function (_ref2) {
-        var data = _ref2.data;
+      worker.onmessage = function (_ref3) {
+        var data = _ref3.data;
 
         if (data.message == "asset-request") {
           thisPopulation.state = "waiting";
@@ -95,22 +133,27 @@ function () {
             thisPopulation.state = "configuring";
           });
         } else if (data == "config-complete") {
-          thisPopulation.state = "idle";
+          // Checks cipher functions are imported
+          cipherFunctionImport.then(function () {
+            thisPopulation.state = "idle";
 
-          worker.onmessage = function (_ref3) {
-            var _ref3$data = _ref3.data,
-                candidates = _ref3$data.candidates,
-                newKnownScores = _ref3$data.newKnownScores;
-            // Adds the newly discovered scores to the knownScores object
-            Object.assign(knownScores, newKnownScores);
-            history.push({
-              candidates: candidates,
-              newKnownScores: Object.keys(newKnownScores)
-            });
-            thisPopulation.genNum++;
-            thisPopulation.updatePage();
-          };
+            worker.onmessage = function (_ref4) {
+              var _ref4$data = _ref4.data,
+                  candidates = _ref4$data.candidates,
+                  newKnownScores = _ref4$data.newKnownScores;
+              // Adds the newly discovered scores to the knownScores object
+              Object.assign(knownScores, newKnownScores);
+              history.push({
+                candidates: candidates,
+                newKnownScores: Object.keys(newKnownScores)
+              });
+              thisPopulation.genNum++;
+              thisPopulation.updatePage();
+            };
+          });
         }
+
+        ;
       };
 
       var genNum = thisPopulation.genNum;
@@ -192,19 +235,15 @@ function () {
       row.appendChild(nameCell);
       row.appendChild(valueCell);
       displayPoints.cipherOptions.appendChild(row);
-    } // Evolution config
+    }
 
+    ; // Evolution config
 
     displayPoints.populationSize.innerText = populationSize;
     displayPoints.childrenPerParent.innerText = childrenPerParent;
     displayPoints.randomPerGeneration.innerText = randomPerGeneration;
     displayPoints.allowDuplicates.innerText = allowDuplicates ? "YES" : "NO"; // Messages
 
-    var messageDecrypterGenerator = messageDecrypterGenerators[cipherName],
-        messageDecrypters = this.messageDecypters = [],
-        textToKey = this.textToKey = textToKeyGenerators[cipherName](cipherOptions);
-    this.keyToText = keyToTextGenerators[cipherName](cipherOptions);
-    this.candidateString = candidateStringGenerators[cipherName](cipherOptions);
     var _iteratorNormalCompletion2 = true;
     var _didIteratorError2 = false;
     var _iteratorError2 = undefined;
@@ -214,7 +253,6 @@ function () {
         var message = _step2.value;
         var m = document.createElement("code"),
             d = document.createElement("code");
-        messageDecrypters.push(messageDecrypterGenerator(message, cipherOptions));
         m.innerText = message;
         messagesDisplay.appendChild(m);
         d.innerText = "run program to see decryptions";
@@ -235,17 +273,7 @@ function () {
       }
     }
 
-    var keyInput = displayPoints.keyInput;
-    keyInput.addEventListener("change", function () {
-      var keyEntered = textToKey(this.value);
-
-      if (keyEntered) {
-        thisPopulation.displayDecryption(keyEntered);
-        this.removeAttribute("invalid");
-      } else {
-        this.setAttribute("invalid", "");
-      }
-    }); // Sets up exports
+    ; // Sets up exports
 
     var copyConfig = displayPoints.copyConfig,
         copyPopulation = displayPoints.copyPopulation,
@@ -260,6 +288,8 @@ function () {
       }, 3000);
     }
 
+    ;
+
     function copyText(button, text) {
       navigator.clipboard.writeText(text).then(function () {
         displayCopyMessage(button, true);
@@ -269,6 +299,7 @@ function () {
       });
     }
 
+    ;
     copyConfig.addEventListener("click", function () {
       copyText(this, JSON.stringify(config));
     });
@@ -350,13 +381,15 @@ function () {
           bestDecryptions = displayPoints.keyDecryptions.children,
           messageDecypters = this.messageDecypters,
           knownScores = this.knownScores,
-          candidateString = this.candidateString(key);
+          keyString = this.keyToString(key);
       displayPoints.keyInput.value = this.keyToText(key);
-      displayPoints.keyScore.innerText = knownScores.hasOwnProperty(candidateString) ? knownScores[candidateString] : "unknown";
+      displayPoints.keyScore.innerText = knownScores.hasOwnProperty(keyString) ? knownScores[keyString] : "unknown";
 
       for (var m = 0; m < messageDecypters.length; m++) {
         bestDecryptions[m].innerText = messageDecypters[m](key);
       }
+
+      ;
     }
   }, {
     key: "state",

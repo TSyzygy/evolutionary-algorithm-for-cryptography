@@ -44,7 +44,7 @@
                 );
               };
 
-      var fitness, randomCandidate, permuteCandidate, candidateToString;
+      var fitness, randomCandidate, permuteCandidate, keyToString;
 
       // If multiple messages provided
       if (messages.length > 1) {
@@ -78,13 +78,13 @@
         return permutedKey;
       };
 
-      candidateToString = (key) => key.join(",");
+      keyToString = (key) => key.join(",");
 
       return {
         fitness,
         randomCandidate,
         permuteCandidate,
-        candidateToString,
+        keyToString,
       };
     },
 
@@ -129,7 +129,7 @@
         return a;
       }
 
-      var fitness, randomCandidate, permuteCandidate, candidateToString;
+      var fitness, randomCandidate, permuteCandidate, keyToString;
 
       // If multiple messages provided
       if (messages.length > 1) {
@@ -160,13 +160,13 @@
         return permutedKey;
       };
 
-      candidateToString = (key) => key.join("");
+      keyToString = (key) => key.join("");
 
       return {
         fitness,
         randomCandidate,
         permuteCandidate,
-        candidateToString,
+        keyToString,
       };
     },
   };
@@ -183,7 +183,7 @@ const { getAsset } = (function () {
     fitness,
     randomCandidate,
     permuteCandidate,
-    candidateToString,
+    keyToString,
     populationSize,
     childrenPerParent,
     randomPerGeneration,
@@ -195,25 +195,25 @@ const { getAsset } = (function () {
   // PRIVATE FUNCTIONS
   function evaluateCandidate(candidate) {
     // If the key is a current candidate and duplicates are allowed, adds to same location in array
-    const candidateString = candidateToString(candidate),
-      existingLocation = candidates.findIndex(match => candidateToString(match) == candidateString);
+    const keyString = keyToString(candidate),
+      existingLocation = candidates.findIndex(match => keyToString(match) == keyString);
 
     if (existingLocation > -1) {
       if (allowDuplicates) candidates.splice(existingLocation, 0, candidate);
     }
 
     // Adds the candidate if it has not been evaluated before
-    else if (!knownScores.hasOwnProperty(candidateString)) {
+    else if (!knownScores.hasOwnProperty(keyString)) {
       const numCandidates = candidates.length,
-        score = (knownScores[candidateString] = fitness(candidate));
+        score = (knownScores[keyString] = fitness(candidate));
 
       // Rounds the score to be sent to control to save space in exports
-      newKnownScores[candidateString] = Math.round(score);
+      newKnownScores[keyString] = Math.round(score);
 
       // Finds position in ordered list of candidates
       for (
         var i = 0;
-        i < numCandidates && score > knownScores[candidateToString(candidates[i])];
+        i < numCandidates && score > knownScores[keyToString(candidates[i])];
         i++
       );
 
@@ -283,7 +283,7 @@ const { getAsset } = (function () {
       fitness,
       randomCandidate,
       permuteCandidate,
-      candidateToString,
+      keyToString,
     } = await configure(messages, options));
 
     importCandidates.forEach(evaluateCandidate);

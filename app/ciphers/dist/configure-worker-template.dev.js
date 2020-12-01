@@ -45,7 +45,7 @@ function configure(messages, _ref) {
             },
             permuteCandidate: function permuteCandidate(_key) {// Permute candidate function goes here
             },
-            candidateToString: function candidateToString(_key) {// Candidate to string function goes here
+            keyToString: function keyToString(_key) {// Candidate to string function goes here
               // Candidates which are the same should always result in the same string
               // Different candidates should always result in a different string
             }

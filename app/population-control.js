@@ -74,6 +74,29 @@ class Population {
     this.genNum = history.length;
     this.state = "opening";
 
+    const cipherFunctionImport = import(
+      "./ciphers/" + cipherName + "/population-functions.js"
+    ).then(({ MessageDecrypter, KeyToString, KeyToText, TextToKey }) => {
+      console.log("B");
+      const textToKey = (this.textToKey = TextToKey(cipherOptions));
+      this.messageDecypters = config.messages.map(message => MessageDecrypter(message, cipherOptions));
+      this.keyToText = KeyToText(cipherOptions);
+      this.keyToString = KeyToString(cipherOptions);
+
+      const keyInput = displayPoints.keyInput;
+      keyInput.addEventListener("change", function () {
+        const keyEntered = textToKey(this.value);
+        if (keyEntered) {
+          thisPopulation.displayDecryption(keyEntered);
+          this.removeAttribute("invalid");
+        } else {
+          this.setAttribute("invalid", "");
+        };
+      });
+    }).catch((err) => {
+      console.log("Error importing cipher functions:", err)
+    });
+
     worker.onmessage = function () {
       worker.onmessage = function ({ data }) {
         if (data.message == "asset-request") {
@@ -83,24 +106,27 @@ class Population {
             thisPopulation.state = "configuring";
           });
         } else if (data == "config-complete") {
-          thisPopulation.state = "idle";
+          // Checks cipher functions are imported
+          cipherFunctionImport.then(() => {
+            thisPopulation.state = "idle";
 
-          worker.onmessage = function ({
-            data: { candidates, newKnownScores },
-          }) {
-            // Adds the newly discovered scores to the knownScores object
-            Object.assign(knownScores, newKnownScores);
-
-            history.push({
-              candidates,
-              newKnownScores: Object.keys(newKnownScores),
-            });
-
-            thisPopulation.genNum++;
-
-            thisPopulation.updatePage();
-          };
-        }
+            worker.onmessage = function ({
+              data: { candidates, newKnownScores },
+            }) {
+              // Adds the newly discovered scores to the knownScores object
+              Object.assign(knownScores, newKnownScores);
+  
+              history.push({
+                candidates,
+                newKnownScores: Object.keys(newKnownScores),
+              });
+  
+              thisPopulation.genNum++;
+  
+              thisPopulation.updatePage();
+            };
+          });
+        };
       };
 
       var genNum = thisPopulation.genNum;
@@ -165,7 +191,7 @@ class Population {
       row.appendChild(nameCell);
       row.appendChild(valueCell);
       displayPoints.cipherOptions.appendChild(row);
-    }
+    };
 
     // Evolution config
     displayPoints.populationSize.innerText = populationSize;
@@ -174,37 +200,16 @@ class Population {
     displayPoints.allowDuplicates.innerText = allowDuplicates ? "YES" : "NO";
 
     // Messages
-    const messageDecrypterGenerator = messageDecrypterGenerators[cipherName],
-      messageDecrypters = (this.messageDecypters = []),
-      textToKey = (this.textToKey = textToKeyGenerators[cipherName](
-        cipherOptions
-      ));
-    this.keyToText = keyToTextGenerators[cipherName](cipherOptions);
-    this.candidateString = candidateStringGenerators[cipherName](cipherOptions);
-
     for (let message of config.messages) {
       const m = document.createElement("code"),
         d = document.createElement("code");
-
-      messageDecrypters.push(messageDecrypterGenerator(message, cipherOptions));
 
       m.innerText = message;
       messagesDisplay.appendChild(m);
 
       d.innerText = "run program to see decryptions";
       keyDecryptions.appendChild(d);
-    }
-
-    const keyInput = displayPoints.keyInput;
-    keyInput.addEventListener("change", function () {
-      const keyEntered = textToKey(this.value);
-      if (keyEntered) {
-        thisPopulation.displayDecryption(keyEntered);
-        this.removeAttribute("invalid");
-      } else {
-        this.setAttribute("invalid", "");
-      }
-    });
+    };
 
     // Sets up exports
     const {
@@ -220,7 +225,7 @@ class Population {
       setTimeout(function () {
         button.classList.remove(message);
       }, 3000);
-    }
+    };
 
     function copyText(button, text) {
       navigator.clipboard
@@ -232,7 +237,7 @@ class Population {
           console.log(err);
           displayCopyMessage(button, false);
         });
-    }
+    };
 
     copyConfig.addEventListener("click", function () {
       copyText(this, JSON.stringify(config));
@@ -314,7 +319,11 @@ class Population {
 
   updatePage() {
     // TODO
-    this.displayDecryption(this.history[this.genNum - 1].candidates[this.config.evolution.populationSize - 1]);
+    this.displayDecryption(
+      this.history[this.genNum - 1].candidates[
+        this.config.evolution.populationSize - 1
+      ]
+    );
   }
 
   openPage() {
@@ -338,14 +347,16 @@ class Population {
       bestDecryptions = displayPoints.keyDecryptions.children,
       messageDecypters = this.messageDecypters,
       knownScores = this.knownScores,
-      candidateString = this.candidateString(key);
+      keyString = this.keyToString(key);
 
     displayPoints.keyInput.value = this.keyToText(key);
-    displayPoints.keyScore.innerText = knownScores.hasOwnProperty(candidateString) ? knownScores[candidateString] : "unknown";
+    displayPoints.keyScore.innerText = knownScores.hasOwnProperty(keyString)
+      ? knownScores[keyString]
+      : "unknown";
 
     for (let m = 0; m < messageDecypters.length; m++) {
       bestDecryptions[m].innerText = messageDecypters[m](key);
-    }
+    };
   }
 }
 

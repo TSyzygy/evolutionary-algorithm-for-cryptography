@@ -106,7 +106,7 @@ function configure(messages, _ref) {
               ;
               return permutedKey;
             },
-            candidateToString: function candidateToString(key) {
+            keyToString: function keyToString(key) {
               return key.join("");
             }
           });

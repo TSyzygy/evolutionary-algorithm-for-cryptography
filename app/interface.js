@@ -89,10 +89,13 @@ function changeCurrentCipherPage(chosenCipherName) {
   if (currentCipherPage) {
     currentCipherPage.classList.remove("chosen");
     // Removes 'required' attribute from each of the old cipher-specific entry options
-    Array.prototype.forEach.call(
+    for (let e of currentCipherPage.getElementsByClassName("required-for-cipher")) {
+      e.removeAttribute("required");
+    }
+    /*Array.prototype.forEach.call(
       currentCipherPage.getElementsByClassName("required-for-cipher"),
       (e) => e.removeAttribute("required")
-    );
+    ); */
   }
 
   currentCipherPage = cipherSpecificPages.querySelector(
@@ -101,10 +104,13 @@ function changeCurrentCipherPage(chosenCipherName) {
   if (currentCipherPage) {
     currentCipherPage.classList.add("chosen");
     // Removes 'required' attribute to each of the new cipher-specific entry options
-    Array.prototype.forEach.call(
+    for (let e of currentCipherPage.getElementsByClassName("required-for-cipher")) {
+      e.setAttribute("required", "")
+    }
+    /*Array.prototype.forEach.call(
       currentCipherPage.getElementsByClassName("required-for-cipher"),
       (e) => e.setAttribute("required", "")
-    );
+    ); */
   }
 
   addPopulationMain.scrollTop = addPopulationMain.scrollHeight;
@@ -207,9 +213,8 @@ addPopulationForm.addEventListener("submit", function () {
 });
 
 // TEMPORARY
-
-if (true) {
-  setupPopulation({
+const startupPopulations = [
+  {
     name: "Vigenere test 1",
     description: "one",
     config: {
@@ -226,8 +231,8 @@ if (true) {
     },
     history: [],
     knownScores: {},
-  });
-  setupPopulation({
+  },
+  {
     name: "Vigenere test 2",
     description: "two",
     config: {
@@ -244,8 +249,8 @@ if (true) {
     },
     history: [],
     knownScores: {},
-  });
-  setupPopulation({
+  },
+  {
     name: "Subst test 1",
     description: "three",
     config: {
@@ -262,8 +267,8 @@ if (true) {
     },
     history: [],
     knownScores: {},
-  });
-  setupPopulation({
+  },
+  {
     name: "Subst test 1b",
     description: "three",
     config: {
@@ -280,8 +285,8 @@ if (true) {
     },
     history: [],
     knownScores: {},
-  });
-  setupPopulation({
+  },
+  {
     name: "Subst test 2",
     description: "three",
     config: {
@@ -298,8 +303,8 @@ if (true) {
     },
     history: [],
     knownScores: {},
-  });
-  setupPopulation({
+  },
+  {
     name: "Hill test 1",
     description: "five",
     config: {
@@ -316,8 +321,8 @@ if (true) {
     },
     history: [],
     knownScores: {},
-  });
-  setupPopulation({
+  },
+  {
     name: "Hill test 2",
     description: "five",
     config: {
@@ -334,8 +339,8 @@ if (true) {
     },
     history: [],
     knownScores: {},
-  });
-  setupPopulation({
+  },
+  {
     name: "Hill test 3",
     description: "six",
     config: {
@@ -353,8 +358,8 @@ if (true) {
     history: [],
     knownScores: {},
     // decrypt key: 21,18,5;25,2,24;14,13,7
-  });
-  setupPopulation({
+  },
+  {
     name: "Hill test 4",
     description: "six",
     config: {
@@ -373,5 +378,9 @@ if (true) {
     knownScores: {},
     // encrypt key: 14,9,21,8;18,0,1,5;17,15,11,18;0,18,25,14
     // decrypt key: 15,2,7,4;17,22,4,7;2,10,0,25;0,18,25,14
-  });
+  }
+]
+
+if (true) {
+  startupPopulations.forEach(setupPopulation);
 }

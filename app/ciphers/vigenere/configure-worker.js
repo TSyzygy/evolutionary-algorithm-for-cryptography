@@ -7,7 +7,7 @@ async function configure(messages, { keylength, n }) {
   // Gets a random number up to and max-1
   function rand(max) {
     return Math.floor(Math.random() * max);
-  }
+  };
 
   return {
     fitness: (function () {
@@ -68,8 +68,8 @@ async function configure(messages, { keylength, n }) {
       permutedKey[rand(keylength)] = rand(26);
       return permutedKey;
     },
-    candidateToString(key) {
+    keyToString(key) {
       return key.join(",");
     },
   };
-}
+};

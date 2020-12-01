@@ -143,7 +143,7 @@ function hill(messages, _ref) {
             fitness: fitness,
             randomCandidate: randomCandidate,
             permuteCandidate: permuteCandidate,
-            candidateString: candidateString
+            keyToString: keyToString
           });
 
         case 11:
