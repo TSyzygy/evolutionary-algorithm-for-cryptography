@@ -341,8 +341,17 @@ select {
   text-transform: capitalize;
 }
 
-.export button span.success, .export button span.failure {
+.export button span.success, .export button span.failure, .export button span.preparing {
   display: none;
+}
+.export button.preparing {
+  background-color: #3e5;
+}
+.export button.preparing span.default {
+  display: none;
+}
+.export button.preparing span.preparing {
+  display: block;
 }
 .export button.success {
   background-color: #3e5;

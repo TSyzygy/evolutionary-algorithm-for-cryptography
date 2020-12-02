@@ -112,16 +112,26 @@
                   <div class="export">
                     <h4>Export</h4>
                     <p>Config only: </p>
-                    <button type="button" data-dp="downloadConfig" disabled>Download .json file</button>
-                    <button type="button" data-dp="copyConfig" disabled>
+                    <button type="button" data-dp="downloadConfig">
+                      <span class="default">Download .json file</span>
+                      <span class="preparing">Preparing...</span>
+                      <span class="success">Downloaded!</span>
+                    </button>
+                    <button type="button" data-dp="copyConfig">
                       <span class="default">Copy JSON to clipboard</span>
+                      <span class="preparing">Preparing...</span>
                       <span class="success">Copied!</span>
                       <span class="failure">Copy failed</span>
                     </button>
                     <p>Config and population history: </p>
-                    <button type="button" data-dp="downloadPopulation" disabled>Download .json file</button>
-                    <button type="button" data-dp="copyPopulation" disabled>
+                    <button type="button" data-dp="downloadPopulation">
+                      <span class="default">Download .json file</span>
+                      <span class="preparing">Preparing...</span>
+                      <span class="success">Downloaded!</span>
+                    </button>
+                    <button type="button" data-dp="copyPopulation">
                       <span class="default">Copy JSON to clipboard</span>
+                      <span class="preparing">Preparing...</span>
                       <span class="success">Copied!</span>
                       <span class="failure">Copy failed</span>
                     </button>

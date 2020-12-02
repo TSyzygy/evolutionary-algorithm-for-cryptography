@@ -107,10 +107,11 @@ function changeCurrentCipherPage(chosenCipherName) {
     }
   }
 
+  ;
   currentCipherPage = cipherSpecificPages.querySelector("[data-cipher-name='" + chosenCipherName + "']");
 
   if (currentCipherPage) {
-    currentCipherPage.classList.add("chosen"); // Removes 'required' attribute to each of the new cipher-specific entry options
+    currentCipherPage.classList.add("chosen"); // Adds 'required' attribute to each of the new cipher-specific entry options
 
     var _iteratorNormalCompletion2 = true;
     var _didIteratorError2 = false;
@@ -142,6 +143,8 @@ function changeCurrentCipherPage(chosenCipherName) {
       }
     }
   }
+
+  ; // Scrolls to bottom
 
   addPopulationMain.scrollTop = addPopulationMain.scrollHeight;
 }

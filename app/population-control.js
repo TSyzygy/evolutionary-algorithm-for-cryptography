@@ -77,7 +77,6 @@ class Population {
     const cipherFunctionImport = import(
       "./ciphers/" + cipherName + "/population-functions.js"
     ).then(({ MessageDecrypter, KeyToString, KeyToText, TextToKey }) => {
-      console.log("B");
       const textToKey = (this.textToKey = TextToKey(cipherOptions));
       this.messageDecypters = config.messages.map(message => MessageDecrypter(message, cipherOptions));
       this.keyToText = KeyToText(cipherOptions);
@@ -217,46 +216,62 @@ class Population {
       copyPopulation,
       downloadConfig,
       downloadPopulation,
-    } = displayPoints;
+    } = displayPoints,
+    displayMessage = (() => {
+      let messages = {};
+      return function (button, message, timeOut = 3000) {
+        if (messages.hasOwnProperty(button)) button.classList.remove(messages[button]);
+        messages[button] = message;
+        button.classList.add(message);
+        if (timeOut != null) setTimeout(function () {
+            button.classList.remove(message);
+          }, timeOut);
+      };
+    })();
 
-    function displayCopyMessage(button, success) {
-      const message = success ? "success" : "failure";
-      button.classList.add(message);
-      setTimeout(function () {
-        button.classList.remove(message);
-      }, 3000);
-    };
-
-    function copyText(button, text) {
+    function copyJSON(button, data) {
+      displayMessage(button, "preparing");
       navigator.clipboard
-        .writeText(text)
+        .writeText(JSON.stringify(data))
         .then(() => {
-          displayCopyMessage(button, true);
+          displayMessage(button, "success");
         })
         .catch((err) => {
           console.log(err);
-          displayCopyMessage(button, false);
+          displayMessage(button, "failure");
         });
     };
 
+    function downloadJSON(button, name, data) {
+      displayMessage(button, "preparing");
+      const blob = new Blob([JSON.stringify(data)], {type: "application/json"}),
+        url = URL.createObjectURL(blob),
+        element = document.createElement("a");
+      element.download = name;
+      element.href = url;
+      element.click();
+      URL.revokeObjectURL(url);
+      displayMessage(button, "success");
+    };
+
     copyConfig.addEventListener("click", function () {
-      copyText(this, JSON.stringify(config));
+      copyJSON(this, config);
     });
-    copyConfig.removeAttribute("disabled");
 
     copyPopulation.addEventListener("click", function () {
-      copyText(
+      copyJSON(
         this,
-        JSON.stringify({
-          name: thisPopulation.name, // reference to thisPopulation needed because primitive value, so would be incorrect if changed
-          description: thisPopulation.description, // because primitive value
-          config,
-          history,
-          knownScores,
-        })
+        thisPopulation.populationInfo
       );
     });
-    copyPopulation.removeAttribute("disabled");
+
+    downloadConfig.addEventListener("click", function () {
+      downloadJSON(this, "config.json", config);
+    });
+
+    downloadPopulation.addEventListener("click", function () {
+      downloadJSON(this, "population.json", thisPopulation.populationInfo);
+    })
 
     // Adds population page
     populationPages.appendChild(page);
@@ -300,6 +315,16 @@ class Population {
 
   get genNum() {
     return this._genNum;
+  }
+
+  get populationInfo() {
+    return {
+      name: this.name,
+      description: this.description,
+      config: this.config,
+      history: this.history,
+      knownScores: this.knownScores,
+    };
   }
 
   run() {
@@ -358,7 +383,7 @@ class Population {
       bestDecryptions[m].innerText = messageDecypters[m](key);
     };
   }
-}
+};
 
 const populations = [];
 var openPopulation = null;
@@ -368,4 +393,4 @@ function setupPopulation(populationData) {
   var population = new Population(populationData);
   populations.push(population);
   population.openPage();
-}
+};

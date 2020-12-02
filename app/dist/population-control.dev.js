@@ -98,7 +98,6 @@ function () {
           KeyToString = _ref2.KeyToString,
           KeyToText = _ref2.KeyToText,
           TextToKey = _ref2.TextToKey;
-      console.log("B");
       var textToKey = _this.textToKey = TextToKey(cipherOptions);
       _this.messageDecypters = config.messages.map(function (message) {
         return MessageDecrypter(message, cipherOptions);
@@ -278,44 +277,59 @@ function () {
     var copyConfig = displayPoints.copyConfig,
         copyPopulation = displayPoints.copyPopulation,
         downloadConfig = displayPoints.downloadConfig,
-        downloadPopulation = displayPoints.downloadPopulation;
+        downloadPopulation = displayPoints.downloadPopulation,
+        displayMessage = function () {
+      var messages = {};
+      return function (button, message) {
+        var timeOut = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 3000;
+        if (messages.hasOwnProperty(button)) button.classList.remove(messages[button]);
+        messages[button] = message;
+        button.classList.add(message);
+        if (timeOut != null) setTimeout(function () {
+          button.classList.remove(message);
+        }, timeOut);
+      };
+    }();
 
-    function displayCopyMessage(button, success) {
-      var message = success ? "success" : "failure";
-      button.classList.add(message);
-      setTimeout(function () {
-        button.classList.remove(message);
-      }, 3000);
-    }
-
-    ;
-
-    function copyText(button, text) {
-      navigator.clipboard.writeText(text).then(function () {
-        displayCopyMessage(button, true);
+    function copyJSON(button, data) {
+      displayMessage(button, "preparing");
+      navigator.clipboard.writeText(JSON.stringify(data)).then(function () {
+        displayMessage(button, "success");
       })["catch"](function (err) {
         console.log(err);
-        displayCopyMessage(button, false);
+        displayMessage(button, "failure");
       });
     }
 
     ;
+
+    function downloadJSON(button, name, data) {
+      displayMessage(button, "preparing");
+      var blob = new Blob([JSON.stringify(data)], {
+        type: "application/json"
+      }),
+          url = URL.createObjectURL(blob),
+          element = document.createElement("a");
+      element.download = name;
+      element.href = url;
+      element.click();
+      URL.revokeObjectURL(url);
+      displayMessage(button, "success");
+    }
+
+    ;
     copyConfig.addEventListener("click", function () {
-      copyText(this, JSON.stringify(config));
+      copyJSON(this, config);
     });
-    copyConfig.removeAttribute("disabled");
     copyPopulation.addEventListener("click", function () {
-      copyText(this, JSON.stringify({
-        name: thisPopulation.name,
-        // reference to thisPopulation needed because primitive value, so would be incorrect if changed
-        description: thisPopulation.description,
-        // because primitive value
-        config: config,
-        history: history,
-        knownScores: knownScores
-      }));
+      copyJSON(this, thisPopulation.populationInfo);
     });
-    copyPopulation.removeAttribute("disabled"); // Adds population page
+    downloadConfig.addEventListener("click", function () {
+      downloadJSON(this, "config.json", config);
+    });
+    downloadPopulation.addEventListener("click", function () {
+      downloadJSON(this, "population.json", thisPopulation.populationInfo);
+    }); // Adds population page
 
     populationPages.appendChild(page); // Adds sidebar button
 
@@ -418,11 +432,23 @@ function () {
     get: function get() {
       return this._genNum;
     }
+  }, {
+    key: "populationInfo",
+    get: function get() {
+      return {
+        name: this.name,
+        description: this.description,
+        config: this.config,
+        history: this.history,
+        knownScores: this.knownScores
+      };
+    }
   }]);
 
   return Population;
 }();
 
+;
 var populations = [];
 var openPopulation = null;
 
@@ -432,3 +458,5 @@ function setupPopulation(populationData) {
   populations.push(population);
   population.openPage();
 }
+
+;

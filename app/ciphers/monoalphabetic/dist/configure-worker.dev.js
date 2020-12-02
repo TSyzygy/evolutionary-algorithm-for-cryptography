@@ -29,9 +29,9 @@ function configure(messages, _ref) {
           return _context.abrupt("return", {
             fitness: function () {
               function convertMessage(message) {
+                var i;
                 return message.toUpperCase().split("").flatMap(function (c) {
-                  var i = alphabet.indexOf(c);
-                  return i > -1 ? [i] : [];
+                  return (i = alphabet.indexOf(c) > -1) ? [i] : [];
                 });
               }
 

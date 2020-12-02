@@ -12,13 +12,11 @@ async function configure(messages, { n }) {
   return {
     fitness: (function () {
       function convertMessage (message) {
+        var i;
         return message
           .toUpperCase()
           .split("")
-          .flatMap((c) => {
-            var i = alphabet.indexOf(c);
-            return i > -1 ? [i] : [];
-          })
+          .flatMap((c) => (i = alphabet.indexOf(c) > -1) ? [i] : []);
       };
 
       function scoreMessage (message, key) {

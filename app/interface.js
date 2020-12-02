@@ -89,30 +89,27 @@ function changeCurrentCipherPage(chosenCipherName) {
   if (currentCipherPage) {
     currentCipherPage.classList.remove("chosen");
     // Removes 'required' attribute from each of the old cipher-specific entry options
-    for (let e of currentCipherPage.getElementsByClassName("required-for-cipher")) {
-      e.removeAttribute("required");
-    }
+    for (let e of currentCipherPage.getElementsByClassName("required-for-cipher")) e.removeAttribute("required");
     /*Array.prototype.forEach.call(
       currentCipherPage.getElementsByClassName("required-for-cipher"),
       (e) => e.removeAttribute("required")
     ); */
-  }
+  };
 
   currentCipherPage = cipherSpecificPages.querySelector(
     "[data-cipher-name='" + chosenCipherName + "']"
   );
   if (currentCipherPage) {
     currentCipherPage.classList.add("chosen");
-    // Removes 'required' attribute to each of the new cipher-specific entry options
-    for (let e of currentCipherPage.getElementsByClassName("required-for-cipher")) {
-      e.setAttribute("required", "")
-    }
+    // Adds 'required' attribute to each of the new cipher-specific entry options
+    for (let e of currentCipherPage.getElementsByClassName("required-for-cipher")) e.setAttribute("required", "");
     /*Array.prototype.forEach.call(
       currentCipherPage.getElementsByClassName("required-for-cipher"),
       (e) => e.setAttribute("required", "")
     ); */
-  }
+  };
 
+  // Scrolls to bottom
   addPopulationMain.scrollTop = addPopulationMain.scrollHeight;
 }
 
