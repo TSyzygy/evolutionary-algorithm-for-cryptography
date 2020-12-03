@@ -4,7 +4,7 @@
 const getAsset = (function () {
   const centralAssets = {};
   return async function (path) {
-    var
+    const
       splitPath = path.split("/"),
       directory = splitPath.slice(0, -1).reduce(
         // Progresses down the asset tree. If a directory does not exist, creates one (another nested empty object).

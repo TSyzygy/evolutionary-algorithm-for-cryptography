@@ -89,12 +89,15 @@ function changeCurrentCipherPage(chosenCipherName) {
   if (currentCipherPage) {
     currentCipherPage.classList.remove("chosen");
     // Removes 'required' attribute from each of the old cipher-specific entry options
-    for (let e of currentCipherPage.getElementsByClassName("required-for-cipher")) e.removeAttribute("required");
+    for (let e of currentCipherPage.getElementsByClassName(
+      "required-for-cipher"
+    ))
+      e.removeAttribute("required");
     /*Array.prototype.forEach.call(
       currentCipherPage.getElementsByClassName("required-for-cipher"),
       (e) => e.removeAttribute("required")
     ); */
-  };
+  }
 
   currentCipherPage = cipherSpecificPages.querySelector(
     "[data-cipher-name='" + chosenCipherName + "']"
@@ -102,12 +105,15 @@ function changeCurrentCipherPage(chosenCipherName) {
   if (currentCipherPage) {
     currentCipherPage.classList.add("chosen");
     // Adds 'required' attribute to each of the new cipher-specific entry options
-    for (let e of currentCipherPage.getElementsByClassName("required-for-cipher")) e.setAttribute("required", "");
+    for (let e of currentCipherPage.getElementsByClassName(
+      "required-for-cipher"
+    ))
+      e.setAttribute("required", "");
     /*Array.prototype.forEach.call(
       currentCipherPage.getElementsByClassName("required-for-cipher"),
       (e) => e.setAttribute("required", "")
     ); */
-  };
+  }
 
   // Scrolls to bottom
   addPopulationMain.scrollTop = addPopulationMain.scrollHeight;
@@ -375,8 +381,26 @@ const startupPopulations = [
     knownScores: {},
     // encrypt key: 14,9,21,8;18,0,1,5;17,15,11,18;0,18,25,14
     // decrypt key: 15,2,7,4;17,22,4,7;2,10,0,25;0,18,25,14
-  }
-]
+  },
+  {
+    name: "Transpos test 1",
+    description: "",
+    config: {
+      messages: [
+        "EWLTLHTAWSAAUSRRPIESADNQIUTAERLEIFEAISSIADEBFROEONOENRAELYLKONWWSHREEHTEAHNIGNGGADRESNOBFAYBLNOWREEOLCTAEADNIDDNOTHTIKNWWEOLUDAHVHEAADCAHNECOFFIDNIGNTEHNXETHCATPEIRFHTAWTAWSHREETIWSABRUIDEBTUISTEMESHTATTAICTSUHDAAEBTETRDIETAHBEAYBLNOINAGDODSESFOLVOENADAWRAWSSIHATRNADHTESIHATRAGTFERMOBBAYOLNAWSNOEFOTEHOIRGNIASLEEVNOWNEDROSFHTEOWRDLIWTALSAETRERPALCDEBTYHLEIHGTOHUESOAFLXEADNRAISIOANMOSTUERWYHTCAIUTSSUEBDOHTBTUMYABBEEACUESHDEINDTNKOWWHREEHTEAHNIGNGGADRESNWREEIETEHRROMYABHEEUJSWTATNETDOOCNUFSTEHUENNIIITAETDNADOTADDAENXRTAALYREOSFERCEYCVAICNOFSUINOAIBTILKHEEODEBSYIPLNIGPUCPIHRESNITEHSLEAETRHCATPESRAYNWYAWAERIENULCTKHIESTHAGRAETNWOLVIEISNHTEEPRAGMNOMSUEMUIBNELRIANNIDHPAPNETHOAEVAAPSTSOHTEUFLCLOLLETCINOIMANTOSRUEOHWHTEWYILLFEELBAOTUUDSIMSATNLNIGTITTORTYOIFNCDHPATRESVEEBNUITFEWEPXLIANHWAITSNIIITSSUPCETHTEUCRTAOSRCRUISOIYTWLILVOECROEMHSINTAUARLRPOETCITVNEESSPREHPASHTEERWWEILLFNIALLYNULCOKHTEESCERTFOTEHITXHELGOINHTALTEVAETSHQEUSETOINFOHWOWDEELAWTIHIMDSAADNMRAYMAHSAALCEEVRDIEWAEHSOLUDELTHTEOCLELCOTREDAWLIHTTEHMHTEURSISAMNAIFAACNEBPERTYTRTUHELSISFHTEFYELEBTERYAEADNSDHHEASSUGGETSEADWYAWMEIHGTAMKTEHTEHEIVSEFLALUOTTIIASCNUNNIGLPAANNIDTIHNIKCNAHLEP",
+      ],
+      cipher: { name: "transposition", options: { keylength: 3, n: 4 } },
+      evolution: {
+        populationSize: "20",
+        childrenPerParent: "2",
+        randomPerGeneration: "5",
+        allowDuplicates: false,
+      },
+    },
+    history: [],
+    knownScores: {}
+  },
+];
 
 if (true) {
   startupPopulations.forEach(setupPopulation);

@@ -9,7 +9,7 @@ function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
 
 function configure(messages, _ref) {
-  var n, alphabet, scores, rand;
+  var n, value, scores, rand;
   return regeneratorRuntime.async(function configure$(_context) {
     while (1) {
       switch (_context.prev = _context.next) {
@@ -19,7 +19,34 @@ function configure(messages, _ref) {
           };
 
           n = _ref.n;
-          alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+          value = {
+            A: 0,
+            B: 1,
+            C: 2,
+            D: 3,
+            E: 4,
+            F: 5,
+            G: 6,
+            H: 7,
+            I: 8,
+            J: 9,
+            K: 10,
+            L: 11,
+            M: 12,
+            N: 13,
+            O: 14,
+            P: 15,
+            Q: 16,
+            R: 17,
+            S: 18,
+            T: 19,
+            U: 20,
+            V: 21,
+            W: 22,
+            X: 23,
+            Y: 24,
+            Z: 25
+          };
           _context.next = 5;
           return regeneratorRuntime.awrap(getAsset("ngrams/" + n + ".json"));
 
@@ -31,7 +58,7 @@ function configure(messages, _ref) {
               function convertMessage(message) {
                 var i;
                 return message.toUpperCase().split("").flatMap(function (c) {
-                  return (i = alphabet.indexOf(c) > -1) ? [i] : [];
+                  return value.hasOwnProperty(c) ? [i = value[c]] : [];
                 });
               }
 
@@ -73,10 +100,8 @@ function configure(messages, _ref) {
               ;
             }(),
             randomCandidate: function randomCandidate() {
-              var j,
-                  x,
-                  i,
-                  a = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
+              var j, x, i;
+              var a = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
 
               for (i = 25; i > 0; i--) {
                 j = Math.floor(Math.random() * (i + 1));
@@ -89,10 +114,9 @@ function configure(messages, _ref) {
               return a;
             },
             permuteCandidate: function permuteCandidate(key) {
-              var posA,
-                  posB,
-                  temp,
-                  permutedKey = _toConsumableArray(key);
+              var posA, posB, temp;
+
+              var permutedKey = _toConsumableArray(key);
 
               for (var numSwaps = rand(4) + 1; numSwaps > 0; numSwaps--) {
                 posA = rand(26);
@@ -103,7 +127,6 @@ function configure(messages, _ref) {
                 permutedKey[posB] = temp;
               }
 
-              ;
               return permutedKey;
             },
             keyToString: function keyToString(key) {
@@ -118,5 +141,3 @@ function configure(messages, _ref) {
     }
   });
 }
-
-;

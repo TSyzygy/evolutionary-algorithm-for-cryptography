@@ -1,6 +1,6 @@
 "use strict";
 
-const alphabet = [
+const alphabet = new Set([
     "A",
     "B",
     "C",
@@ -27,100 +27,61 @@ const alphabet = [
     "X",
     "Y",
     "Z",
-  ],
-  value = {
-    A: 0,
-    B: 1,
-    C: 2,
-    D: 3,
-    E: 4,
-    F: 5,
-    G: 6,
-    H: 7,
-    I: 8,
-    J: 9,
-    K: 10,
-    L: 11,
-    M: 12,
-    N: 13,
-    O: 14,
-    P: 15,
-    Q: 16,
-    R: 17,
-    S: 18,
-    T: 19,
-    U: 20,
-    V: 21,
-    W: 22,
-    X: 23,
-    Y: 24,
-    Z: 25,
-    a: 0,
-    b: 1,
-    c: 2,
-    d: 3,
-    e: 4,
-    f: 5,
-    g: 6,
-    h: 7,
-    i: 8,
-    j: 9,
-    k: 10,
-    l: 11,
-    m: 12,
-    n: 13,
-    o: 14,
-    p: 15,
-    q: 16,
-    r: 17,
-    s: 18,
-    t: 19,
-    u: 20,
-    v: 21,
-    w: 22,
-    x: 23,
-    y: 24,
-    z: 25,
-  };
+    "a",
+    "b",
+    "c",
+    "d",
+    "e",
+    "f",
+    "g",
+    "h",
+    "i",
+    "j",
+    "k",
+    "l",
+    "m",
+    "n",
+    "o",
+    "p",
+    "q",
+    "r",
+    "s",
+    "t",
+    "u",
+    "v",
+    "w",
+    "x",
+    "y",
+    "z",
+  ]);
 
-function MessageDecrypter(message, config) {
-  const convertedMessage = message
+function MessageDecrypter(message, { keylength }) {
+  const filteredMessage = message
     .split("")
-    .map((c) => (value.hasOwnProperty(c) ? value[c] : c)),
-    lettersOnlyMessage = convertedMessage.filter((c) => alphabet.indexOf(c) >);
+    .filter((c) => alphabet.has(c));
   return (key) => {
-    var p = 0, b = 0;
-    return convertedMessage.reduce((plaintext, val) => {
+    var p = 0,
+      b = 0;
+    return filteredMessage.reduce((plaintext, val, _i, ciphertext) => {
       if (p == keylength) {
         p = 0;
-        b += keylength
+        b += keylength;
       };
-      return (
-        plaintext + (typeof val == "number" ? letter[val + key[p++]] : val)
-      );
+      return plaintext + ciphertext[val + key[p++]];
     }, "");
   };
-  const decrypted = [];
+}
 
-  for (let i = 0, b = 0, p = 0, l = message.length; i < l; (i++, p++)) {
-    if (p == keylength) {
-      p = 0;
-      b += keylength;
-    };
-    decrypted.push(message[b + key[p]]);
-  };
-};
+function KeyToString() {
+  return key => key.join(",")
+}
 
-function KeyToString(config) {
+function KeyToText() {
+  return key => key.join(",")
+}
 
-};
-
-function KeyToText(config) {
-
-};
-
-function TextToKey(config) {
-  
-};
+function TextToKey() {
+  return text => text.split(",").map(Number)
+}
 
 export { MessageDecrypter, KeyToString, KeyToText, TextToKey };

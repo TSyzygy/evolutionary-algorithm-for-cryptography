@@ -1,179 +1,6 @@
-"use strict"; // Functions which generate the cipher-specific functions (fitness, randomCandidate and permuteCandidate)
-// IIFE
+"use strict"; // IIFE used to prevent worker config functions from changing evolution variables / running internal functions
 
-/* const cipherFunctionGenerators = (function () {
-  // Prevents cipherFunctionGenerators from changing the worker's onmessage handler
-  var onmessage, globalThis;
-
-  return {
-    async vigenere(messages, { keylength, n }) {
-      const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
-        alphabetLength = 26,
-        scores = await getAsset("ngrams/" + n + ".json"),
-        convertMessage = (message) =>
-          message
-            .toUpperCase()
-            .split("")
-            .flatMap((c) => {
-              var i = alphabet.indexOf(c);
-              return i > -1 ? [i] : [];
-            }),
-        scoreMessage =
-          n > 1 // Ngram score
-            ? function (message, key) {
-                const keylength = key.length;
-                var gram = [],
-                  p = 0,
-                  score = 0;
-                for (let char of message) {
-                  if (gram.length == n) gram.shift();
-                  gram.push(alphabet[char + key[p]]);
-                  score += scores[gram.join("")] || 0;
-                  if (++p == keylength) {
-                    p = 0;
-                  }
-                }
-                return score / message.length;
-              } // Letter score
-            : function (message, key) {
-                return 1000 * (
-                  message.reduce(
-                    (t, c, p) => t + scores[c + key[p % keylength]]
-                  ) / message.length
-                );
-              };
-
-      var fitness, randomCandidate, permuteCandidate, keyToString;
-
-      // If multiple messages provided
-      if (messages.length > 1) {
-        messages = messages.map(convertMessage);
-        // Converts messages to numerical form
-        fitness = (key) =>
-          messages.reduce((t, message) => t + scoreMessage(message, key));
-        // If only one message provided
-      } else {
-        const message = convertMessage(messages[0]);
-        fitness = (key) => scoreMessage(message, key);
-      }
-
-      // Generates random candidate function
-      randomCandidate = function () {
-        var key = [];
-        for (let i = 0; i < keylength; i++)
-          key.push(Math.floor(Math.random() * alphabetLength));
-        return key;
-      };
-
-      // Gets a random number between min and max-1
-      function randRange(min, max) {
-        return Math.floor(Math.random() * (max - min)) + min;
-      }
-
-      // Generates permute candidate function
-      permuteCandidate = function (key) {
-        const permutedKey = [...key];
-        permutedKey[randRange(0, keylength)] = randRange(0, alphabetLength);
-        return permutedKey;
-      };
-
-      keyToString = (key) => key.join(",");
-
-      return {
-        fitness,
-        randomCandidate,
-        permuteCandidate,
-        keyToString,
-      };
-    },
-
-    async monoalphabetic(messages, { n }) {
-      const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
-        alphabetLength = 26,
-        scores = await getAsset("ngrams/" + n + ".json"),
-        convertMessage = (message) =>
-          message
-            .toUpperCase()
-            .split("")
-            .flatMap((c) => {
-              var i = alphabet.indexOf(c);
-              return i > -1 ? [i] : [];
-            }),
-        scoreMessage = function (message, key) {
-          var gram = [],
-            score = 0,
-            g;
-          for (let char of message) {
-            if (gram.length == n) gram.shift();
-            gram.push(key[char]);
-            g = gram.join("");
-            if (scores.hasOwnProperty(g)) score += scores[g];
-          }
-          return score / message.length;
-        },
-        // Gets a random number between min and max-1
-        randRange = function (min, max) {
-          return Math.floor(Math.random() * (max - min)) + min;
-        };
-
-      // Shuffles array in place
-      function shuffle(a) {
-        var j, x, i;
-        for (i = a.length - 1; i > 0; i--) {
-          j = Math.floor(Math.random() * (i + 1));
-          x = a[i];
-          a[i] = a[j];
-          a[j] = x;
-        }
-        return a;
-      }
-
-      var fitness, randomCandidate, permuteCandidate, keyToString;
-
-      // If multiple messages provided
-      if (messages.length > 1) {
-        messages = messages.map(convertMessage);
-        // Converts messages to numerical form
-        fitness = (key) =>
-          messages.reduce((t, message) => t + scoreMessage(message, key));
-      // If only one message provided
-      } else {
-        var message = convertMessage(messages[0]);
-        fitness = (key) => scoreMessage(message, key);
-      }
-
-      // Generates random candidate function
-      randomCandidate = () => shuffle(alphabet.split(""));
-
-      // Generates permute candidate function
-      permuteCandidate = function (key) {
-        const permutedKey = [...key],
-          numSwaps = randRange(0, 4);
-        for (let n = 0; n < numSwaps; n++) {
-          var posA = randRange(0, alphabetLength),
-            posB = randRange(0, alphabetLength), // TODO: ensure posA != posB?
-            temp = permutedKey[posA];
-          permutedKey[posA] = permutedKey[posB];
-          permutedKey[posB] = temp;
-        }
-        return permutedKey;
-      };
-
-      keyToString = (key) => key.join("");
-
-      return {
-        fitness,
-        randomCandidate,
-        permuteCandidate,
-        keyToString,
-      };
-    },
-  };
-})();
-*/
-// IIFE used to prevent cipherFunctionGenerators from changing evolution variables / running internal functions. The getAsset function is accessible by cipherFunctionGenerators
-
-var _ref = function () {
+var getAsset = function () {
   // PRIVATE VARIABLES
   var running = false,
       candidates = [],
@@ -186,9 +13,7 @@ var _ref = function () {
       populationSize,
       childrenPerParent,
       randomPerGeneration,
-      allowDuplicates; // PRIVATE CONSTANTS
-
-  var localAssets = {}; // PRIVATE FUNCTIONS
+      allowDuplicates; // PRIVATE FUNCTIONS
 
   function evaluateCandidate(candidate) {
     // If the key is a current candidate and duplicates are allowed, adds to same location in array
@@ -214,7 +39,6 @@ var _ref = function () {
         candidates.splice(i, 0, candidate);
       }
 
-    ;
     if (candidates.length > populationSize) candidates.shift(); // If the candidate is not currently a candidate but had been in the past, it must be worse than all current candidates so is ignored.
   } // Evolve the population by one generation
 
@@ -254,13 +78,7 @@ var _ref = function () {
 
     postStatusUpdate();
     if (running) setTimeout(nextGeneration);
-  }
-  /* Continues evolving the population until "stop" message received.
-  function run() {
-    nextGeneration();
-    nextGenTimeout = setTimeout(run); // Any new instructions from control (such as "stop") will be dealt with before running next generation
-  } */
-  // Sends a status update to control
+  } // Sends a status update to control
 
 
   function postStatusUpdate() {
@@ -281,14 +99,14 @@ var _ref = function () {
     };
 
     return onmessage;
-  }(function _callee(_ref2) {
-    var _ref2$data, _ref2$data$config, messages, _ref2$data$config$cip, name, options, evolution, importCandidates, importKnownScores, _ref3;
+  }(function _callee(_ref) {
+    var _ref$data, _ref$data$config, messages, _ref$data$config$ciph, name, options, evolution, importCandidates, importKnownScores, _ref2;
 
     return regeneratorRuntime.async(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            _ref2$data = _ref2.data, _ref2$data$config = _ref2$data.config, messages = _ref2$data$config.messages, _ref2$data$config$cip = _ref2$data$config.cipher, name = _ref2$data$config$cip.name, options = _ref2$data$config$cip.options, evolution = _ref2$data$config.evolution, importCandidates = _ref2$data.candidates, importKnownScores = _ref2$data.knownScores;
+            _ref$data = _ref.data, _ref$data$config = _ref$data.config, messages = _ref$data$config.messages, _ref$data$config$ciph = _ref$data$config.cipher, name = _ref$data$config$ciph.name, options = _ref$data$config$ciph.options, evolution = _ref$data$config.evolution, importCandidates = _ref$data.candidates, importKnownScores = _ref$data.knownScores;
             populationSize = evolution.populationSize;
             childrenPerParent = evolution.childrenPerParent;
             randomPerGeneration = evolution.randomPerGeneration;
@@ -300,11 +118,11 @@ var _ref = function () {
             return regeneratorRuntime.awrap(configure(messages, options));
 
           case 8:
-            _ref3 = _context.sent;
-            fitness = _ref3.fitness;
-            randomCandidate = _ref3.randomCandidate;
-            permuteCandidate = _ref3.permuteCandidate;
-            keyToString = _ref3.keyToString;
+            _ref2 = _context.sent;
+            fitness = _ref2.fitness;
+            randomCandidate = _ref2.randomCandidate;
+            permuteCandidate = _ref2.permuteCandidate;
+            keyToString = _ref2.keyToString;
             importCandidates.forEach(evaluateCandidate);
             knownScores = importKnownScores;
 
@@ -313,8 +131,8 @@ var _ref = function () {
             } // Once config complete, message events toggle the population on/off.
 
 
-            onmessage = function onmessage(_ref4) {
-              var run = _ref4.data;
+            onmessage = function onmessage(_ref3) {
+              var run = _ref3.data;
               running = run;
               nextGeneration();
             };
@@ -328,27 +146,27 @@ var _ref = function () {
         }
       }
     });
-  }); // PUBLIC FUNCTIONS
+  }); // IIFE for localAssets
 
 
-  return {
-    getAsset: function getAsset(path) {
+  return function () {
+    var localAssets = {}; // PUBLIC GETASSET FUNCTION
+
+    return function _callee2(path) {
       var splitPath, directory, fileName;
-      return regeneratorRuntime.async(function getAsset$(_context2) {
+      return regeneratorRuntime.async(function _callee2$(_context2) {
         while (1) {
           switch (_context2.prev = _context2.next) {
             case 0:
               // Navigates to the correct directory in local data
-              splitPath = path.split("/");
-              directory = splitPath.slice(0, -1).reduce(function (t, v) {
+              splitPath = path.split("/"), directory = splitPath.slice(0, -1).reduce(function (t, v) {
                 return t.hasOwnProperty(v) ? t[v] : t[v] = {};
-              }, localAssets);
-              fileName = splitPath[splitPath.length - 1];
+              }, localAssets), fileName = splitPath[splitPath.length - 1];
               return _context2.abrupt("return", directory.hasOwnProperty(fileName) ? directory[fileName] // If the asset is not already stored locally, requests it from control
               : new Promise(function (resolve) {
                 // Waits for a message returning the data
-                onmessage = function onmessage(_ref5) {
-                  var asset = _ref5.data;
+                onmessage = function onmessage(_ref4) {
+                  var asset = _ref4.data;
                   // Once asset is recieved from control, saves it locally in case of future use and resolves the promise
                   resolve(directory[fileName] = asset);
                 }; // Posts a message requesting the desired data
@@ -360,16 +178,15 @@ var _ref = function () {
                 });
               }));
 
-            case 4:
+            case 2:
             case "end":
               return _context2.stop();
           }
         }
       });
-    }
-  };
-}(),
-    getAsset = _ref.getAsset; // Once initial setup is complete, tells control that it is ready to receive config
+    };
+  }();
+}(); // Once initial setup is complete, tells control that it is ready to receive config
 
 
 postMessage({
