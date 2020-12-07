@@ -34,7 +34,7 @@ async function configure(messages, { n }) {
   // Gets a random number between min and max-1
   function rand(max) {
     return Math.floor(Math.random() * max);
-  };
+  }
 
   return {
     fitness: (function () {
@@ -44,7 +44,7 @@ async function configure(messages, { n }) {
           .toUpperCase()
           .split("")
           .flatMap((c) => (value.hasOwnProperty(c) ? [(i = value[c])] : []));
-      };
+      }
 
       function scoreMessage(message, key) {
         // This double iteration is the fastest method I have found so far
@@ -56,7 +56,7 @@ async function configure(messages, { n }) {
           if (scores.hasOwnProperty((gram = decrypted.substr(i, n))))
             score += scores[gram];
         return score / message.length;
-      };
+      }
 
       // If multiple messages provided
       if (messages.length > 1) {
@@ -68,52 +68,48 @@ async function configure(messages, { n }) {
       } else {
         const message = convertMessage(messages[0]);
         return (key) => scoreMessage(message, key);
-      };
+      }
     })(),
     randomCandidate() {
-      var j,
-        x,
-        i;
+      var j, x, i;
       const a = [
-          "A",
-          "B",
-          "C",
-          "D",
-          "E",
-          "F",
-          "G",
-          "H",
-          "I",
-          "J",
-          "K",
-          "L",
-          "M",
-          "N",
-          "O",
-          "P",
-          "Q",
-          "R",
-          "S",
-          "T",
-          "U",
-          "V",
-          "W",
-          "X",
-          "Y",
-          "Z",
-        ];
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F",
+        "G",
+        "H",
+        "I",
+        "J",
+        "K",
+        "L",
+        "M",
+        "N",
+        "O",
+        "P",
+        "Q",
+        "R",
+        "S",
+        "T",
+        "U",
+        "V",
+        "W",
+        "X",
+        "Y",
+        "Z",
+      ];
       for (i = 25; i > 0; i--) {
         j = Math.floor(Math.random() * (i + 1));
         x = a[i];
         a[i] = a[j];
         a[j] = x;
-      };
+      }
       return a;
     },
     permuteCandidate(key) {
-      var posA,
-        posB,
-        temp;
+      var posA, posB, temp;
       const permutedKey = [...key];
       for (let numSwaps = rand(4) + 1; numSwaps > 0; numSwaps--) {
         posA = rand(26);

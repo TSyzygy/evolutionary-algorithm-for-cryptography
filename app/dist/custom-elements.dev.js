@@ -2,6 +2,10 @@
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
@@ -22,9 +26,9 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
-var populationPageTemplate = document.getElementById("population-page-template").content.firstElementChild;
+var customElementRegistry = window.customElements;
 {
-  var customElementRegistry = window.customElements;
+  var populationPageTemplate = document.getElementById("population-page-template").content.firstElementChild;
   customElementRegistry.define("population-page",
   /*#__PURE__*/
   function (_HTMLElement) {
@@ -48,3 +52,58 @@ var populationPageTemplate = document.getElementById("population-page-template")
     return _class;
   }(_wrapNativeSuper(HTMLElement)));
 }
+;
+{
+  var modalTemplate = document.getElementById("modal-template").content;
+  customElementRegistry.define("modal-popup",
+  /*#__PURE__*/
+  function (_HTMLElement2) {
+    _inherits(_class2, _HTMLElement2);
+
+    _createClass(_class2, null, [{
+      key: "observedAttributes",
+      get: function get() {
+        return [];
+      }
+    }]);
+
+    function _class2() {
+      var _this2;
+
+      _classCallCheck(this, _class2);
+
+      _this2 = _possibleConstructorReturn(this, _getPrototypeOf(_class2).call(this));
+
+      var shadow = _this2.attachShadow({
+        mode: "closed"
+      }),
+          modalElements = modalTemplate.cloneNode(true),
+          thisModal = _assertThisInitialized(_this2);
+
+      _this2.elements = modalElements.querySelector("section");
+      modalElements.querySelector("#close-button").addEventListener("click", function () {
+        thisModal.open = false;
+      });
+      shadow.appendChild(modalElements);
+      return _this2;
+    }
+
+    _createClass(_class2, [{
+      key: "attributeChangedCallback",
+      value: function attributeChangedCallback(name, oldValue, newValue) {
+        switch (name) {}
+      }
+    }, {
+      key: "open",
+      set: function set(val) {
+        if (val) this.setAttribute("open", "");else this.removeAttribute("open");
+      },
+      get: function get() {
+        return this.hasAttribute("open");
+      }
+    }]);
+
+    return _class2;
+  }(_wrapNativeSuper(HTMLElement)));
+}
+;

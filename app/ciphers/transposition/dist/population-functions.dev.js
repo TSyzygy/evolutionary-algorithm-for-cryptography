@@ -11,20 +11,25 @@ var alphabet = new Set(["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "
 
 function MessageDecrypter(message, _ref) {
   var keylength = _ref.keylength;
+
+  while (message.length % keylength) {
+    message += "X";
+  }
+
   var filteredMessage = message.split("").filter(function (c) {
     return alphabet.has(c);
   });
   return function (key) {
     var p = 0,
         b = 0;
-    return filteredMessage.reduce(function (plaintext, val, _i, ciphertext) {
+    return filteredMessage.reduce(function (plaintext, _c, _i, ciphertext) {
       if (p == keylength) {
         p = 0;
         b += keylength;
       }
 
       ;
-      return plaintext + ciphertext[val + key[p++]];
+      return plaintext + ciphertext[b + key[p++]];
     }, "");
   };
 }

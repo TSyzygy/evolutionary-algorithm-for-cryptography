@@ -56,18 +56,19 @@ const alphabet = new Set([
   ]);
 
 function MessageDecrypter(message, { keylength }) {
+  while (message.length % keylength) message += "X";
   const filteredMessage = message
     .split("")
     .filter((c) => alphabet.has(c));
   return (key) => {
     var p = 0,
       b = 0;
-    return filteredMessage.reduce((plaintext, val, _i, ciphertext) => {
+    return filteredMessage.reduce((plaintext, _c, _i, ciphertext) => {
       if (p == keylength) {
         p = 0;
         b += keylength;
       };
-      return plaintext + ciphertext[val + key[p++]];
+      return plaintext + ciphertext[b + key[p++]];
     }, "");
   };
 }

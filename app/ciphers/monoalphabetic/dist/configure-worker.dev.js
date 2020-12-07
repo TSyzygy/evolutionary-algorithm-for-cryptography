@@ -52,7 +52,6 @@ function configure(messages, _ref) {
 
         case 5:
           scores = _context.sent;
-          ;
           return _context.abrupt("return", {
             fitness: function () {
               function convertMessage(message) {
@@ -61,8 +60,6 @@ function configure(messages, _ref) {
                   return value.hasOwnProperty(c) ? [i = value[c]] : [];
                 });
               }
-
-              ;
 
               function scoreMessage(message, key) {
                 // This double iteration is the fastest method I have found so far
@@ -78,9 +75,8 @@ function configure(messages, _ref) {
                 }
 
                 return score / message.length;
-              }
+              } // If multiple messages provided
 
-              ; // If multiple messages provided
 
               if (messages.length > 1) {
                 messages = messages.map(convertMessage); // Converts messages to numerical form
@@ -96,8 +92,6 @@ function configure(messages, _ref) {
                   return scoreMessage(message, key);
                 };
               }
-
-              ;
             }(),
             randomCandidate: function randomCandidate() {
               var j, x, i;
@@ -110,7 +104,6 @@ function configure(messages, _ref) {
                 a[j] = x;
               }
 
-              ;
               return a;
             },
             permuteCandidate: function permuteCandidate(key) {
@@ -134,7 +127,7 @@ function configure(messages, _ref) {
             }
           });
 
-        case 8:
+        case 7:
         case "end":
           return _context.stop();
       }

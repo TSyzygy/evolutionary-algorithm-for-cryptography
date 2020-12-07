@@ -169,6 +169,40 @@
     </div>
 
 
+    <template id="modal-template">
+      <link rel="stylesheet" href="dist/modal.css">
+
+      <div>
+        <div>
+          <header>
+            <h4>
+              <slot name="title">Unnamed modal</slot>
+            </h4>
+            <button id="close-button">
+              &times;
+            </button>
+          </header>
+          <main>
+            <slot>
+
+            </slot>
+          </main>
+          <footer>
+            <p><slot name="footer">Footer text</slot></p>
+          </footer>
+        </div>
+      </div>
+    </template>
+
+    <modal-popup id="modal-test">
+      <span slot="title">Yay!</span>
+      <p>This is some text</p>
+    </modal-popup>
+
+    <template id="modal-page-template">
+      
+    </template>
+
     <section id="add-population-modal" class="modal">
       <div>
         <div>
@@ -265,6 +299,7 @@
                       <option value="monoalphabetic">Monoalphabetic substitution</option>
                       <option value="one-time-pad">One-time pad</option>
                       <option value="hill">Hill</option>
+                      <option value="adfgvx">ADFGVX</option>
                     </select>
                   </div>
                   <div id="cipher-specific-options">
@@ -338,6 +373,19 @@
                       </div>
                     </div>
 
+                    <div data-cipher-name="adfgvx">
+                      <div class="data-entry">
+                        <label for="adfgvx-n">Fitness evaluation method:</label>
+                        <select name="n" id="adfgvx-n" class="required-for-cipher">
+                          <option value="">Select fitness method...</option>
+                          <option value="2">Bigram score</option>
+                          <option value="3">Trigram score</option>
+                          <option value="4">Quadgram score (recommended)</option>
+                          <option value="5">Quintgram score</option>
+                        </select>
+                      </div>
+                    </div>
+
                   </div>
                 </div>
 
@@ -359,6 +407,7 @@
     </section>
 
     <script src="functionality-checks.js"></script>
+    <script src="custom-elements.js"></script>
     <script src="population-control.js"></script>
     <script src="assets.js"></script>
     <script src="interface.js"></script>
