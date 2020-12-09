@@ -26,6 +26,25 @@
   height: 100%;
   padding: 16px;
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+:host header {
+  flex-shrink: 0;
+  display: flex;
+  margin: 4px 0;
+}
+:host header h4 {
+  flex-grow: 1;
+}
+:host main {
+  flex-grow: 1;
+  overflow: auto;
+  border-top: 1px solid #0002;
+  border-bottom: 1px solid #0002;
+}
+:host main > div {
+  margin: 8px 8px 8px 0;
 }
 
 :host([open]) {

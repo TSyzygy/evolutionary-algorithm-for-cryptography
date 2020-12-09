@@ -16,24 +16,14 @@ const // sidebar
   ),
   addPopulationModal = document.getElementById("add-population-modal"),
   addPopulationForm = addPopulationModal.querySelector("form"),
-  addPopulationMain = addPopulationForm.querySelector("div"),
-  closeAddPopulationModalButton = addPopulationForm.querySelector(
-    "#close-add-population-modal"
-  ),
-  addPopulationMenu = addPopulationMain.querySelector("#add-population-menu"),
-  newPopulationMenu = addPopulationMain.querySelector("#new-population-menu"),
-  openNewPopulationMenuButton = addPopulationMenu.querySelector(
-    "#open-new-population-menu"
-  ),
-  populationModalBackButton = addPopulationForm.querySelector("footer button"),
-  messageEntryContainer = newPopulationMenu.querySelector("#messages"),
-  addMessageButton = newPopulationMenu.querySelector("#add-message"),
-  messageEntryTemplate = newPopulationMenu.querySelector(
+  messageEntryContainer = addPopulationForm.querySelector("#messages"),
+  addMessageButton = addPopulationForm.querySelector("#add-message"),
+  messageEntryTemplate = addPopulationForm.querySelector(
     "#message-input-template"
   ),
   maxMessagesAllowed = 12,
-  cipherName = newPopulationMenu.querySelector("#cipher-name"),
-  cipherSpecificPages = newPopulationMenu.querySelector(
+  cipherName = addPopulationForm.querySelector("#cipher-name"),
+  cipherSpecificPages = addPopulationForm.querySelector(
     "#cipher-specific-options"
   ),
   cipherSpecificPagesCollection = cipherSpecificPages.children;
@@ -56,34 +46,9 @@ closeSidebarButton.addEventListener("click", closeSidebar);
 // add-population-modal
 
 function openAddPopulationModal() {
-  addPopulationMenu.classList.add("open");
-  addPopulationModal.classList.add("open");
+  addPopulationModal.open = true;
 }
 openAddPopulationModalButton.addEventListener("click", openAddPopulationModal);
-
-function closeAddPopulationModal() {
-  addPopulationModal.classList.remove("open");
-  // Returns it to the main add population menu
-  returnToAddPopulationMenu();
-}
-closeAddPopulationModalButton.addEventListener(
-  "click",
-  closeAddPopulationModal
-);
-
-function returnToAddPopulationMenu() {
-  newPopulationMenu.classList.remove("open");
-  addPopulationMenu.classList.add("open");
-  populationModalBackButton.setAttribute("disabled", "true");
-}
-populationModalBackButton.addEventListener("click", returnToAddPopulationMenu);
-
-function openNewPopulationMenu() {
-  addPopulationMenu.classList.remove("open");
-  newPopulationMenu.classList.add("open");
-  populationModalBackButton.removeAttribute("disabled");
-}
-openNewPopulationMenuButton.addEventListener("click", openNewPopulationMenu);
 
 function changeCurrentCipherPage(chosenCipherName) {
   if (currentCipherPage) {
@@ -93,10 +58,6 @@ function changeCurrentCipherPage(chosenCipherName) {
       "required-for-cipher"
     ))
       e.removeAttribute("required");
-    /*Array.prototype.forEach.call(
-      currentCipherPage.getElementsByClassName("required-for-cipher"),
-      (e) => e.removeAttribute("required")
-    ); */
   }
 
   currentCipherPage = cipherSpecificPages.querySelector(
@@ -109,14 +70,10 @@ function changeCurrentCipherPage(chosenCipherName) {
       "required-for-cipher"
     ))
       e.setAttribute("required", "");
-    /*Array.prototype.forEach.call(
-      currentCipherPage.getElementsByClassName("required-for-cipher"),
-      (e) => e.setAttribute("required", "")
-    ); */
   }
 
   // Scrolls to bottom
-  addPopulationMain.scrollTop = addPopulationMain.scrollHeight;
+  // addPopulationMain.scrollTop = addPopulationMain.scrollHeight;
 }
 
 cipherName.addEventListener("change", function () {
@@ -179,24 +136,23 @@ addPopulationForm.addEventListener("submit", function () {
         cipher: {
           name: cipherName.value,
           // Collects all the cipher-specific option inputs
-          options: Array.prototype.reduce.call(
-            currentCipherPage.querySelectorAll("input, select"),
-            (t, e) => {
-              switch (e.type) {
+          options: (() => {
+            const options = {};
+            for (let option of currentCipherPage.querySelectorAll("input, select")) {
+              switch (option.type) {
                 case "checkbox":
-                  t[e.name] = e.checked;
+                  options[option.name] = option.checked;
                   break;
                 case "number":
-                  t[e.name] = Number(e.value);
+                  options[option.name] = Number(option.value);
                   break;
                 case "select-one":
-                  t[e.name] = Number(e.value);
+                  options[option.name] = Number(option.value);
                   break;
               }
-              return t;
-            },
-            {}
-          ),
+            }
+            return options;
+          })(),
         },
         evolution: {
           populationSize: elements["population-size"].value,
@@ -211,7 +167,7 @@ addPopulationForm.addEventListener("submit", function () {
 
   setupPopulation(populationInfo);
 
-  closeAddPopulationModal();
+  addPopulationModal.open = false;
   this.reset();
 });
 

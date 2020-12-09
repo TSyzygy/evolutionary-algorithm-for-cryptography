@@ -1,0 +1,133 @@
+h1 {
+  font-weight: 400;
+  font-size: 1.4rem;
+  margin: auto 0;
+}
+
+h2 {
+  font-weight: 400;
+  font-size: 1.2rem;
+  margin: auto 0;
+  text-transform: uppercase;
+}
+
+h3 {
+  font-weight: 200;
+  font-size: 1.2rem;
+  margin: auto 0;
+}
+
+h4 {
+  font-weight: 500;
+  font-size: 1rem;
+  margin: auto 0;
+}
+
+h5 {
+  font-weight: 400;
+  font-size: 1rem;
+  margin: auto 0;
+}
+
+p, label {
+  font-weight: 300;
+  margin: auto 0;
+}
+
+code,
+.monospace {
+  font-family: RobotoMono, monospace;
+  word-break: break-word;
+}
+
+.break-all {
+  word-break: break-all;
+}
+
+table {
+  font-size: 0.9rem;
+  text-align: left;
+  border-spacing: 0 4px;
+}
+
+th {
+  font-weight: 500;
+}
+
+td {
+  padding: 0 4px 0 0;
+}
+
+button {
+  border: none;
+  border-radius: 4px;
+  margin: 0;
+  cursor: pointer;
+  font-family: Inter, Helvetica;
+  font-size: 1em;
+  text-align: center;
+  color: #000;
+  background-color: #0000;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+button:hover {
+  color: inherit;
+  background-color: #0002;
+}
+button:disabled:hover {
+  background-color: initial;
+}
+button:disabled {
+  color: #666;
+}
+button.square {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+input[type=text] {
+  margin: 0;
+}
+input[type=number] {
+  margin: auto 0;
+  width: 80px;
+}
+input[type=text], input[type=number] {
+  border: none;
+  font-family: Inter, Helvetica;
+  font-weight: 300;
+  font-size: 1em;
+  padding: 3px;
+  box-sizing: border-box;
+  border-radius: 4px;
+  background-color: #0001;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  transition: background-color 0.2s;
+}
+input[type=text]:hover, input[type=text]:focus, input[type=number]:hover, input[type=number]:focus {
+  background-color: #0002;
+}
+input[type=text]:focus, input[type=number]:focus {
+  outline: none;
+}
+input[type=text]::placeholder, input[type=number]::placeholder {
+  color: #444;
+}
+input.monospace {
+  font-family: RobotoMono, monospace;
+}
+input.small {
+  font-size: 12px;
+}
+
+select {
+  margin: auto 0;
+}
+
+:focus {
+  outline: none;
+}

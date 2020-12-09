@@ -27,83 +27,161 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
 var customElementRegistry = window.customElements;
-{
-  var populationPageTemplate = document.getElementById("population-page-template").content.firstElementChild;
-  customElementRegistry.define("population-page",
-  /*#__PURE__*/
-  function (_HTMLElement) {
-    _inherits(_class, _HTMLElement);
+var populationPageTemplate = document.getElementById("population-page-template").content.firstElementChild;
+customElementRegistry.define("population-page",
+/*#__PURE__*/
+function (_HTMLElement) {
+  _inherits(_class, _HTMLElement);
 
-    function _class() {
-      var _this;
+  function _class() {
+    var _this;
 
-      _classCallCheck(this, _class);
+    _classCallCheck(this, _class);
 
-      _this = _possibleConstructorReturn(this, _getPrototypeOf(_class).call(this));
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(_class).call(this));
 
-      var shadow = _this.attachShadow({
-        mode: "closed"
-      });
+    var shadow = _this.attachShadow({
+      mode: "closed"
+    });
 
-      shadow.appendChild(populationPageTemplate.cloneNode(true));
-      return _this;
+    shadow.appendChild(populationPageTemplate.cloneNode(true));
+    return _this;
+  }
+
+  return _class;
+}(_wrapNativeSuper(HTMLElement)));
+var modalTemplate = document.getElementById("modal-template").content;
+customElementRegistry.define("modal-popup",
+/*#__PURE__*/
+function (_HTMLElement2) {
+  _inherits(_class2, _HTMLElement2);
+
+  _createClass(_class2, null, [{
+    key: "observedAttributes",
+    get: function get() {
+      return ["name"];
     }
+  }]);
 
-    return _class;
-  }(_wrapNativeSuper(HTMLElement)));
-}
-;
-{
-  var modalTemplate = document.getElementById("modal-template").content;
-  customElementRegistry.define("modal-popup",
-  /*#__PURE__*/
-  function (_HTMLElement2) {
-    _inherits(_class2, _HTMLElement2);
+  function _class2() {
+    var _this2;
 
-    _createClass(_class2, null, [{
-      key: "observedAttributes",
-      get: function get() {
-        return [];
+    _classCallCheck(this, _class2);
+
+    _this2 = _possibleConstructorReturn(this, _getPrototypeOf(_class2).call(this));
+
+    var shadow = _this2.attachShadow({
+      mode: "open"
+    }),
+        modalElements = modalTemplate.cloneNode(true),
+        thisModal = _assertThisInitialized(_this2);
+
+    modalElements.querySelector("#close-button").addEventListener("click", function () {
+      thisModal.open = false;
+    });
+    shadow.appendChild(modalElements);
+    return _this2;
+  }
+
+  _createClass(_class2, [{
+    key: "attributeChangedCallback",
+    value: function attributeChangedCallback(name, _oldValue, newValue) {
+      switch (name) {
+        case "name":
+          this.shadowRoot.querySelector("header h4").innerText = newValue;
+          break;
       }
-    }]);
-
-    function _class2() {
-      var _this2;
-
-      _classCallCheck(this, _class2);
-
-      _this2 = _possibleConstructorReturn(this, _getPrototypeOf(_class2).call(this));
-
-      var shadow = _this2.attachShadow({
-        mode: "closed"
-      }),
-          modalElements = modalTemplate.cloneNode(true),
-          thisModal = _assertThisInitialized(_this2);
-
-      _this2.elements = modalElements.querySelector("section");
-      modalElements.querySelector("#close-button").addEventListener("click", function () {
-        thisModal.open = false;
-      });
-      shadow.appendChild(modalElements);
-      return _this2;
     }
+  }, {
+    key: "open",
+    set: function set(val) {
+      if (val) this.setAttribute("open", "");else this.removeAttribute("open");
+    },
+    get: function get() {
+      return this.hasAttribute("open");
+    }
+  }]);
 
-    _createClass(_class2, [{
-      key: "attributeChangedCallback",
-      value: function attributeChangedCallback(name, oldValue, newValue) {
-        switch (name) {}
-      }
-    }, {
-      key: "open",
-      set: function set(val) {
-        if (val) this.setAttribute("open", "");else this.removeAttribute("open");
-      },
-      get: function get() {
-        return this.hasAttribute("open");
-      }
-    }]);
+  return _class2;
+}(_wrapNativeSuper(HTMLElement)));
+/* customElementRegistry.define(
+  "cipher-input-select",
+  class extends HTMLElement {
+    constructor(options) {
+      const shadow = this.attachShadow({ mode: "open" }),
+        selectElement = document.createElement("select");
 
-    return _class2;
-  }(_wrapNativeSuper(HTMLElement)));
-}
-;
+      for (let option in options) {
+        let optionElement = document.createElement("option");
+        optionElement.innerText = option;
+        optionElement.setAttribute("value", options[option]);
+        selectElement.append(optionElement);
+      };
+
+      shadow.appendChild(selectElement);
+    }
+    checkValidity() {
+      return this.shadow.querySelector("select").checkValidity();
+    }
+  }
+); */
+
+/* customElementRegistry.define(
+  "cipher-option-group",
+  class extends HTMLElement {
+    constructor() {
+
+    }
+  }
+) */
+
+/*
+customElementRegistry.define(
+  "cipher-option",
+  class extends HTMLElement {
+    static get observedAttributes() {
+      return []; // todo
+    }
+    constructor (inputDetails, cipherName, optionName, label, info) {
+      super();
+
+      var shadow = this.attachShadow({ mode: "open" }),
+        labelElement = document.createElement("label"),
+        inputElement;
+      
+      labelElement.setAttribute("for", cipherName + "-" + optionName);
+      labelElement.innerText = label;
+
+      switch (inputDetails.type) {
+        case "select":
+          inputElement = document.createElement("select");
+          let options = inputDetails.options;
+          for (let option in options) {
+            let optionElement = document.createElement("option");
+            optionElement.innerText = option;
+            optionElement.setAttribute("value", options[option]);
+            inputElement.append(optionElement);
+          };
+          break;
+        case "number":
+          inputElement = document.createElement("input");
+          inputElement.setAttribute("type", "number");
+          for (let attribute of ["min", "max", "placeholder", "value"])
+            if (inputDetails.hasOwnProperty(attribute))
+              inputElement.setAttribute(attribute, inputDetails[attribute]);
+          break;
+      };
+      this._inputElement = inputElement;
+
+      shadow.appendChild(labelElement);
+      shadow.appendChild(inputElement);
+    }
+    get value () {
+      return this._inputElement.value;
+    }
+    checkValidity() {
+      return this._inputElement.checkValidity();
+    }
+  }
+)
+*/

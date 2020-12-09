@@ -14,18 +14,12 @@ populationPageTemplate = document.getElementById("population-page-template"),
 openAddPopulationModalButton = document.getElementById("open-add-population-modal"),
     addPopulationModal = document.getElementById("add-population-modal"),
     addPopulationForm = addPopulationModal.querySelector("form"),
-    addPopulationMain = addPopulationForm.querySelector("div"),
-    closeAddPopulationModalButton = addPopulationForm.querySelector("#close-add-population-modal"),
-    addPopulationMenu = addPopulationMain.querySelector("#add-population-menu"),
-    newPopulationMenu = addPopulationMain.querySelector("#new-population-menu"),
-    openNewPopulationMenuButton = addPopulationMenu.querySelector("#open-new-population-menu"),
-    populationModalBackButton = addPopulationForm.querySelector("footer button"),
-    messageEntryContainer = newPopulationMenu.querySelector("#messages"),
-    addMessageButton = newPopulationMenu.querySelector("#add-message"),
-    messageEntryTemplate = newPopulationMenu.querySelector("#message-input-template"),
+    messageEntryContainer = addPopulationForm.querySelector("#messages"),
+    addMessageButton = addPopulationForm.querySelector("#add-message"),
+    messageEntryTemplate = addPopulationForm.querySelector("#message-input-template"),
     maxMessagesAllowed = 12,
-    cipherName = newPopulationMenu.querySelector("#cipher-name"),
-    cipherSpecificPages = newPopulationMenu.querySelector("#cipher-specific-options"),
+    cipherName = addPopulationForm.querySelector("#cipher-name"),
+    cipherSpecificPages = addPopulationForm.querySelector("#cipher-specific-options"),
     cipherSpecificPagesCollection = cipherSpecificPages.children;
 var numMessageInputs = 1,
     currentCipherPage = null; // sidebar
@@ -43,35 +37,10 @@ function closeSidebar() {
 closeSidebarButton.addEventListener("click", closeSidebar); // add-population-modal
 
 function openAddPopulationModal() {
-  addPopulationMenu.classList.add("open");
-  addPopulationModal.classList.add("open");
+  addPopulationModal.open = true;
 }
 
 openAddPopulationModalButton.addEventListener("click", openAddPopulationModal);
-
-function closeAddPopulationModal() {
-  addPopulationModal.classList.remove("open"); // Returns it to the main add population menu
-
-  returnToAddPopulationMenu();
-}
-
-closeAddPopulationModalButton.addEventListener("click", closeAddPopulationModal);
-
-function returnToAddPopulationMenu() {
-  newPopulationMenu.classList.remove("open");
-  addPopulationMenu.classList.add("open");
-  populationModalBackButton.setAttribute("disabled", "true");
-}
-
-populationModalBackButton.addEventListener("click", returnToAddPopulationMenu);
-
-function openNewPopulationMenu() {
-  addPopulationMenu.classList.remove("open");
-  newPopulationMenu.classList.add("open");
-  populationModalBackButton.removeAttribute("disabled");
-}
-
-openNewPopulationMenuButton.addEventListener("click", openNewPopulationMenu);
 
 function changeCurrentCipherPage(chosenCipherName) {
   if (currentCipherPage) {
@@ -86,11 +55,6 @@ function changeCurrentCipherPage(chosenCipherName) {
         var e = _step.value;
         e.removeAttribute("required");
       }
-      /*Array.prototype.forEach.call(
-        currentCipherPage.getElementsByClassName("required-for-cipher"),
-        (e) => e.removeAttribute("required")
-      ); */
-
     } catch (err) {
       _didIteratorError = true;
       _iteratorError = err;
@@ -122,11 +86,6 @@ function changeCurrentCipherPage(chosenCipherName) {
 
         _e.setAttribute("required", "");
       }
-      /*Array.prototype.forEach.call(
-        currentCipherPage.getElementsByClassName("required-for-cipher"),
-        (e) => e.setAttribute("required", "")
-      ); */
-
     } catch (err) {
       _didIteratorError2 = true;
       _iteratorError2 = err;
@@ -142,9 +101,8 @@ function changeCurrentCipherPage(chosenCipherName) {
       }
     }
   } // Scrolls to bottom
+  // addPopulationMain.scrollTop = addPopulationMain.scrollHeight;
 
-
-  addPopulationMain.scrollTop = addPopulationMain.scrollHeight;
 }
 
 cipherName.addEventListener("change", function () {
@@ -195,23 +153,47 @@ addPopulationForm.addEventListener("submit", function () {
       cipher: {
         name: cipherName.value,
         // Collects all the cipher-specific option inputs
-        options: Array.prototype.reduce.call(currentCipherPage.querySelectorAll("input, select"), function (t, e) {
-          switch (e.type) {
-            case "checkbox":
-              t[e.name] = e.checked;
-              break;
+        options: function () {
+          var options = {};
+          var _iteratorNormalCompletion3 = true;
+          var _didIteratorError3 = false;
+          var _iteratorError3 = undefined;
 
-            case "number":
-              t[e.name] = Number(e.value);
-              break;
+          try {
+            for (var _iterator3 = currentCipherPage.querySelectorAll("input, select")[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+              var option = _step3.value;
 
-            case "select-one":
-              t[e.name] = Number(e.value);
-              break;
+              switch (option.type) {
+                case "checkbox":
+                  options[option.name] = option.checked;
+                  break;
+
+                case "number":
+                  options[option.name] = Number(option.value);
+                  break;
+
+                case "select-one":
+                  options[option.name] = Number(option.value);
+                  break;
+              }
+            }
+          } catch (err) {
+            _didIteratorError3 = true;
+            _iteratorError3 = err;
+          } finally {
+            try {
+              if (!_iteratorNormalCompletion3 && _iterator3["return"] != null) {
+                _iterator3["return"]();
+              }
+            } finally {
+              if (_didIteratorError3) {
+                throw _iteratorError3;
+              }
+            }
           }
 
-          return t;
-        }, {})
+          return options;
+        }()
       },
       evolution: {
         populationSize: elements["population-size"].value,
@@ -224,7 +206,7 @@ addPopulationForm.addEventListener("submit", function () {
     knownScores: {}
   };
   setupPopulation(populationInfo);
-  closeAddPopulationModal();
+  addPopulationModal.open = false;
   this.reset();
 }); // TEMPORARY
 
