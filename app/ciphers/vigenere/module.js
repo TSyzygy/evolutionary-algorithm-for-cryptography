@@ -161,7 +161,7 @@ const value = {
     "z",
   ];
 
-const cipherSetup = {
+const setup = {
   displayName: "Vigenere",
   options: [
     {
@@ -199,6 +199,10 @@ const cipherSetup = {
           {
             value: "4",
             name: "Quadgram score",
+          },
+          {
+            value: "5",
+            name: "Quintgram score",
           },
         ],
       },
@@ -239,4 +243,4 @@ function TextToKey({ keylength }) {
   };
 }
 
-export { cipherSetup, MessageDecrypter, KeyToString, KeyToText, TextToKey };
+export { setup, MessageDecrypter, KeyToString, KeyToText, TextToKey };

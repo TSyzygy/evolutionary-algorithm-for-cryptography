@@ -39,17 +39,13 @@
 
 */
 
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function _getRequireWildcardCache() { return cache; }; return cache; }
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { "default": obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj["default"] = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+console.log("hi", ciphers);
 
 var Population =
 /*#__PURE__*/
@@ -67,7 +63,7 @@ function () {
 
     var thisPopulation = this,
         worker = this.worker = new Worker("population-worker.js"),
-        page = this.page = populationPageTemplate.content.firstElementChild.cloneNode(true),
+        page = this.page = populationPageTemplate.cloneNode(true),
         toggleButton = this.toggleButton = page.querySelector(".toggle-button"),
         stepButton = this.stepButton = page.querySelector(".step-button"),
         navButtons = page.querySelector("nav").children,
@@ -91,9 +87,7 @@ function () {
     this.open = false;
     this.genNum = history.length;
     this.state = "opening";
-    var cipherFunctionImport = Promise.resolve().then(function () {
-      return _interopRequireWildcard(require("".concat("./ciphers/" + cipherName + "/population-functions.js")));
-    }).then(function (_ref2) {
+    var cipherFunctionImport = this.cipherFunctionImport = ciphers[cipherName].module.then(function (_ref2) {
       var MessageDecrypter = _ref2.MessageDecrypter,
           KeyToString = _ref2.KeyToString,
           KeyToText = _ref2.KeyToText,
@@ -104,8 +98,7 @@ function () {
       });
       _this.keyToText = KeyToText(cipherOptions);
       _this.keyToString = KeyToString(cipherOptions);
-      var keyInput = displayPoints.keyInput;
-      keyInput.addEventListener("change", function () {
+      displayPoints.keyInput.addEventListener("change", function () {
         var keyEntered = textToKey(this.value);
 
         if (keyEntered) {
@@ -114,8 +107,6 @@ function () {
         } else {
           this.setAttribute("invalid", "");
         }
-
-        ;
       });
     })["catch"](function (err) {
       console.log("Error importing cipher functions:", err);
@@ -151,8 +142,6 @@ function () {
             };
           });
         }
-
-        ;
       };
 
       var genNum = thisPopulation.genNum;
@@ -234,9 +223,8 @@ function () {
       row.appendChild(nameCell);
       row.appendChild(valueCell);
       displayPoints.cipherOptions.appendChild(row);
-    }
+    } // Evolution config
 
-    ; // Evolution config
 
     displayPoints.populationSize.innerText = populationSize;
     displayPoints.childrenPerParent.innerText = childrenPerParent;
@@ -256,7 +244,8 @@ function () {
         messagesDisplay.appendChild(m);
         d.innerText = "run program to see decryptions";
         keyDecryptions.appendChild(d);
-      }
+      } // Sets up exports
+
     } catch (err) {
       _didIteratorError2 = true;
       _iteratorError2 = err;
@@ -271,8 +260,6 @@ function () {
         }
       }
     }
-
-    ; // Sets up exports
 
     var copyConfig = displayPoints.copyConfig,
         copyPopulation = displayPoints.copyPopulation,
@@ -301,8 +288,6 @@ function () {
       });
     }
 
-    ;
-
     function downloadJSON(button, name, data) {
       displayMessage(button, "preparing");
       var blob = new Blob([JSON.stringify(data)], {
@@ -317,7 +302,6 @@ function () {
       displayMessage(button, "success");
     }
 
-    ;
     copyConfig.addEventListener("click", function () {
       copyJSON(this, config);
     });
@@ -402,8 +386,6 @@ function () {
       for (var m = 0; m < messageDecypters.length; m++) {
         bestDecryptions[m].innerText = messageDecypters[m](key);
       }
-
-      ;
     }
   }, {
     key: "state",
@@ -448,7 +430,6 @@ function () {
   return Population;
 }();
 
-;
 var populations = [];
 var openPopulation = null;
 
@@ -458,5 +439,3 @@ function setupPopulation(populationData) {
   populations.push(population);
   population.openPage();
 }
-
-;

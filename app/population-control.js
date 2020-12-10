@@ -40,13 +40,12 @@
 
 */
 
+console.log("hi", ciphers);
 class Population {
   constructor({ name, description, config, history, knownScores }) {
     const thisPopulation = this,
       worker = (this.worker = new Worker("population-worker.js")),
-      page = (this.page = populationPageTemplate.content.firstElementChild.cloneNode(
-        true
-      )),
+      page = (this.page = populationPageTemplate.cloneNode(true)),
       toggleButton = (this.toggleButton = page.querySelector(".toggle-button")),
       stepButton = (this.stepButton = page.querySelector(".step-button")),
       navButtons = page.querySelector("nav").children,
@@ -74,27 +73,30 @@ class Population {
     this.genNum = history.length;
     this.state = "opening";
 
-    const cipherFunctionImport = import(
-      "./ciphers/" + cipherName + "/population-functions.js"
-    ).then(({ MessageDecrypter, KeyToString, KeyToText, TextToKey }) => {
-      const textToKey = (this.textToKey = TextToKey(cipherOptions));
-      this.messageDecypters = config.messages.map(message => MessageDecrypter(message, cipherOptions));
-      this.keyToText = KeyToText(cipherOptions);
-      this.keyToString = KeyToString(cipherOptions);
+    const cipherFunctionImport = (this.cipherFunctionImport = ciphers[
+      cipherName
+    ].module
+      .then(({ MessageDecrypter, KeyToString, KeyToText, TextToKey }) => {
+        const textToKey = (this.textToKey = TextToKey(cipherOptions));
+        this.messageDecypters = config.messages.map((message) =>
+          MessageDecrypter(message, cipherOptions)
+        );
+        this.keyToText = KeyToText(cipherOptions);
+        this.keyToString = KeyToString(cipherOptions);
 
-      const keyInput = displayPoints.keyInput;
-      keyInput.addEventListener("change", function () {
-        const keyEntered = textToKey(this.value);
-        if (keyEntered) {
-          thisPopulation.displayDecryption(keyEntered);
-          this.removeAttribute("invalid");
-        } else {
-          this.setAttribute("invalid", "");
-        };
-      });
-    }).catch((err) => {
-      console.log("Error importing cipher functions:", err)
-    });
+        displayPoints.keyInput.addEventListener("change", function () {
+          const keyEntered = textToKey(this.value);
+          if (keyEntered) {
+            thisPopulation.displayDecryption(keyEntered);
+            this.removeAttribute("invalid");
+          } else {
+            this.setAttribute("invalid", "");
+          }
+        });
+      })
+      .catch((err) => {
+        console.log("Error importing cipher functions:", err);
+      }));
 
     worker.onmessage = function () {
       worker.onmessage = function ({ data }) {
@@ -114,18 +116,18 @@ class Population {
             }) {
               // Adds the newly discovered scores to the knownScores object
               Object.assign(knownScores, newKnownScores);
-  
+
               history.push({
                 candidates,
                 newKnownScores: Object.keys(newKnownScores),
               });
-  
+
               thisPopulation.genNum++;
-  
+
               thisPopulation.updatePage();
             };
           });
-        };
+        }
       };
 
       var genNum = thisPopulation.genNum;
@@ -190,7 +192,7 @@ class Population {
       row.appendChild(nameCell);
       row.appendChild(valueCell);
       displayPoints.cipherOptions.appendChild(row);
-    };
+    }
 
     // Evolution config
     displayPoints.populationSize.innerText = populationSize;
@@ -208,26 +210,28 @@ class Population {
 
       d.innerText = "run program to see decryptions";
       keyDecryptions.appendChild(d);
-    };
+    }
 
     // Sets up exports
     const {
-      copyConfig,
-      copyPopulation,
-      downloadConfig,
-      downloadPopulation,
-    } = displayPoints,
-    displayMessage = (() => {
-      let messages = {};
-      return function (button, message, timeOut = 3000) {
-        if (messages.hasOwnProperty(button)) button.classList.remove(messages[button]);
-        messages[button] = message;
-        button.classList.add(message);
-        if (timeOut != null) setTimeout(function () {
-            button.classList.remove(message);
-          }, timeOut);
-      };
-    })();
+        copyConfig,
+        copyPopulation,
+        downloadConfig,
+        downloadPopulation,
+      } = displayPoints,
+      displayMessage = (() => {
+        let messages = {};
+        return function (button, message, timeOut = 3000) {
+          if (messages.hasOwnProperty(button))
+            button.classList.remove(messages[button]);
+          messages[button] = message;
+          button.classList.add(message);
+          if (timeOut != null)
+            setTimeout(function () {
+              button.classList.remove(message);
+            }, timeOut);
+        };
+      })();
 
     function copyJSON(button, data) {
       displayMessage(button, "preparing");
@@ -240,11 +244,13 @@ class Population {
           console.log(err);
           displayMessage(button, "failure");
         });
-    };
+    }
 
     function downloadJSON(button, name, data) {
       displayMessage(button, "preparing");
-      const blob = new Blob([JSON.stringify(data)], {type: "application/json"}),
+      const blob = new Blob([JSON.stringify(data)], {
+          type: "application/json",
+        }),
         url = URL.createObjectURL(blob),
         element = document.createElement("a");
       element.download = name;
@@ -252,17 +258,14 @@ class Population {
       element.click();
       URL.revokeObjectURL(url);
       displayMessage(button, "success");
-    };
+    }
 
     copyConfig.addEventListener("click", function () {
       copyJSON(this, config);
     });
 
     copyPopulation.addEventListener("click", function () {
-      copyJSON(
-        this,
-        thisPopulation.populationInfo
-      );
+      copyJSON(this, thisPopulation.populationInfo);
     });
 
     downloadConfig.addEventListener("click", function () {
@@ -271,7 +274,7 @@ class Population {
 
     downloadPopulation.addEventListener("click", function () {
       downloadJSON(this, "population.json", thisPopulation.populationInfo);
-    })
+    });
 
     // Adds population page
     populationPages.appendChild(page);
@@ -381,9 +384,9 @@ class Population {
 
     for (let m = 0; m < messageDecypters.length; m++) {
       bestDecryptions[m].innerText = messageDecypters[m](key);
-    };
+    }
   }
-};
+}
 
 const populations = [];
 var openPopulation = null;
@@ -393,4 +396,4 @@ function setupPopulation(populationData) {
   var population = new Population(populationData);
   populations.push(population);
   population.openPage();
-};
+}

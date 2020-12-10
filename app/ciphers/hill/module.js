@@ -83,6 +83,55 @@ const alphabet = [
     z: 25,
   };
 
+const setup = {
+  displayName: "Hill",
+  options: [
+    {
+      name: "m",
+      type: "number",
+      label: "Matrix size",
+      description:
+        "The size of the matrix used to encrypt the plaintext with the vigenere cipher.",
+      params: {
+        min: 2,
+        max: 5,
+        default: 3,
+      },
+    },
+    {
+      name: "n",
+      label: "Fitness evaluation method",
+      description:
+        "The length of n-gram used to compare each decryption to expected English frequencies.",
+      type: "select",
+      params: {
+        options: [
+          {
+            value: "",
+            name: "Select fitness method...",
+          },
+          {
+            value: "2",
+            name: "Bigram score",
+          },
+          {
+            value: "3",
+            name: "Trigram score",
+          },
+          {
+            value: "4",
+            name: "Quadgram score",
+          },
+          {
+            value: "5",
+            name: "Quintgram score",
+          },
+        ],
+      },
+    },
+  ],
+};
+
 // from https://stackoverflow.com/questions/44474864/compute-determinant-of-a-matrix
 const determinant = (m) =>
   m.length == 1
@@ -220,4 +269,4 @@ function TextToKey({ m }) {
   };
 };
 
-export { MessageDecrypter, KeyToString, KeyToText, TextToKey };
+export { setup, MessageDecrypter, KeyToString, KeyToText, TextToKey };

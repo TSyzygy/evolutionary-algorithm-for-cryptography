@@ -5,21 +5,21 @@ openSidebarButton = document.getElementById("open-sidebar"),
     sidebar = document.getElementById("sidebar"),
     closeSidebarButton = sidebar.querySelector("#close-sidebar"),
     // populations
-populationPageTemplate = document.getElementById("population-page-template"),
-    populationPages = document.getElementById("population-pages"),
+// populationPageTemplate = document.getElementById("population-page-template"),
+populationPages = document.getElementById("population-pages"),
     populationPagesCollection = populationPages.children,
     populationButtons = sidebar.querySelector("#population-buttons"),
     populationButtonsCollection = populationButtons.children,
     // modal
 openAddPopulationModalButton = document.getElementById("open-add-population-modal"),
-    addPopulationModal = document.getElementById("add-population-modal"),
-    addPopulationForm = addPopulationModal.querySelector("form"),
+    // addPopulationModal = document.getElementById("add-population-modal"),
+addPopulationForm = addPopulationModal.querySelector("form"),
     messageEntryContainer = addPopulationForm.querySelector("#messages"),
     addMessageButton = addPopulationForm.querySelector("#add-message"),
     messageEntryTemplate = addPopulationForm.querySelector("#message-input-template"),
     maxMessagesAllowed = 12,
-    cipherName = addPopulationForm.querySelector("#cipher-name"),
-    cipherSpecificPages = addPopulationForm.querySelector("#cipher-specific-options"),
+    // cipherName = addPopulationForm.querySelector("#cipher-name"),
+cipherSpecificPages = addPopulationForm.querySelector("#cipher-specific-options"),
     cipherSpecificPagesCollection = cipherSpecificPages.children;
 var numMessageInputs = 1,
     currentCipherPage = null; // sidebar
@@ -41,76 +41,41 @@ function openAddPopulationModal() {
 }
 
 openAddPopulationModalButton.addEventListener("click", openAddPopulationModal);
-
-function changeCurrentCipherPage(chosenCipherName) {
+/* function changeCurrentCipherPage(chosenCipherName) {
   if (currentCipherPage) {
-    currentCipherPage.classList.remove("chosen"); // Removes 'required' attribute from each of the old cipher-specific entry options
-
-    var _iteratorNormalCompletion = true;
-    var _didIteratorError = false;
-    var _iteratorError = undefined;
-
-    try {
-      for (var _iterator = currentCipherPage.getElementsByClassName("required-for-cipher")[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-        var e = _step.value;
-        e.removeAttribute("required");
-      }
-    } catch (err) {
-      _didIteratorError = true;
-      _iteratorError = err;
-    } finally {
-      try {
-        if (!_iteratorNormalCompletion && _iterator["return"] != null) {
-          _iterator["return"]();
-        }
-      } finally {
-        if (_didIteratorError) {
-          throw _iteratorError;
-        }
-      }
-    }
+    currentCipherPage.classList.remove("chosen");
+    // Removes 'required' attribute from each of the old cipher-specific entry options
+    for (let e of currentCipherPage.getElementsByClassName(
+      "required-for-cipher"
+    ))
+      e.removeAttribute("required");
   }
 
-  currentCipherPage = cipherSpecificPages.querySelector("[data-cipher-name='" + chosenCipherName + "']");
-
+  currentCipherPage = cipherSpecificPages.querySelector(
+    "[data-cipher-name='" + chosenCipherName + "']"
+  );
   if (currentCipherPage) {
-    currentCipherPage.classList.add("chosen"); // Adds 'required' attribute to each of the new cipher-specific entry options
+    currentCipherPage.classList.add("chosen");
+    // Adds 'required' attribute to each of the new cipher-specific entry options
+    for (let e of currentCipherPage.getElementsByClassName(
+      "required-for-cipher"
+    ))
+      e.setAttribute("required", "");
+  }
 
-    var _iteratorNormalCompletion2 = true;
-    var _didIteratorError2 = false;
-    var _iteratorError2 = undefined;
-
-    try {
-      for (var _iterator2 = currentCipherPage.getElementsByClassName("required-for-cipher")[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-        var _e = _step2.value;
-
-        _e.setAttribute("required", "");
-      }
-    } catch (err) {
-      _didIteratorError2 = true;
-      _iteratorError2 = err;
-    } finally {
-      try {
-        if (!_iteratorNormalCompletion2 && _iterator2["return"] != null) {
-          _iterator2["return"]();
-        }
-      } finally {
-        if (_didIteratorError2) {
-          throw _iteratorError2;
-        }
-      }
-    }
-  } // Scrolls to bottom
+  // Scrolls to bottom
   // addPopulationMain.scrollTop = addPopulationMain.scrollHeight;
-
 }
 
 cipherName.addEventListener("change", function () {
   changeCurrentCipherPage(this.value);
-});
-addPopulationForm.addEventListener("reset", function () {
+}); */
+// Todo: redo this
+
+/* addPopulationForm.addEventListener("reset", function () {
   changeCurrentCipherPage("");
-});
+}); */
+
 addMessageButton.addEventListener("click", function () {
   var messageNum = ++numMessageInputs,
       messageEntry = messageEntryTemplate.content.firstElementChild.cloneNode(true),
@@ -151,49 +116,9 @@ addPopulationForm.addEventListener("submit", function () {
         return e.value;
       }),
       cipher: {
-        name: cipherName.value,
+        name: currentCipherOptionGroup.cipherName,
         // Collects all the cipher-specific option inputs
-        options: function () {
-          var options = {};
-          var _iteratorNormalCompletion3 = true;
-          var _didIteratorError3 = false;
-          var _iteratorError3 = undefined;
-
-          try {
-            for (var _iterator3 = currentCipherPage.querySelectorAll("input, select")[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-              var option = _step3.value;
-
-              switch (option.type) {
-                case "checkbox":
-                  options[option.name] = option.checked;
-                  break;
-
-                case "number":
-                  options[option.name] = Number(option.value);
-                  break;
-
-                case "select-one":
-                  options[option.name] = Number(option.value);
-                  break;
-              }
-            }
-          } catch (err) {
-            _didIteratorError3 = true;
-            _iteratorError3 = err;
-          } finally {
-            try {
-              if (!_iteratorNormalCompletion3 && _iterator3["return"] != null) {
-                _iterator3["return"]();
-              }
-            } finally {
-              if (_didIteratorError3) {
-                throw _iteratorError3;
-              }
-            }
-          }
-
-          return options;
-        }()
+        options: currentCipherOptionGroup.collectInputs()
       },
       evolution: {
         populationSize: elements["population-size"].value,

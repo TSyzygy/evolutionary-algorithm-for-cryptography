@@ -5,7 +5,7 @@ const // sidebar
   sidebar = document.getElementById("sidebar"),
   closeSidebarButton = sidebar.querySelector("#close-sidebar"),
   // populations
-  populationPageTemplate = document.getElementById("population-page-template"),
+  // populationPageTemplate = document.getElementById("population-page-template"),
   populationPages = document.getElementById("population-pages"),
   populationPagesCollection = populationPages.children,
   populationButtons = sidebar.querySelector("#population-buttons"),
@@ -14,7 +14,7 @@ const // sidebar
   openAddPopulationModalButton = document.getElementById(
     "open-add-population-modal"
   ),
-  addPopulationModal = document.getElementById("add-population-modal"),
+  // addPopulationModal = document.getElementById("add-population-modal"),
   addPopulationForm = addPopulationModal.querySelector("form"),
   messageEntryContainer = addPopulationForm.querySelector("#messages"),
   addMessageButton = addPopulationForm.querySelector("#add-message"),
@@ -22,7 +22,7 @@ const // sidebar
     "#message-input-template"
   ),
   maxMessagesAllowed = 12,
-  cipherName = addPopulationForm.querySelector("#cipher-name"),
+  // cipherName = addPopulationForm.querySelector("#cipher-name"),
   cipherSpecificPages = addPopulationForm.querySelector(
     "#cipher-specific-options"
   ),
@@ -50,7 +50,7 @@ function openAddPopulationModal() {
 }
 openAddPopulationModalButton.addEventListener("click", openAddPopulationModal);
 
-function changeCurrentCipherPage(chosenCipherName) {
+/* function changeCurrentCipherPage(chosenCipherName) {
   if (currentCipherPage) {
     currentCipherPage.classList.remove("chosen");
     // Removes 'required' attribute from each of the old cipher-specific entry options
@@ -78,11 +78,12 @@ function changeCurrentCipherPage(chosenCipherName) {
 
 cipherName.addEventListener("change", function () {
   changeCurrentCipherPage(this.value);
-});
+}); */
 
-addPopulationForm.addEventListener("reset", function () {
+// Todo: redo this
+/* addPopulationForm.addEventListener("reset", function () {
   changeCurrentCipherPage("");
-});
+}); */
 
 addMessageButton.addEventListener("click", function () {
   const messageNum = ++numMessageInputs,
@@ -134,25 +135,9 @@ addPopulationForm.addEventListener("submit", function () {
           (e) => e.value
         ),
         cipher: {
-          name: cipherName.value,
+          name: currentCipherOptionGroup.cipherName,
           // Collects all the cipher-specific option inputs
-          options: (() => {
-            const options = {};
-            for (let option of currentCipherPage.querySelectorAll("input, select")) {
-              switch (option.type) {
-                case "checkbox":
-                  options[option.name] = option.checked;
-                  break;
-                case "number":
-                  options[option.name] = Number(option.value);
-                  break;
-                case "select-one":
-                  options[option.name] = Number(option.value);
-                  break;
-              }
-            }
-            return options;
-          })(),
+          options: currentCipherOptionGroup.collectInputs(),
         },
         evolution: {
           populationSize: elements["population-size"].value,

@@ -274,15 +274,16 @@
             <label for="cipher-name">Cipher type:</label>
             <select id="cipher-name" name="cipher-name" required>
               <option value="">Choose cipher...</option>
-              <option value="vigenere">Vigenere</option>
+              <!--<option value="vigenere">Vigenere</option>
               <option value="transposition">Transposition</option>
               <option value="monoalphabetic">Monoalphabetic substitution</option>
               <option value="one-time-pad">One-time pad</option>
               <option value="hill">Hill</option>
-              <option value="adfgvx">ADFGVX</option>
+              <option value="adfgvx">ADFGVX</option>-->
             </select>
           </div>
           <div id="cipher-specific-options">
+            <!--
             <div data-cipher-name="vigenere">
               <div class="data-entry">
                 <label for="vigenere-keylength">Keylength:</label>
@@ -364,6 +365,7 @@
                 </select>
               </div>
             </div>
+            -->
 
           </div>
         </div>
@@ -580,9 +582,9 @@
 
     <script src="functionality-checks.js"></script>
     <script src="custom-elements.js"></script>
-    <script src="population-control.js"></script>
     <script src="assets.js"></script>
+    <script src="ciphers.js"></script>
+    <script src="population-control.js"></script>
     <script src="interface.js"></script>
-
   </body>
 </html>

@@ -39,6 +39,43 @@ const alphabet = [
     "9",
   ];
 
+const setup = {
+  displayName: "ADFGVX",
+  options: [
+    {
+      name: "n",
+      label: "Fitness evaluation method",
+      description:
+        "The length of n-gram used to compare each decryption to expected English frequencies.",
+      type: "select",
+      params: {
+        options: [
+          {
+            value: "",
+            name: "Select fitness method...",
+          },
+          {
+            value: "2",
+            name: "Bigram score",
+          },
+          {
+            value: "3",
+            name: "Trigram score",
+          },
+          {
+            value: "4",
+            name: "Quadgram score",
+          },
+          {
+            value: "5",
+            name: "Quintgram score",
+          },
+        ],
+      },
+    },
+  ],
+};
+
 function MessageDecrypter(message) {
   // Todo: remove non-ADFGVX characters
   const l = message.length,
@@ -107,4 +144,4 @@ function TextToKey() {
   };
 }
 
-export { MessageDecrypter, KeyToString, KeyToText, TextToKey };
+export { setup, MessageDecrypter, KeyToString, KeyToText, TextToKey };
