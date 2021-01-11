@@ -3,7 +3,12 @@
 async function configure(messages, { m, n }) {
   // m is matrix size, n is n-gram size for scoring
   const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
-    scores = n > 1 ? await getAsset("ngrams/" + n + ".json") : await getAsset("ngrams/1-by-letter.json");
+    scores =
+      n > 1
+        ? await getAsset(["ngrams"], n + ".json")
+        : await getAsset(["ngrams"], "1-by-letter.json"),
+    mMinusOne = m - 1,
+    shuffleRowsChance = Math.round(1000 / mMinusOne); // shuffles the rows more often for greater matrix sizes - 1 in [shuffleRowsChance] chance
 
   // Gets a random number between min and max-1
   function rand(max) {
@@ -12,7 +17,6 @@ async function configure(messages, { m, n }) {
 
   // Return an object with fitness, randomCandidate, permuteCandidate, and keyToString methods
   return {
-    // Here is a possible structure for the fitness function, using an IIFE
     fitness: (function () {
       // from https://stackoverflow.com/questions/44474864/compute-determinant-of-a-matrix
       const determinant = (m) =>
@@ -65,10 +69,11 @@ async function configure(messages, { m, n }) {
               return score / message.length;
             }
           : function (message, key) {
-              return decryptMessage(message, key).split("").reduce(
-                (t, c) => t + scores[c],
-                0
-              ) / message.length;
+              return (
+                decryptMessage(message, key)
+                  .split("")
+                  .reduce((t, c) => t + scores[c], 0) / message.length
+              );
             };
 
       if (messages.length > 1) {
@@ -98,10 +103,22 @@ async function configure(messages, { m, n }) {
       return key;
     },
     permuteCandidate(key) {
-      const permutedKey = key.map((row) => [...row]),
-        row = permutedKey[rand(m)];
-      for (let numChanges = rand(m); numChanges >= 0; numChanges--)
-        row[rand(m)] = rand(26);
+      const permutedKey = key.map((row) => [...row]);
+      if (rand(shuffleRowsChance)) {
+        const row = permutedKey[rand(m)];
+        for (let numChanges = rand(m); numChanges >= 0; numChanges--)
+          row[rand(m)] = rand(26);
+        return permutedKey;
+      } else {
+        // 1 in every 100, shuffles columns
+        var j, x, i;
+        for (i = mMinusOne; i > 0; i--) {
+          j = Math.floor(Math.random() * (i + 1));
+          x = permutedKey[i];
+          permutedKey[i] = permutedKey[j];
+          permutedKey[j] = x;
+        }
+      }
       return permutedKey;
     },
     keyToString(key) {

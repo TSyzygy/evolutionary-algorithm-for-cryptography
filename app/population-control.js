@@ -40,7 +40,6 @@
 
 */
 
-console.log("hi", ciphers);
 class Population {
   constructor({ name, description, config, history, knownScores }) {
     const thisPopulation = this,
@@ -102,7 +101,7 @@ class Population {
       worker.onmessage = function ({ data }) {
         if (data.message == "asset-request") {
           thisPopulation.state = "waiting";
-          getAsset(data.path).then((asset) => {
+          getAsset(data.directoryPath, data.fileName).then((asset) => {
             worker.postMessage(asset);
             thisPopulation.state = "configuring";
           });
@@ -382,9 +381,8 @@ class Population {
       ? knownScores[keyString]
       : "unknown";
 
-    for (let m = 0; m < messageDecypters.length; m++) {
+    for (let m = 0, l = messageDecypters.length; m < l; m++)
       bestDecryptions[m].innerText = messageDecypters[m](key);
-    }
   }
 }
 

@@ -1,54 +1,5 @@
 "use strict";
 
-/*
-
-let vigenereCipherSetup = {
-  displayName: "Vigenere",
-  options: [
-    {
-      name: "keylength",
-      type: "number",
-      label: "Keylength",
-      description:
-        "The length of the key used to encrypt the plaintext with the vigenere cipher.",
-      params: {
-        min: 2,
-        max: 100,
-        default: 8,
-      },
-    },
-    {
-      name: "n",
-      label: "Fitness evaluation method",
-      description:
-        "The length of n-gram used to compare each decryption to expected English frequencies.",
-      type: "select",
-      params: {
-        options: [
-          {
-            value: "",
-            name: "Select fitness method...",
-          },
-          {
-            value: "2",
-            name: "Bigram score",
-          },
-          {
-            value: "3",
-            name: "Trigram score",
-          },
-          {
-            value: "4",
-            name: "Quadgram score",
-          },
-        ],
-      },
-    },
-  ],
-};
-
-*/
-
 const availableCiphers = [
   {
     cipherName: "vigenere",
@@ -125,8 +76,7 @@ class Cipher {
           const div = document.createElement("div"),
             labelElement = document.createElement("label"),
             id = `option-${cipherName}-${optionName}`;
-          var inputElement,
-            getValue;
+          var inputElement, getValue;
 
           labelElement.innerText = label;
 
@@ -152,7 +102,7 @@ class Cipher {
                 optionElement.setAttribute("value", value);
                 optionElement.innerText = name;
                 inputElement.appendChild(optionElement);
-              };
+              }
               break;
           }
 
@@ -162,9 +112,9 @@ class Cipher {
           this.options.push({
             name: optionName,
             input: inputElement,
-            get value () {
+            get value() {
               return this.input.value;
-            }
+            },
           });
 
           optionGroup.appendChild(div);
@@ -189,27 +139,23 @@ class Cipher {
         this.optionGroup.classList.add("chosen");
         // Adds 'required' attribute to each of the options
         if (this.loaded)
-          for (let option of this.options) {
+          for (let option of this.options)
             option.input.setAttribute("required", "");
-          }
       } else {
         this.optionGroup.classList.remove("chosen");
         // Removes 'required' attribute from each of the options
         if (this.loaded)
-          for (let option of this.options) {
+          for (let option of this.options)
             option.input.removeAttribute("required");
-          }
       }
       this._open = open;
     }
-    if (!this.loading) this.load();
+    if (!this.loading) this.module;
   }
 
   collectInputs() {
     const config = {};
-    for (let option of this.options) {
-      config[option.name] = option.value;
-    }
+    for (let option of this.options) config[option.name] = option.value;
     return config;
   }
 }
@@ -217,14 +163,13 @@ class Cipher {
 const ciphers = {};
 availableCiphers.forEach(function (cipher) {
   ciphers[cipher.cipherName] = new Cipher(cipher);
-  console.log("A");
 });
 
 cipherSelect.addEventListener("change", function () {
   if (currentCipherOptionGroup) currentCipherOptionGroup.open = false;
   var cipherName = this.value;
   if (cipherName) {
-    currentCipherOptionGroup = ciphers[cipherName]
+    currentCipherOptionGroup = ciphers[cipherName];
     currentCipherOptionGroup.open = true;
   }
 });

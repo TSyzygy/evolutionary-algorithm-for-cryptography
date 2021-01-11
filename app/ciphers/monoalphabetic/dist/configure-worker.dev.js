@@ -1,5 +1,7 @@
 "use strict";
 
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
 
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
@@ -8,16 +10,17 @@ function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.
 
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
 
+function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function _getRequireWildcardCache() { return cache; }; return cache; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { "default": obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj["default"] = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
 function configure(messages, _ref) {
-  var n, value, scores, rand;
+  var n, value, _ref2, NgramScore, scorePlaintext, rand;
+
   return regeneratorRuntime.async(function configure$(_context) {
     while (1) {
       switch (_context.prev = _context.next) {
         case 0:
-          rand = function _ref2(max) {
-            return Math.floor(Math.random() * max);
-          };
-
           n = _ref.n;
           value = {
             A: 0,
@@ -47,35 +50,37 @@ function configure(messages, _ref) {
             Y: 24,
             Z: 25
           };
-          _context.next = 5;
-          return regeneratorRuntime.awrap(getAsset("ngrams/" + n + ".json"));
+          _context.next = 4;
+          return regeneratorRuntime.awrap(Promise.resolve().then(function () {
+            return _interopRequireWildcard(require("../standard-configure-worker-functions"));
+          }));
 
-        case 5:
-          scores = _context.sent;
+        case 4:
+          _ref2 = _context.sent;
+          NgramScore = _ref2.NgramScore;
+          _context.next = 8;
+          return regeneratorRuntime.awrap(NgramScore(n));
+
+        case 8:
+          scorePlaintext = _context.sent;
+
+          // Gets a random number between min and max-1
+          rand = function rand(max) {
+            return Math.floor(Math.random() * max);
+          };
+
           return _context.abrupt("return", {
             fitness: function () {
-              function convertMessage(message) {
-                var i;
+              var convertMessage = function convertMessage(message) {
                 return message.toUpperCase().split("").flatMap(function (c) {
-                  return value.hasOwnProperty(c) ? [i = value[c]] : [];
+                  return value.hasOwnProperty(c) ? [value[c]] : [];
                 });
-              }
-
-              function scoreMessage(message, key) {
-                // This double iteration is the fastest method I have found so far
-                var decrypted = message.reduce(function (t, c) {
+              },
+                  scoreMessage = function scoreMessage(message, key) {
+                return scorePlaintext(message.reduce(function (t, c) {
                   return t + key[c];
-                }, ""),
-                    max = message.length - n;
-                var score = 0,
-                    gram;
-
-                for (var i = 0; i < max; i++) {
-                  if (scores.hasOwnProperty(gram = decrypted.substr(i, n))) score += scores[gram];
-                }
-
-                return score / message.length;
-              } // If multiple messages provided
+                }, ""));
+              }; // If multiple messages provided
 
 
               if (messages.length > 1) {
@@ -98,7 +103,7 @@ function configure(messages, _ref) {
               var a = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
 
               for (i = 25; i > 0; i--) {
-                j = Math.floor(Math.random() * (i + 1));
+                j = rand(i + 1);
                 x = a[i];
                 a[i] = a[j];
                 a[j] = x;
@@ -127,7 +132,7 @@ function configure(messages, _ref) {
             }
           });
 
-        case 7:
+        case 11:
         case "end":
           return _context.stop();
       }

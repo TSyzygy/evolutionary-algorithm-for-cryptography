@@ -3,8 +3,8 @@
 // IIFE used to prevent worker config functions from changing evolution variables / running internal functions
 const getAsset = (function () {
   // PRIVATE VARIABLES
+  const candidates = [];
   var running = false,
-    candidates = [],
     knownScores = {},
     newKnownScores = {},
     fitness,
@@ -97,7 +97,6 @@ const getAsset = (function () {
     } = evolution);
 
     // Gets cipher functions
-    // if (!cipherFunctionGenerators.hasOwnProperty(name)) throw Error("Unrecognised config.cipher.name: " + name);
     importScripts("ciphers/" + name + "/configure-worker.js");
     ({
       fitness,
@@ -127,20 +126,16 @@ const getAsset = (function () {
     const localAssets = {};
 
     // PUBLIC GETASSET FUNCTION
-    return async function (path) {
+    return async function (directoryPath, fileName) {
       // Navigates to the correct directory in local data
-      const splitPath = path.split("/"),
-        directory = splitPath
-          .slice(0, -1)
-          .reduce(
-            (t, v) => (t.hasOwnProperty(v) ? t[v] : (t[v] = {})),
-            localAssets
-          ),
-        fileName = splitPath[splitPath.length - 1];
+      const directory = directoryPath.reduce(
+        (t, v) => (t.hasOwnProperty(v) ? t[v] : (t[v] = {})),
+        localAssets
+      );
 
       return directory.hasOwnProperty(fileName)
         ? directory[fileName] // If the asset is not already stored locally, requests it from control
-        : new Promise(function (resolve) {
+        : new Promise(function (resolve, reject) {
             // Waits for a message returning the data
             onmessage = function ({ data: asset }) {
               // Once asset is recieved from control, saves it locally in case of future use and resolves the promise
@@ -150,7 +145,8 @@ const getAsset = (function () {
             // Posts a message requesting the desired data
             postMessage({
               message: "asset-request",
-              path,
+              directoryPath,
+              fileName
             });
           });
     };

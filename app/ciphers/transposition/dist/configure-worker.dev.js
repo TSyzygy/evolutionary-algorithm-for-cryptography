@@ -113,17 +113,16 @@ function configure(messages, _ref) {
 
 
               function swap(key) {
-                var posA = rand(keylength),
-                    posB,
-                    temp;
-
                 var newKey = _toConsumableArray(key);
+
+                var posA = rand(keylength),
+                    temp = newKey[posA],
+                    posB;
 
                 do {
                   posB = rand(keylength);
                 } while (posA == posB);
 
-                temp = newKey[posA];
                 newKey[posA] = newKey[posB];
                 newKey[posB] = temp;
                 return newKey;
@@ -142,15 +141,6 @@ function configure(messages, _ref) {
                     blockEnd = blockStart + blockLength,
                     distance = rand(keylength - blockLength - blockStart) + 1,
                     moveTo = blockEnd + distance;
-                /*
-                return [
-                  ...key.slice(0, blockStart),
-                  ...key.slice(blockEnd, moveTo),
-                  ...key.slice(blockStart, blockEnd),
-                  ...key.slice(moveTo, keylength),
-                ];
-                */
-
                 return key.slice(0, blockStart).concat(key.slice(blockEnd, moveTo), key.slice(blockStart, blockEnd), key.slice(moveTo, keylength));
               }
 

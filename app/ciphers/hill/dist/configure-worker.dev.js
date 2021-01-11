@@ -9,7 +9,7 @@ function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
 
 function configure(messages, _ref) {
-  var m, n, alphabet, scores, rand, decryptMessage;
+  var m, n, alphabet, scores, mMinusOne, shuffleRowsChance, rand, decryptMessage;
   return regeneratorRuntime.async(function configure$(_context) {
     while (1) {
       switch (_context.prev = _context.next) {
@@ -39,7 +39,7 @@ function configure(messages, _ref) {
           }
 
           _context.next = 7;
-          return regeneratorRuntime.awrap(getAsset("ngrams/" + n + ".json"));
+          return regeneratorRuntime.awrap(getAsset(["ngrams"], n + ".json"));
 
         case 7:
           _context.t0 = _context.sent;
@@ -48,15 +48,16 @@ function configure(messages, _ref) {
 
         case 10:
           _context.next = 12;
-          return regeneratorRuntime.awrap(getAsset("ngrams/1-by-letter.json"));
+          return regeneratorRuntime.awrap(getAsset(["ngrams"], "1-by-letter.json"));
 
         case 12:
           _context.t0 = _context.sent;
 
         case 13:
           scores = _context.t0;
+          mMinusOne = m - 1;
+          shuffleRowsChance = Math.round(1000 / mMinusOne);
           return _context.abrupt("return", {
-            // Here is a possible structure for the fitness function, using an IIFE
             fitness: function () {
               // from https://stackoverflow.com/questions/44474864/compute-determinant-of-a-matrix
               var determinant = function determinant(m) {
@@ -149,11 +150,26 @@ function configure(messages, _ref) {
             permuteCandidate: function permuteCandidate(key) {
               var permutedKey = key.map(function (row) {
                 return _toConsumableArray(row);
-              }),
-                  row = permutedKey[rand(m)];
+              });
 
-              for (var numChanges = rand(m); numChanges >= 0; numChanges--) {
-                row[rand(m)] = rand(26);
+              if (rand(shuffleRowsChance)) {
+                var row = permutedKey[rand(m)];
+
+                for (var numChanges = rand(m); numChanges >= 0; numChanges--) {
+                  row[rand(m)] = rand(26);
+                }
+
+                return permutedKey;
+              } else {
+                // 1 in every 100, shuffles columns
+                var j, x, i;
+
+                for (i = mMinusOne; i > 0; i--) {
+                  j = Math.floor(Math.random() * (i + 1));
+                  x = permutedKey[i];
+                  permutedKey[i] = permutedKey[j];
+                  permutedKey[j] = x;
+                }
               }
 
               return permutedKey;
@@ -164,7 +180,7 @@ function configure(messages, _ref) {
             }
           });
 
-        case 15:
+        case 17:
         case "end":
           return _context.stop();
       }

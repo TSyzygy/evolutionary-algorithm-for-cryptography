@@ -20,7 +20,7 @@ function configure(messages, _ref) {
 
           n = _ref.n;
           _context.next = 4;
-          return regeneratorRuntime.awrap(getAsset("ngrams/" + n + ".json"));
+          return regeneratorRuntime.awrap(getAsset(["ngrams"], n + ".json"));
 
         case 4:
           scores = _context.sent;
@@ -87,7 +87,6 @@ function configure(messages, _ref) {
                   converted.push(map[message.substr(p, 2)]);
                 }
 
-                ;
                 return converted;
                 /*
                   map = {

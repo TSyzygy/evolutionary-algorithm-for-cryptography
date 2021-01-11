@@ -45,8 +45,6 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
-console.log("hi", ciphers);
-
 var Population =
 /*#__PURE__*/
 function () {
@@ -118,7 +116,7 @@ function () {
 
         if (data.message == "asset-request") {
           thisPopulation.state = "waiting";
-          getAsset(data.path).then(function (asset) {
+          getAsset(data.directoryPath, data.fileName).then(function (asset) {
             worker.postMessage(asset);
             thisPopulation.state = "configuring";
           });
@@ -383,7 +381,7 @@ function () {
       displayPoints.keyInput.value = this.keyToText(key);
       displayPoints.keyScore.innerText = knownScores.hasOwnProperty(keyString) ? knownScores[keyString] : "unknown";
 
-      for (var m = 0; m < messageDecypters.length; m++) {
+      for (var m = 0, l = messageDecypters.length; m < l; m++) {
         bestDecryptions[m].innerText = messageDecypters[m](key);
       }
     }

@@ -3,7 +3,7 @@
 // Here is a template for a possible structure of a worker config function for a cipher
 async function configure(messages, { n }) {
   // Declare constants, e.g:
-  const scores = await getAsset("ngrams/" + n + ".json"); // The getAsset function is available to request any asset stored in 
+  const scores = await getAsset(["ngrams"], n + ".json"); // The getAsset function is available to request any asset stored in 
 
   // Declare functions, e.g:
   function rand(max) {
@@ -27,9 +27,8 @@ async function configure(messages, { n }) {
 
         if (l % 2) message += "A";
 
-        for (let p = 0; p < l; p += 2) {
-          converted.push(map[message.substr(p, 2)])
-        };
+        for (let p = 0; p < l; p += 2)
+          converted.push(map[message.substr(p, 2)]);
 
         return converted;
 

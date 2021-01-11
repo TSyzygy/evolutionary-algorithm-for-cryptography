@@ -29,34 +29,16 @@ async function configure(messages, { n }) {
       Y: 24,
       Z: 25,
     },
-    scores = await getAsset("ngrams/" + n + ".json");
+    { NgramScore } = await import("../standard-configure-worker-functions"),
+    scorePlaintext = await NgramScore(n);
 
   // Gets a random number between min and max-1
-  function rand(max) {
-    return Math.floor(Math.random() * max);
-  }
+  const rand = (max) => Math.floor(Math.random() * max);
 
   return {
     fitness: (function () {
-      function convertMessage(message) {
-        var i;
-        return message
-          .toUpperCase()
-          .split("")
-          .flatMap((c) => (value.hasOwnProperty(c) ? [(i = value[c])] : []));
-      }
-
-      function scoreMessage(message, key) {
-        // This double iteration is the fastest method I have found so far
-        const decrypted = message.reduce((t, c) => t + key[c], ""),
-          max = message.length - n;
-        var score = 0,
-          gram;
-        for (let i = 0; i < max; i++)
-          if (scores.hasOwnProperty((gram = decrypted.substr(i, n))))
-            score += scores[gram];
-        return score / message.length;
-      }
+      const convertMessage = (message) => message.toUpperCase().split("").flatMap((c) => (value.hasOwnProperty(c) ? [value[c]] : [])),
+        scoreMessage = (message, key) => scorePlaintext(message.reduce((t, c) => t + key[c], ""));
 
       // If multiple messages provided
       if (messages.length > 1) {
@@ -101,7 +83,7 @@ async function configure(messages, { n }) {
         "Z",
       ];
       for (i = 25; i > 0; i--) {
-        j = Math.floor(Math.random() * (i + 1));
+        j = rand(i + 1)
         x = a[i];
         a[i] = a[j];
         a[j] = x;

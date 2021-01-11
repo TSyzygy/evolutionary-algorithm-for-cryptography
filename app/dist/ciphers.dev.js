@@ -1,52 +1,4 @@
 "use strict";
-/*
-
-let vigenereCipherSetup = {
-  displayName: "Vigenere",
-  options: [
-    {
-      name: "keylength",
-      type: "number",
-      label: "Keylength",
-      description:
-        "The length of the key used to encrypt the plaintext with the vigenere cipher.",
-      params: {
-        min: 2,
-        max: 100,
-        default: 8,
-      },
-    },
-    {
-      name: "n",
-      label: "Fitness evaluation method",
-      description:
-        "The length of n-gram used to compare each decryption to expected English frequencies.",
-      type: "select",
-      params: {
-        options: [
-          {
-            value: "",
-            name: "Select fitness method...",
-          },
-          {
-            value: "2",
-            name: "Bigram score",
-          },
-          {
-            value: "3",
-            name: "Trigram score",
-          },
-          {
-            value: "4",
-            name: "Quadgram score",
-          },
-        ],
-      },
-    },
-  ],
-};
-
-*/
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -220,7 +172,6 @@ function () {
                     }
                   }
 
-                  ;
                   break;
               }
 
@@ -330,7 +281,7 @@ function () {
         this._open = open;
       }
 
-      if (!this.loading) this.load();
+      if (!this.loading) this.module;
     }
   }]);
 
@@ -340,7 +291,6 @@ function () {
 var ciphers = {};
 availableCiphers.forEach(function (cipher) {
   ciphers[cipher.cipherName] = new Cipher(cipher);
-  console.log("A");
 });
 cipherSelect.addEventListener("change", function () {
   if (currentCipherOptionGroup) currentCipherOptionGroup.open = false;

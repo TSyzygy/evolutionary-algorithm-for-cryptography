@@ -2,8 +2,8 @@
 
 var getAsset = function () {
   // PRIVATE VARIABLES
+  var candidates = [];
   var running = false,
-      candidates = [],
       knownScores = {},
       newKnownScores = {},
       fitness,
@@ -112,7 +112,6 @@ var getAsset = function () {
             randomPerGeneration = evolution.randomPerGeneration;
             allowDuplicates = evolution.allowDuplicates;
             // Gets cipher functions
-            // if (!cipherFunctionGenerators.hasOwnProperty(name)) throw Error("Unrecognised config.cipher.name: " + name);
             importScripts("ciphers/" + name + "/configure-worker.js");
             _context.next = 8;
             return regeneratorRuntime.awrap(configure(messages, options));
@@ -152,18 +151,18 @@ var getAsset = function () {
   return function () {
     var localAssets = {}; // PUBLIC GETASSET FUNCTION
 
-    return function _callee2(path) {
-      var splitPath, directory, fileName;
+    return function _callee2(directoryPath, fileName) {
+      var directory;
       return regeneratorRuntime.async(function _callee2$(_context2) {
         while (1) {
           switch (_context2.prev = _context2.next) {
             case 0:
               // Navigates to the correct directory in local data
-              splitPath = path.split("/"), directory = splitPath.slice(0, -1).reduce(function (t, v) {
+              directory = directoryPath.reduce(function (t, v) {
                 return t.hasOwnProperty(v) ? t[v] : t[v] = {};
-              }, localAssets), fileName = splitPath[splitPath.length - 1];
+              }, localAssets);
               return _context2.abrupt("return", directory.hasOwnProperty(fileName) ? directory[fileName] // If the asset is not already stored locally, requests it from control
-              : new Promise(function (resolve) {
+              : new Promise(function (resolve, reject) {
                 // Waits for a message returning the data
                 onmessage = function onmessage(_ref4) {
                   var asset = _ref4.data;
@@ -174,7 +173,8 @@ var getAsset = function () {
 
                 postMessage({
                   message: "asset-request",
-                  path: path
+                  directoryPath: directoryPath,
+                  fileName: fileName
                 });
               }));
 

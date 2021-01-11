@@ -21,7 +21,7 @@ function configure(messages, _ref) {
           keylength = _ref.keylength, n = _ref.n;
           alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ";
           _context.next = 5;
-          return regeneratorRuntime.awrap(getAsset("ngrams/" + n + ".json"));
+          return regeneratorRuntime.awrap(getAsset(["ngrams"], n + ".json"));
 
         case 5:
           scores = _context.sent;
@@ -52,9 +52,9 @@ function configure(messages, _ref) {
                 return score / message.length;
               } : function (message, key) {
                 // Letter score
-                return 1000 * (message.reduce(function (t, c, p) {
+                return message.reduce(function (t, c, p) {
                   return t + scores[c + key[p % keylength]];
-                }) / message.length);
+                }) / message.length;
               };
 
               if (messages.length > 1) {

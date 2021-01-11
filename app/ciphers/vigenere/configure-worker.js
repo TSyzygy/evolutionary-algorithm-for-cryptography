@@ -2,9 +2,9 @@
 
 async function configure(messages, { keylength, n }) {
   const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
-    scores = await getAsset("ngrams/" + n + ".json");
+    scores = await getAsset(["ngrams"], n + ".json");
 
-  // Gets a random number up to and max-1
+  // Gets a random number up to and including max-1
   function rand(max) {
     return Math.floor(Math.random() * max);
   };
@@ -39,7 +39,6 @@ async function configure(messages, { keylength, n }) {
           : function (message, key) {
               // Letter score
               return (
-                1000 *
                 (message.reduce(
                   (t, c, p) => t + scores[c + key[p % keylength]]
                 ) /

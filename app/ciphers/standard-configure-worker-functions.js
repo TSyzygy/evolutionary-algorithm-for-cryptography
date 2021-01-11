@@ -1,5 +1,5 @@
 async function NgramScore(n) {
-  const scores = await getAsset("ngrams/" + n + ".json");
+  const scores = await getAsset(["ngrams"], n + ".json");
   return (plaintext) => {
     var score = 0,
       gram;

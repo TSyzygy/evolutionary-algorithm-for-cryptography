@@ -1,7 +1,6 @@
 "use strict";
 
 async function configure(messages, { keylength, n }) {
-  // const scores = await getAsset("ngrams/" + n + ".json");
   const { NgramScore } = await import("../standard-configure-worker-functions"),
     scorePlaintext = await NgramScore(n);
   return {
@@ -108,14 +107,13 @@ async function configure(messages, { keylength, n }) {
 
       // Swaps two randomly chosen positions within the key
       function swap(key) {
-        var posA = rand(keylength),
-          posB,
-          temp;
         const newKey = [...key];
+        var posA = rand(keylength),
+          temp = newKey[posA],
+          posB;
         do {
           posB = rand(keylength);
         } while (posA == posB);
-        temp = newKey[posA];
         newKey[posA] = newKey[posB];
         newKey[posB] = temp;
         return newKey;
@@ -134,14 +132,6 @@ async function configure(messages, { keylength, n }) {
           blockEnd = blockStart + blockLength,
           distance = rand(keylength - blockLength - blockStart) + 1,
           moveTo = blockEnd + distance;
-        /*
-        return [
-          ...key.slice(0, blockStart),
-          ...key.slice(blockEnd, moveTo),
-          ...key.slice(blockStart, blockEnd),
-          ...key.slice(moveTo, keylength),
-        ];
-        */
         return key
           .slice(0, blockStart)
           .concat(
@@ -155,17 +145,15 @@ async function configure(messages, { keylength, n }) {
         // Could be made more efficient
         var i = rand(operationWeights[0].length);
 
-        for (let f = 0; f < operations.length; f++) {
+        for (let f = 0; f < operations.length; f++)
           for (
             let n = 0,
               repeat = operationWeights[f][i],
               operation = operations[f];
             n < repeat;
             n++
-          ) {
+          )
             key = operation(key);
-          }
-        }
 
         return key;
       };

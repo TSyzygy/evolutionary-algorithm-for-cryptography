@@ -12,7 +12,7 @@ function configure(messages, _ref) {
 
           keylength = _ref.keylength, n = _ref.n;
           _context.next = 4;
-          return regeneratorRuntime.awrap(getAsset("ngrams/" + n + ".json"));
+          return regeneratorRuntime.awrap(getAsset(["ngrams"], n + ".json"));
 
         case 4:
           scores = _context.sent;
