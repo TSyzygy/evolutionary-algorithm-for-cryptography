@@ -313,16 +313,7 @@ function () {
       downloadJSON(this, "population.json", thisPopulation.populationInfo);
     }); // Adds population page
 
-    populationPages.appendChild(page); // Adds sidebar button
-
-    var button = this.button = document.createElement("button");
-    button.setAttribute("type", "button");
-    button.innerText = name; // Sets up event listener to open this population on sidebar button click
-
-    button.addEventListener("click", function () {
-      thisPopulation.openPage();
-    });
-    populationButtons.appendChild(button);
+    populationPages.appendChild(page);
   }
   /**
    * @param {string} newState opening, waiting, configuring, running, or idle
@@ -355,20 +346,14 @@ function () {
   }, {
     key: "openPage",
     value: function openPage() {
-      if (openPopulation) openPopulation.closePage();
-      this.button.classList.add("open");
       this.page.classList.add("open");
       this.open = true;
-      openPopulation = this;
-      closeSidebar();
     }
   }, {
     key: "closePage",
     value: function closePage() {
-      this.button.classList.remove("open");
       this.page.classList.remove("open");
       this.open = false;
-      openPopulation = null;
     }
   }, {
     key: "displayDecryption",
@@ -429,11 +414,37 @@ function () {
 }();
 
 var populations = [];
-var openPopulation = null;
+var numPopulations = 0,
+    openPopulationNum = -1,
+    openPopulation = null,
+    openButton = null;
 
 function setupPopulation(populationData) {
   // console.log(JSON.stringify(populationData));
-  var population = new Population(populationData);
-  populations.push(population);
-  population.openPage();
+  var thisPopulationNum = numPopulations++,
+      thisPopulation = new Population(populationData),
+      button = document.createElement("button");
+  populations.push(thisPopulation);
+  button.setAttribute("type", "button");
+  button.innerText = populationData.name;
+
+  function openThisPopulation() {
+    if (openPopulation) {
+      openPopulation.closePage();
+      openButton.classList.remove("open");
+    }
+
+    ;
+    this.classList.add("open");
+    openButton = this;
+    thisPopulation.openPage();
+    openPopulationNum = thisPopulationNum;
+    openPopulation = thisPopulation;
+    closeSidebar();
+  } // Sets up event listener to open this population on sidebar button click
+
+
+  button.addEventListener("click", openThisPopulation);
+  populationButtons.appendChild(button);
+  openThisPopulation.call(button);
 }

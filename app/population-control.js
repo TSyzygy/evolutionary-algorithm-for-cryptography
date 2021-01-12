@@ -277,17 +277,6 @@ class Population {
 
     // Adds population page
     populationPages.appendChild(page);
-
-    // Adds sidebar button
-    const button = (this.button = document.createElement("button"));
-    button.setAttribute("type", "button");
-    button.innerText = name;
-
-    // Sets up event listener to open this population on sidebar button click
-    button.addEventListener("click", function () {
-      thisPopulation.openPage();
-    });
-    populationButtons.appendChild(button);
   }
 
   /**
@@ -354,19 +343,13 @@ class Population {
   }
 
   openPage() {
-    if (openPopulation) openPopulation.closePage();
-    this.button.classList.add("open");
     this.page.classList.add("open");
     this.open = true;
-    openPopulation = this;
-    closeSidebar();
   }
 
   closePage() {
-    this.button.classList.remove("open");
     this.page.classList.remove("open");
     this.open = false;
-    openPopulation = null;
   }
 
   displayDecryption(key) {
@@ -387,11 +370,38 @@ class Population {
 }
 
 const populations = [];
-var openPopulation = null;
+var numPopulations = 0,
+  openPopulationNum = -1,
+  openPopulation = null,
+  openButton = null;
 
 function setupPopulation(populationData) {
   // console.log(JSON.stringify(populationData));
-  var population = new Population(populationData);
-  populations.push(population);
-  population.openPage();
+  const thisPopulationNum = numPopulations++,
+    thisPopulation = new Population(populationData),
+    button = document.createElement("button");
+  populations.push(thisPopulation);
+
+  button.setAttribute("type", "button");
+  button.innerText = populationData.name;
+
+  function openThisPopulation () {
+    if (openPopulation) {
+      openPopulation.closePage();
+      openButton.classList.remove("open");
+    };
+    this.classList.add("open");
+    openButton = this;
+
+    thisPopulation.openPage();
+    openPopulationNum = thisPopulationNum;
+    openPopulation = thisPopulation;
+    closeSidebar();
+  }
+
+  // Sets up event listener to open this population on sidebar button click
+  button.addEventListener("click", openThisPopulation);
+  populationButtons.appendChild(button);
+
+  openThisPopulation.call(button);
 }

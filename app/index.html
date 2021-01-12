@@ -191,18 +191,8 @@
       </div>
     </template>
 
-    <!--<modal-popup id="modal-test" name="Modal test">
-      <p>This is some text</p>
-    </modal-popup>-->
-
     <modal-popup id="add-population-modal" name="Add population">
       <form id="add-population-form" name="new-population-form" autocomplete="off" autocapitalize="words" onsubmit="return false">
-        <!--<div id="create-population">
-            <h5>Create population from blank</h5>
-            <button type="button" id="open-new-population-menu">New population &rarr;</button><br>
-            <button type="button" disabled>New populations in bulk &rarr;</button>
-          </div>-->
-
         <div id="import-population">
           <h5>Import population (optional)</h5>
           <div id="population-from-file">
@@ -274,99 +264,11 @@
             <label for="cipher-name">Cipher type:</label>
             <select id="cipher-name" name="cipher-name" required>
               <option value="">Choose cipher...</option>
-              <!--<option value="vigenere">Vigenere</option>
-              <option value="transposition">Transposition</option>
-              <option value="monoalphabetic">Monoalphabetic substitution</option>
-              <option value="one-time-pad">One-time pad</option>
-              <option value="hill">Hill</option>
-              <option value="adfgvx">ADFGVX</option>-->
+              <!-- Available ciphers dynamically added here -->
             </select>
           </div>
           <div id="cipher-specific-options">
-            <!--
-            <div data-cipher-name="vigenere">
-              <div class="data-entry">
-                <label for="vigenere-keylength">Keylength:</label>
-                <input type="number" name="keylength" id="vigenere-keylength" class="required-for-cipher" max="100" min="2" value="8">
-              </div>
-              <div class="data-entry">
-                <label for="vigenere-n">Fitness evaluation method:</label>
-                <select name="n" id="vigenere-n" class="required-for-cipher">
-                  <option value="">Select fitness method...</option>
-                  <option value="1">Letter frequencies (fastest)</option>
-                  <option value="2">Bigram score</option>
-                  <option value="3">Trigram score</option>
-                  <option value="4">Quadgram score (most reliable)</option>
-                  <option value="5">Quintgram score</option>
-                </select>
-              </div>
-            </div>
-
-            <div data-cipher-name="transposition">
-              <div class="data-entry">
-                <label for="transposition-keylength">Keylength:</label>
-                <input type="number" name="keylength" id="transposition-keylength" class="required-for-cipher" max="100" min="2" value="8">
-              </div>
-              <div class="data-entry">
-                <label for="transposition-n">Fitness evaluation method:</label>
-                <select name="n" id="transposition-n" class="required-for-cipher">
-                  <option value="">Select fitness method...</option>
-                  <option value="2">Bigram score</option>
-                  <option value="3">Trigram score</option>
-                  <option value="4">Quadgram score (recommended)</option>
-                  <option value="5">Quintgram score</option>
-                </select>
-              </div>
-            </div>
-
-            <div data-cipher-name="monoalphabetic">
-              <div class="data-entry">
-                <label for="monoalphabetic-n">Fitness evaluation method:</label>
-                <select name="n" id="monoalphabetic-n" class="required-for-cipher">
-                  <option value="">Select fitness method...</option>
-                  <option value="2">Bigram score</option>
-                  <option value="3">Trigram score</option>
-                  <option value="4">Quadgram score (recommended)</option>
-                  <option value="5">Quintgram score</option>
-                </select>
-              </div>
-            </div>
-
-            <div data-cipher-name="one-time-pad">
-              <p>One-time pad not yet implemented</p>
-            </div>
-
-            <div data-cipher-name="hill">
-              <div class="data-entry">
-                <label for="hill-m">Matrix size:</label>
-                <input type="number" name="m" id="hill-m" class="required-for-cipher" max="4" min="2" value="3">
-              </div>
-              <div class="data-entry">
-                <label for="hill-n">Fitness evaluation method:</label>
-                <select name="n" id="hill-n" class="required-for-cipher">
-                  <option value="">Select fitness method...</option>
-                  <option value="2">Bigram score</option>
-                  <option value="3">Trigram score</option>
-                  <option value="4">Quadgram score (recommended)</option>
-                  <option value="5">Quintgram score</option>
-                </select>
-              </div>
-            </div>
-
-            <div data-cipher-name="adfgvx">
-              <div class="data-entry">
-                <label for="adfgvx-n">Fitness evaluation method:</label>
-                <select name="n" id="adfgvx-n" class="required-for-cipher">
-                  <option value="">Select fitness method...</option>
-                  <option value="2">Bigram score</option>
-                  <option value="3">Trigram score</option>
-                  <option value="4">Quadgram score (recommended)</option>
-                  <option value="5">Quintgram score</option>
-                </select>
-              </div>
-            </div>
-            -->
-
+            <!-- Cipher specific options dynamically added here-->
           </div>
         </div>
 
@@ -377,214 +279,13 @@
       </form>
     </modal-popup>
 
-    <!--<section id="add-population-modal" class="modal">
-      <div>
-        <div>
-
-          <form id="add-population-form" name="new-population-form" autocomplete="off" autocapitalize="words" onsubmit="return false">
-
-            <header>
-              <h4>Add population</h4>
-              <button type="reset" class="square" id="close-add-population-modal">&times;</button>
-            </header>
-
-            <div id="add-population-main">
-              <div id="add-population-menu" class="modal-page open">
-                <div id="create-population">
-                  <h5>Create population from blank</h5>
-                  <button type="button" id="open-new-population-menu">New population &rarr;</button><br>
-                  <button type="button" disabled>New populations in bulk &rarr;</button>
-                </div>
-                <div id="import-population">
-                  <h5>Import population</h5>
-                  <div id="population-from-file">
-                    <label for="population-file-import">From file: </label>
-                    <input type="file" id="population-file-import" accept=".json">
-                    <button type="button" disabled>Next &rarr;</button>
-                  </div>
-                  <div id="population-from-text">
-                    <label for="population-text-input">From text: </label>
-                    <input type="text" id="population-text-input" class="monospace small">
-                    <button type="button" disabled>Next &rarr;</button>
-                  </div>
-                </div>
-              </div>
-    
-              <div id="new-population-menu" class="modal-page">
-                <div>
-                  <h5>Population info</h5>
-                  <div class="data-entry">
-                    <label for="population-name-input">Name: </label><input type="text" id="population-name-input" name="name" maxlength="32" required>
-                  </div>
-                  <div class="data-entry">
-                    <label for="population-description-input">Description (optional):</label><input type="text" id="population-description-input" name="description" autocapitalize="sentences" maxLength="256" rows="2">
-                  </div>
-                </div>
-                
-                <div id="algorithm-options">
-                  <h5>Algorithm options</h5>
-                  <div class="data-entry">
-                    <label for="population-size">Population size: </label>
-                    <input type="number" id="population-size" name="population-size" max="1000" min="1" value="20" required>
-                  </div>
-                  <div class="data-entry">
-                    <label for="children-per-parent">Children per parent: </label>
-                    <input type="number" id="children-per-parent" name="children-per-parent" max="20" min="1" value="2" required>
-                  </div>
-                  <div class="data-entry">
-                    <label for="random-per-generation">Random per generation: </label>
-                    <input type="number" id="random-per-generation" name="random-per-generation" max="500" min="1" value="5" required>
-                  </div>
-                  <div class="data-entry">
-                    <label for="duplicates-allowed">Duplicates allowed? </label>
-                    <input type="checkbox" id="duplicates-allowed" name="duplicates-allowed">
-                  </div>
-                </div>
-
-                <div id="messages-for-decryption">
-                  <h5>Message(s) for decryption</h5>
-                  <p>Enter up to 12 messages. The algorithm will search for a decryption which applies best to all of them. If they are encrypted in different ways, a separate population must be made for each message.</p>
-                  <div>
-                    <div id="messages">
-                      <div>
-                        <input type="text" placeholder="message" class="monospace small" required>
-                        <p><span class="monospace">0000</span> chars</p>
-                      </div>
-                    </div>
-                    <button type="button" id="add-message">&plus; Add message</button>
-                    <template id="message-input-template">
-                      <div>
-                        <input type="text" placeholder="message" class="monospace small" required>
-                        <button type="button">&times;</button>
-                        <p><span class="monospace">0000</span> chars</p>
-                      </div>
-                    </template>
-                  </div>
-                </div>
-
-                <div id="cipher-options">
-                  <h5>Cipher options</h5>
-                  <div id="cipher-choices"  class="data-entry">
-                    <label for="cipher-name">Cipher type:</label>
-                    <select id="cipher-name" name="cipher-name" required>
-                      <option value="">Choose cipher...</option>
-                      <option value="vigenere">Vigenere</option>
-                      <option value="transposition">Transposition</option>
-                      <option value="monoalphabetic">Monoalphabetic substitution</option>
-                      <option value="one-time-pad">One-time pad</option>
-                      <option value="hill">Hill</option>
-                      <option value="adfgvx">ADFGVX</option>
-                    </select>
-                  </div>
-                  <div id="cipher-specific-options">
-
-                    <div data-cipher-name="vigenere">
-                      <div class="data-entry">
-                        <label for="vigenere-keylength">Keylength:</label>
-                        <input type="number" name="keylength" id="vigenere-keylength" class="required-for-cipher" max="100" min="2" value="8">
-                      </div>
-                      <div class="data-entry">
-                        <label for="vigenere-n">Fitness evaluation method:</label>
-                        <select name="n" id="vigenere-n" class="required-for-cipher">
-                          <option value="">Select fitness method...</option>
-                          <option value="1">Letter frequencies (fastest)</option>
-                          <option value="2">Bigram score</option>
-                          <option value="3">Trigram score</option>
-                          <option value="4">Quadgram score (most reliable)</option>
-                          <option value="5">Quintgram score</option>
-                        </select>
-                      </div>
-                    </div>
-
-                    <div data-cipher-name="transposition">
-                      <div class="data-entry">
-                        <label for="transposition-keylength">Keylength:</label>
-                        <input type="number" name="keylength" id="transposition-keylength" class="required-for-cipher" max="100" min="2" value="8">
-                      </div>
-                      <div class="data-entry">
-                        <label for="transposition-n">Fitness evaluation method:</label>
-                        <select name="n" id="transposition-n" class="required-for-cipher">
-                          <option value="">Select fitness method...</option>
-                          <option value="2">Bigram score</option>
-                          <option value="3">Trigram score</option>
-                          <option value="4">Quadgram score (recommended)</option>
-                          <option value="5">Quintgram score</option>
-                        </select>
-                      </div>
-                    </div>
-
-                    <div data-cipher-name="monoalphabetic">
-                      <div class="data-entry">
-                        <label for="monoalphabetic-n">Fitness evaluation method:</label>
-                        <select name="n" id="monoalphabetic-n" class="required-for-cipher">
-                          <option value="">Select fitness method...</option>
-                          <option value="2">Bigram score</option>
-                          <option value="3">Trigram score</option>
-                          <option value="4">Quadgram score (recommended)</option>
-                          <option value="5">Quintgram score</option>
-                        </select>
-                      </div>
-                    </div>
-
-                    <div data-cipher-name="one-time-pad">
-                      <p>One-time pad not yet implemented</p>
-                    </div>
-
-                    <div data-cipher-name="hill">
-                      <div class="data-entry">
-                        <label for="hill-m">Matrix size:</label>
-                        <input type="number" name="m" id="hill-m" class="required-for-cipher" max="4" min="2" value="3">
-                      </div>
-                      <div class="data-entry">
-                        <label for="hill-n">Fitness evaluation method:</label>
-                        <select name="n" id="hill-n" class="required-for-cipher">
-                          <option value="">Select fitness method...</option>
-                          <option value="2">Bigram score</option>
-                          <option value="3">Trigram score</option>
-                          <option value="4">Quadgram score (recommended)</option>
-                          <option value="5">Quintgram score</option>
-                        </select>
-                      </div>
-                    </div>
-
-                    <div data-cipher-name="adfgvx">
-                      <div class="data-entry">
-                        <label for="adfgvx-n">Fitness evaluation method:</label>
-                        <select name="n" id="adfgvx-n" class="required-for-cipher">
-                          <option value="">Select fitness method...</option>
-                          <option value="2">Bigram score</option>
-                          <option value="3">Trigram score</option>
-                          <option value="4">Quadgram score (recommended)</option>
-                          <option value="5">Quintgram score</option>
-                        </select>
-                      </div>
-                    </div>
-
-                  </div>
-                </div>
-
-                <div>
-                  <h5>Finish</h5>
-                  <button type="submit" id="add-population-submit">Create population &rarr;</button>
-                </div>
-              </div>
-            </div>
-
-            <footer>
-              <button type="button" id="population-modal-back-button" disabled>&larr; Back</button>
-            </footer>
-
-          </form>
-          
-        </div>
-      </div>
-    </section>-->
-
     <script src="functionality-checks.js"></script>
     <script src="custom-elements.js"></script>
     <script src="assets.js"></script>
     <script src="ciphers.js"></script>
     <script src="population-control.js"></script>
     <script src="interface.js"></script>
+    <script src="keypress.js"></script>
+    <script src="startup-populations.js"></script>
   </body>
 </html>
