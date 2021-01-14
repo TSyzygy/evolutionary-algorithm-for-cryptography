@@ -47,28 +47,10 @@
           </div>
         </section>
 
-        <!-- template for population pages -->
-        <template id="population-page-template">
+        <!-- template for population pages
+        <template id="population-page-template-old">
           <section>
             <div class="population-page">
-
-              <div class="top-bar">
-                <h2 data-dp="name"></h2>
-                <div class="controls">
-                  <button type="button" class="toggle-button"><span class="run-text">Run &rtrif;</span class="stop-text"><span class="stop-text">Stop &squf;</span></button>
-                  <button type="button" class="step-button">Step &plus;</button>
-                </div>
-                <div class="current">
-                  <p>Gen <code data-dp="genNum">0</code>, <span data-dp="state"></span></p>
-                </div>
-              </div>
-
-              <nav>
-                <button data-target="config" class="open">Config</button>
-                <button data-target="decryptions">Decryptions</button>
-                <button data-target="population">Population</button>
-              </nav>
-
               <div class="sub-pages">
                 <div class="config open">
                   <h3>Config</h3>
@@ -136,6 +118,98 @@
                       <span class="success">Copied!</span>
                       <span class="failure">Copy failed</span>
                     </button>
+                  </div>
+                </div>
+  
+                <div class="decryptions">
+                  <h3>Decryptions</h3>
+                  <p>Key: <input type="text" data-dp="keyInput" class="monospace" width="100px"></p>
+                  <p>Score: <code data-dp="keyScore"></code></p>
+                  <p>Decryption:</p>
+                  <div data-dp="keyDecryptions">
+                    
+                  </div>
+                </div>
+  
+                <div class="population">
+                  <h3>Population</h3>
+                </div>
+              </div>
+
+            </div>
+          </section>
+        </template>--->
+
+        <template id="population-page-template">
+          <section>
+            <div class="population-page">
+              <div class="sub-pages">
+                <div class="config open">
+                  <h3>Config</h3>
+                  <div class="description">
+                    <h4>Description</h4>
+                    <p><slot name="description"></slot></p>
+                  </div>
+                  <div class="cipher-config">
+                    <h4>Cipher config</h4>
+                    <p data-dp="cipherName"></p>
+                    <table>
+                      <slot name="cipher-options"></slot>
+                    </table>
+                  </div>
+                  <div class="evolution">
+                    <h4>Evolution config</h4>
+                    <table>
+                      <tr>
+                        <td>Population size:</td>
+                        <td><slot name="population-size"></slot></td>
+                      </tr>
+                      <tr>
+                        <td>Children per parent:</td>
+                        <td><slot name="children-per-parent"></slot></td>
+                      </tr>
+                      <tr>
+                        <td>Random per generation:</td>
+                        <td><slot name="random-per-generation"></slot></td>
+                      </tr>
+                      <tr>
+                        <td>Allow duplicates:</td>
+                        <td><slot name="allow-duplicates"></slot></td>
+                      </tr>
+                    </table>
+                  </div>
+                  <div class="messages">
+                    <h4>Messages</h4>
+                    <div>
+                      <slot name="messages"></slot>
+                    </div>
+                  </div>
+                  <div class="export">
+                    <h4>Export</h4>
+                    <p>Config only: </p>
+                    <button type="button" data-dp="downloadConfig">
+                      <span class="default">Download .json file</span>
+                      <span class="preparing">Preparing...</span>
+                      <span class="success">Downloaded!</span>
+                    </button>
+                    <button type="button" data-dp="copyConfig">
+                      <span class="default">Copy JSON to clipboard</span>
+                      <span class="preparing">Preparing...</span>
+                      <span class="success">Copied!</span>
+                      <span class="failure">Copy failed</span>
+                    </button>
+                    <p>Config and population history: </p>
+                    <button type="button" data-dp="downloadPopulation">
+                      <span class="default">Download .json file</span>
+                      <span class="preparing">Preparing...</span>
+                      <span class="success">Downloaded!</span>
+                    </button>
+                    <button type="button" data-dp="copyPopulation">
+                      <span class="default">Copy JSON to clipboard</span>
+                      <span class="preparing">Preparing...</span>
+                      <span class="success">Copied!</span>
+                      <span class="failure">Copy failed</span>
+                    </button>
                     <!--<p>Export config only: </p><input type="text" data-dp="configExport" value="Waiting for initialisation to finish" disabled>
                     <p>Export config and population history: </p><input type="text" data-dp="populationExport" value="Click to generate export" disabled>-->
                   </div>
@@ -160,9 +234,28 @@
           </section>
         </template>
 
-        <div id="population-pages">
-          
-        </div>
+        <main>
+          <div class="top-bar">
+            <h2 data-dp="name"></h2>
+            <div class="controls">
+              <button type="button" class="toggle-button"><span class="run-text">Run &rtrif;</span class="stop-text"><span class="stop-text">Stop &squf;</span></button>
+              <button type="button" class="step-button">Step &plus;</button>
+            </div>
+            <div class="current">
+              <p>Gen <code data-dp="genNum">0</code>, <span data-dp="state"></span></p>
+            </div>
+          </div>
+
+          <nav>
+            <button data-target="config" class="open">Config</button>
+            <button data-target="decryptions">Decryptions</button>
+            <button data-target="population">Population</button>
+          </nav>
+
+          <div id="population-pages">
+
+          </div>
+        </main>
 
       </div>
 

@@ -1,6 +1,6 @@
-let customElementRegistry = window.customElements;
+const customElementRegistry = window.customElements;
 
-let populationPageTemplate = document.getElementById("population-page-template")
+const populationPageTemplate = document.getElementById("population-page-template")
   .content.firstElementChild;
 customElementRegistry.define(
   "population-page",

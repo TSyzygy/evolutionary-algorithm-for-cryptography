@@ -44,7 +44,7 @@ class Population {
   constructor({ name, description, config, history, knownScores }) {
     const thisPopulation = this,
       worker = (this.worker = new Worker("population-worker.js")),
-      page = (this.page = populationPageTemplate.cloneNode(true)),
+      page = (this.page = document.createElement("population-page")),
       toggleButton = (this.toggleButton = page.querySelector(".toggle-button")),
       stepButton = (this.stepButton = page.querySelector(".step-button")),
       navButtons = page.querySelector("nav").children,
@@ -276,7 +276,7 @@ class Population {
     });
 
     // Adds population page
-    populationPages.appendChild(page);
+    populationPageElements.appendChild(page);
   }
 
   /**
@@ -375,6 +375,20 @@ var numPopulations = 0,
   openPopulation = null,
   openButton = null;
 
+function changeOpenPopulation(n) {
+  if (n != openPopulationNum) {
+    if (0 <= n && n < numPopulations) {
+      openPopulation.closePage();
+      populationButtonCollection[openPopulationNum].classList.remove("open");
+      openPopulationNum = n;
+      openPopulation = populations[n];
+      populationButtonCollection[openPopulationNum].classList.add("open");
+      openPopulation.openPage();
+    } else return false;
+  };
+  return openPopulation;
+}
+
 function setupPopulation(populationData) {
   // console.log(JSON.stringify(populationData));
   const thisPopulationNum = numPopulations++,
@@ -385,23 +399,11 @@ function setupPopulation(populationData) {
   button.setAttribute("type", "button");
   button.innerText = populationData.name;
 
-  function openThisPopulation () {
-    if (openPopulation) {
-      openPopulation.closePage();
-      openButton.classList.remove("open");
-    };
-    this.classList.add("open");
-    openButton = this;
-
-    thisPopulation.openPage();
-    openPopulationNum = thisPopulationNum;
-    openPopulation = thisPopulation;
-    closeSidebar();
-  }
-
   // Sets up event listener to open this population on sidebar button click
-  button.addEventListener("click", openThisPopulation);
-  populationButtons.appendChild(button);
+  button.addEventListener("click", function () {
+    changeOpenPopulation(thisPopulationNum);
+  });
+  populationButtonElements.appendChild(button);
 
-  openThisPopulation.call(button);
+  changeOpenPopulation(thisPopulationNum);
 }
