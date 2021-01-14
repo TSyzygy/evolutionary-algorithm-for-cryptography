@@ -1,21 +1,50 @@
 const customElementRegistry = window.customElements;
 
 const populationPageTemplate = document.getElementById("population-page-template")
-  .content.firstElementChild;
+  .content;
 customElementRegistry.define(
   "population-page",
   class extends HTMLElement {
     constructor() {
       super();
 
-      const shadow = this.attachShadow({ mode: "closed" });
+      const shadow = this.attachShadow({ mode: "closed" }),
+        populationPageElements = populationPageTemplate.cloneNode(true),
+        thisPopulationPage = this,
+        keyInput = populationPageElements.getElementById("key-input");
+      
+      this._openSubPage = 0;
+      this.subPages = this.getElementById("sub-pages").children;
+
+      keyInput.addEventListener("change", function () {
+        const cancelled = !thisPopulationPage.dispatchEvent(new CustomEvent("displayedkeychange", { detail: () => this.value }));
+
+        if (cancelled) {
+          this.setAttribute("invalid", "");
+        } else {
+          this.removeAttribute("invalid");
+        }
+      })
 
       shadow.appendChild(populationPageTemplate.cloneNode(true));
+    }
+
+    get openSubPage() {
+      return this._openSubPage;
+    }
+
+    set openSubPage(newN) {
+      const oldN = this._openSubPage,
+        subPages = this.subPages;
+      if (newN != oldN) {
+        subPages[oldN].classList.remove("open");
+        subPages[newN].classList.add("open");
+      }
     }
   }
 );
 
-let modalTemplate = document.getElementById("modal-template").content;
+const modalTemplate = document.getElementById("modal-template").content;
 customElementRegistry.define(
   "modal-popup",
   class extends HTMLElement {

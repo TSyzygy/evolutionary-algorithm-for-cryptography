@@ -83,13 +83,12 @@ class Population {
         this.keyToText = KeyToText(cipherOptions);
         this.keyToString = KeyToString(cipherOptions);
 
-        displayPoints.keyInput.addEventListener("change", function () {
-          const keyEntered = textToKey(this.value);
+        page.addEventListener("displayedkeychange", function (e) {
+          const keyEntered = textToKey(e.detail);
           if (keyEntered) {
             thisPopulation.displayDecryption(keyEntered);
-            this.removeAttribute("invalid");
           } else {
-            this.setAttribute("invalid", "");
+            e.preventDefault();
           }
         });
       })
@@ -176,7 +175,7 @@ class Population {
     }
 
     // Name, gen num and description
-    displayPoints.name.innerText = name;
+    page.setAttribute("name", name);
     displayPoints.description.innerText = description;
 
     // Cipher config
@@ -276,7 +275,7 @@ class Population {
     });
 
     // Adds population page
-    populationPageElements.appendChild(page);
+    populationPages.appendChild(page);
   }
 
   /**
@@ -403,7 +402,7 @@ function setupPopulation(populationData) {
   button.addEventListener("click", function () {
     changeOpenPopulation(thisPopulationNum);
   });
-  populationButtonElements.appendChild(button);
+  populationButtons.appendChild(button);
 
   changeOpenPopulation(thisPopulationNum);
 }

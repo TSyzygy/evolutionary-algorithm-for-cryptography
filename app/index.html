@@ -187,24 +187,24 @@
                   <div class="export">
                     <h4>Export</h4>
                     <p>Config only: </p>
-                    <button type="button" data-dp="downloadConfig">
+                    <button type="button" id="download-config">
                       <span class="default">Download .json file</span>
                       <span class="preparing">Preparing...</span>
                       <span class="success">Downloaded!</span>
                     </button>
-                    <button type="button" data-dp="copyConfig">
+                    <button type="button" id="copy-config">
                       <span class="default">Copy JSON to clipboard</span>
                       <span class="preparing">Preparing...</span>
                       <span class="success">Copied!</span>
                       <span class="failure">Copy failed</span>
                     </button>
                     <p>Config and population history: </p>
-                    <button type="button" data-dp="downloadPopulation">
+                    <button type="button" id="download-population">
                       <span class="default">Download .json file</span>
                       <span class="preparing">Preparing...</span>
                       <span class="success">Downloaded!</span>
                     </button>
-                    <button type="button" data-dp="copyPopulation">
+                    <button type="button" id="copy-population">
                       <span class="default">Copy JSON to clipboard</span>
                       <span class="preparing">Preparing...</span>
                       <span class="success">Copied!</span>
@@ -217,11 +217,11 @@
   
                 <div class="decryptions">
                   <h3>Decryptions</h3>
-                  <p>Key: <input type="text" data-dp="keyInput" class="monospace" width="100px"></p>
-                  <p>Score: <code data-dp="keyScore"></code></p>
+                  <p>Key: <input type="text" id="key-input" class="monospace" width="100px"></p>
+                  <p>Score: <code id="key-score"></code></p>
                   <p>Decryption:</p>
-                  <div data-dp="keyDecryptions">
-                    
+                  <div>
+                    <slot slot="key-decryptions"></slot>
                   </div>
                 </div>
   

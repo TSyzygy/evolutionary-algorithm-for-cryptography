@@ -6,9 +6,9 @@ const // sidebar
   closeSidebarButton = sidebar.querySelector("#close-sidebar"),
   // populations
   // populationPageTemplate = document.getElementById("population-page-template"),
-  populationPageElements = document.getElementById("population-pages"),
-  populationButtonElements = sidebar.querySelector("#population-buttons"),
-  populationButtonCollection = populationButtonElements.children,
+  populationPages = document.getElementById("population-pages"),
+  populationButtons = sidebar.querySelector("#population-buttons"),
+  populationButtonCollection = populationButtons.children,
   // modal
   openAddPopulationModalButton = document.getElementById(
     "open-add-population-modal"
