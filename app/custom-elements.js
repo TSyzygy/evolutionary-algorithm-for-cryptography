@@ -5,6 +5,10 @@ const populationPageTemplate = document.getElementById("population-page-template
 customElementRegistry.define(
   "population-page",
   class extends HTMLElement {
+    static get observedAttributes() {
+      return ["name", "description", /* "cipher-name", */ "population-size", "children-per-parent", "random-per-generation", "allow-duplicates"];
+    }
+
     constructor() {
       super();
 
@@ -12,9 +16,16 @@ customElementRegistry.define(
         populationPageElements = populationPageTemplate.cloneNode(true),
         thisPopulationPage = this,
         keyInput = populationPageElements.getElementById("key-input");
-      
-      this._openSubPage = 0;
-      this.subPages = this.getElementById("sub-pages").children;
+
+      this._openTab = 0;
+      this.tabs = this.getElementById("sub-pages").children;
+      this.descriptionEntry = this.getElementById("description-entry");
+      /*
+      this.populationSizeDisplay = this.getElementById("population-size");
+      this.childrenPerParent = this.getElementById("children-per-parent");
+      this.randomPerGeneration = this.getElementById("random-per-generation");
+      this.allowDupliates = this.getElementById("allow-duplicates");
+      */
 
       keyInput.addEventListener("change", function () {
         const cancelled = !thisPopulationPage.dispatchEvent(new CustomEvent("displayedkeychange", { detail: () => this.value }));
@@ -26,23 +37,86 @@ customElementRegistry.define(
         }
       })
 
-      shadow.appendChild(populationPageTemplate.cloneNode(true));
+      shadow.appendChild(populationPageElements);
     }
 
-    get openSubPage() {
-      return this._openSubPage;
-    }
-
-    set openSubPage(newN) {
-      const oldN = this._openSubPage,
-        subPages = this.subPages;
+    get openTab() { return this._openTab }
+    set openTab(newN) {
+      const oldN = this._openTab,
+        tabs = this.tabs;
       if (newN != oldN) {
-        subPages[oldN].classList.remove("open");
-        subPages[newN].classList.add("open");
+        tabs[oldN].classList.remove("open");
+        tabs[newN].classList.add("open");
       }
+    }
+
+    /*
+    get populationSize() { return this._populationSize }
+    set populationSize(newVal) {
+      this._populationSize = newVal;
+      this.setAttribute("population-size", newVal);
+    }
+
+    get childrenPerParent() { return this._childrenPerParent }
+    set childrenPerParent(newVal) {
+      this._childrenPerParent = newVal;
+      this.setAttribute("children-per-parent", newVal);
+    }
+    */
+
+    // displayDecryption() { }
+
+    attributeChangedCallback(name, _oldValue, newValue) {
+      switch (name) {
+        case "name":
+          // todo
+          break;
+        case "description":
+          this.descriptionEntry.value = newValue;
+          break;
+        /* case "population-size":
+          this.populationSize.innerText = newValue;
+          break;
+        case "children-per-parent":
+          this.childrenPerParent.innerText = newValue;
+          break;
+        case "random-per-generation":
+          this.randomPerGeneration.innerText = newValue;
+          break;
+        case "allow-duplicates":
+          this.allowDupliates.innerText = allowDupliates ? "YES" : "NO";
+          break; */
+      };
     }
   }
 );
+
+const populationButtonTemplate = document.getElementById("population-button-template").content;
+customElementRegistry.define(
+  "population-button",
+  class extends HTMLElement {
+    static get observedAttributes() {
+      return ["open"];
+    }
+
+    constructor() {
+      super()
+
+      const shadow = this.attachShadow({ mode: "closed" }),
+        populationButtonElements = populationButtonTemplate.cloneNode(true),
+        thisPopulationPage = this;
+
+      shadow.appendChild(populationButtonElements);
+    }
+    
+    get open() { return this._open }
+    set open(newVal) {
+      this._open = newVal; // trust newVal is boolean?
+      if (newVal) this.setAttribute("open", "");
+      else this.removeAttribute("open")
+    }
+  }
+)
 
 const modalTemplate = document.getElementById("modal-template").content;
 customElementRegistry.define(
@@ -86,85 +160,3 @@ customElementRegistry.define(
     }
   }
 );
-
-/* customElementRegistry.define(
-  "cipher-input-select",
-  class extends HTMLElement {
-    constructor(options) {
-      const shadow = this.attachShadow({ mode: "open" }),
-        selectElement = document.createElement("select");
-
-      for (let option in options) {
-        let optionElement = document.createElement("option");
-        optionElement.innerText = option;
-        optionElement.setAttribute("value", options[option]);
-        selectElement.append(optionElement);
-      };
-
-      shadow.appendChild(selectElement);
-    }
-    checkValidity() {
-      return this.shadow.querySelector("select").checkValidity();
-    }
-  }
-); */
-
-/* customElementRegistry.define(
-  "cipher-option-group",
-  class extends HTMLElement {
-    constructor() {
-
-    }
-  }
-) */
-
-/*
-customElementRegistry.define(
-  "cipher-option",
-  class extends HTMLElement {
-    static get observedAttributes() {
-      return []; // todo
-    }
-    constructor (inputDetails, cipherName, optionName, label, info) {
-      super();
-
-      var shadow = this.attachShadow({ mode: "open" }),
-        labelElement = document.createElement("label"),
-        inputElement;
-      
-      labelElement.setAttribute("for", cipherName + "-" + optionName);
-      labelElement.innerText = label;
-
-      switch (inputDetails.type) {
-        case "select":
-          inputElement = document.createElement("select");
-          let options = inputDetails.options;
-          for (let option in options) {
-            let optionElement = document.createElement("option");
-            optionElement.innerText = option;
-            optionElement.setAttribute("value", options[option]);
-            inputElement.append(optionElement);
-          };
-          break;
-        case "number":
-          inputElement = document.createElement("input");
-          inputElement.setAttribute("type", "number");
-          for (let attribute of ["min", "max", "placeholder", "value"])
-            if (inputDetails.hasOwnProperty(attribute))
-              inputElement.setAttribute(attribute, inputDetails[attribute]);
-          break;
-      };
-      this._inputElement = inputElement;
-
-      shadow.appendChild(labelElement);
-      shadow.appendChild(inputElement);
-    }
-    get value () {
-      return this._inputElement.value;
-    }
-    checkValidity() {
-      return this._inputElement.checkValidity();
-    }
-  }
-)
-*/

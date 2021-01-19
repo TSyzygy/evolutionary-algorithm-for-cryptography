@@ -27,8 +27,8 @@ const // sidebar
   ),
   cipherSpecificPagesCollection = cipherSpecificPages.children;
 
-var numMessageInputs = 1,
-  currentCipherPage = null;
+var numMessageInputs = 1;
+  // openCipherPage = null,
 
 // sidebar
 
@@ -92,32 +92,31 @@ messageEntryContainer.querySelector("input").addEventListener(
 );
 
 addPopulationForm.addEventListener("submit", function () {
-  const elements = this.elements,
-    populationInfo = {
-      name: elements.name.value,
-      description: elements.description.value,
-      config: {
-        messages: Array.prototype.map.call(
-          this.querySelectorAll("#messages input"),
-          (e) => e.value
-        ),
-        cipher: {
-          name: currentCipherOptionGroup.cipherName,
-          // Collects all the cipher-specific option inputs
-          options: currentCipherOptionGroup.collectInputs(),
-        },
-        evolution: {
-          populationSize: elements["population-size"].value,
-          childrenPerParent: elements["children-per-parent"].value,
-          randomPerGeneration: elements["random-per-generation"].value,
-          allowDuplicates: elements["duplicates-allowed"].checked,
-        },
-      },
-      history: [],
-      knownScores: {},
-    };
+  const elements = this.elements;
 
-  setupPopulation(populationInfo);
+  setupPopulation({
+    name: elements.name.value,
+    description: elements.description.value,
+    config: {
+      messages: Array.prototype.map.call(
+        this.querySelectorAll("#messages input"),
+        (e) => e.value
+      ),
+      cipher: {
+        name: currentCipherOptionGroup.cipherName,
+        // Collects all the cipher-specific option inputs
+        options: currentCipherOptionGroup.collectInputs(),
+      },
+      evolution: {
+        populationSize: elements["population-size"].value,
+        childrenPerParent: elements["children-per-parent"].value,
+        randomPerGeneration: elements["random-per-generation"].value,
+        allowDuplicates: elements["duplicates-allowed"].checked,
+      },
+    },
+    history: [],
+    knownScores: {},
+  });
 
   addPopulationModal.open = false;
   this.reset();

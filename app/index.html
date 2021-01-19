@@ -15,6 +15,14 @@
     <link rel="stylesheet" href="fonts/fonts.css">
   </head>
   <body>
+    <script src="functionality-checks.js" defer></script>
+    <script src="custom-elements.js" defer></script>
+    <script src="assets.js" defer></script>
+    <script src="ciphers.js" defer></script>
+    <script src="population-control.js" defer></script>
+    <script src="interface.js" defer></script>
+    <script src="keypress.js" defer></script>
+    <script src="startup-populations.js" defer></script>
 
     <div id="page">
 
@@ -29,7 +37,11 @@
             <h4>Populations:</h4>
             <button type="button" class="square" id="open-add-population-modal">&plus;</button>
           </div>
-          <nav id="population-buttons"></nav>
+          <nav id="population-buttons">
+            <template id="population-button-template">
+              <button type="button"><slot name="name"></slot></button>
+            </template>
+          </nav>
           <p id="no-populations-message">No populations.</p>
         </section>
       </div>
@@ -47,98 +59,12 @@
           </div>
         </section>
 
-        <!-- template for population pages
-        <template id="population-page-template-old">
-          <section>
-            <div class="population-page">
-              <div class="sub-pages">
-                <div class="config open">
-                  <h3>Config</h3>
-                  <div class="description">
-                    <h4>Description</h4>
-                    <p data-dp="description"></p>
-                  </div>
-                  <div class="cipher-config">
-                    <h4>Cipher config</h4>
-                    <p data-dp="cipherName"></p>
-                    <table data-dp="cipherOptions">
-                      
-                    </table>
-                  </div>
-                  <div class="evolution">
-                    <h4>Evolution config</h4>
-                    <table>
-                      <tr>
-                        <td>Population size:</td>
-                        <td data-dp="populationSize"></td>
-                      </tr>
-                      <tr>
-                        <td>Children per parent:</td>
-                        <td data-dp="childrenPerParent"></td>
-                      </tr>
-                      <tr>
-                        <td>Random per generation:</td>
-                        <td data-dp="randomPerGeneration"></td>
-                      </tr>
-                      <tr>
-                        <td>Allow duplicates:</td>
-                        <td data-dp="allowDuplicates"></td>
-                      </tr>
-                    </table>
-                  </div>
-                  <div class="messages">
-                    <h4>Messages</h4>
-                    <div data-dp="messages">
-  
-                    </div>
-                  </div>
-                  <div class="export">
-                    <h4>Export</h4>
-                    <p>Config only: </p>
-                    <button type="button" data-dp="downloadConfig">
-                      <span class="default">Download .json file</span>
-                      <span class="preparing">Preparing...</span>
-                      <span class="success">Downloaded!</span>
-                    </button>
-                    <button type="button" data-dp="copyConfig">
-                      <span class="default">Copy JSON to clipboard</span>
-                      <span class="preparing">Preparing...</span>
-                      <span class="success">Copied!</span>
-                      <span class="failure">Copy failed</span>
-                    </button>
-                    <p>Config and population history: </p>
-                    <button type="button" data-dp="downloadPopulation">
-                      <span class="default">Download .json file</span>
-                      <span class="preparing">Preparing...</span>
-                      <span class="success">Downloaded!</span>
-                    </button>
-                    <button type="button" data-dp="copyPopulation">
-                      <span class="default">Copy JSON to clipboard</span>
-                      <span class="preparing">Preparing...</span>
-                      <span class="success">Copied!</span>
-                      <span class="failure">Copy failed</span>
-                    </button>
-                  </div>
-                </div>
-  
-                <div class="decryptions">
-                  <h3>Decryptions</h3>
-                  <p>Key: <input type="text" data-dp="keyInput" class="monospace" width="100px"></p>
-                  <p>Score: <code data-dp="keyScore"></code></p>
-                  <p>Decryption:</p>
-                  <div data-dp="keyDecryptions">
-                    
-                  </div>
-                </div>
-  
-                <div class="population">
-                  <h3>Population</h3>
-                </div>
-              </div>
-
-            </div>
-          </section>
-        </template>--->
+        <template id="tab-template">
+          <link rel="stylesheet" href="dist/tab.css">
+          <main>
+            
+          </main>
+        </template>
 
         <template id="population-page-template">
           <section>
@@ -148,11 +74,11 @@
                   <h3>Config</h3>
                   <div class="description">
                     <h4>Description</h4>
-                    <p><slot name="description"></slot></p>
+                    <textarea id="description-entry"></textarea>
                   </div>
                   <div class="cipher-config">
                     <h4>Cipher config</h4>
-                    <p data-dp="cipherName"></p>
+                    <p><slot name="cipher-name"></slot></p>
                     <table>
                       <slot name="cipher-options"></slot>
                     </table>
@@ -371,14 +297,5 @@
         </div>
       </form>
     </modal-popup>
-
-    <script src="functionality-checks.js"></script>
-    <script src="custom-elements.js"></script>
-    <script src="assets.js"></script>
-    <script src="ciphers.js"></script>
-    <script src="population-control.js"></script>
-    <script src="interface.js"></script>
-    <script src="keypress.js"></script>
-    <script src="startup-populations.js"></script>
   </body>
 </html>

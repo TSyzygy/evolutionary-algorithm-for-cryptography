@@ -40,6 +40,13 @@
 
 */
 
+// Todo once stable: move some bits to separate thing?
+class PopulationWorker {
+  constructor() {
+    // const worker = (this.worker = new Worker("population-worker.js"));
+  }
+}
+
 class Population {
   constructor({ name, description, config, history, knownScores }) {
     const thisPopulation = this,
@@ -48,7 +55,7 @@ class Population {
       toggleButton = (this.toggleButton = page.querySelector(".toggle-button")),
       stepButton = (this.stepButton = page.querySelector(".step-button")),
       navButtons = page.querySelector("nav").children,
-      // subPages = (this.subPages = page.querySelectorAll("#population-page > div")),
+      // tabs = (this.tabs = page.querySelectorAll("#population-page > div")),
       displayPoints = (this.displayPoints = Array.prototype.reduce.call(
         page.querySelectorAll("[data-dp]"),
         (t, c) => ((t[c.dataset.dp] = c), t),
@@ -156,17 +163,17 @@ class Population {
     });
 
     // Nav buttons
-    this.openSubPage = page.querySelector("div.config");
+    this.openTab = page.querySelector("div.config");
     this.openNavButton = page.querySelector("nav button[data-target='config']");
 
     for (let navButton of navButtons) {
-      const targetSubPage = page.querySelector(
+      const targetTab = page.querySelector(
         "div." + navButton.dataset.target
       );
       navButton.addEventListener("click", function () {
-        thisPopulation.openSubPage.classList.remove("open");
-        targetSubPage.classList.add("open");
-        thisPopulation.openSubPage = targetSubPage;
+        thisPopulation.openTab.classList.remove("open");
+        targetTab.classList.add("open");
+        thisPopulation.openTab = targetTab;
 
         thisPopulation.openNavButton.classList.remove("open");
         this.classList.add("open");
@@ -176,10 +183,20 @@ class Population {
 
     // Name, gen num and description
     page.setAttribute("name", name);
-    displayPoints.description.innerText = description;
+    
+    var tempSpan = document.createElement("span");
+    tempSpan.slot = "description";
+    tempSpan.innerText = description;
+    page.appendChild(tempSpan);
 
     // Cipher config
-    displayPoints.cipherName = cipherName;
+    tempSpan = document.createElement("span");
+    tempSpan.slot = "cipher-name";
+    tempSpan.innerText = cipherName;
+    page.appendChild(tempSpan);
+
+    tempSpan = document.createElement("span");
+    tempSpan.slot = "cipher-options";
     for (let optionName in cipherOptions) {
       const row = document.createElement("tr"),
         nameCell = document.createElement("td"),
@@ -189,14 +206,25 @@ class Population {
 
       row.appendChild(nameCell);
       row.appendChild(valueCell);
-      displayPoints.cipherOptions.appendChild(row);
-    }
+      cipherOptionsSpan.appendChild(row);
+    };
+    page.appendChild(tempSpan);
 
     // Evolution config
-    displayPoints.populationSize.innerText = populationSize;
-    displayPoints.childrenPerParent.innerText = childrenPerParent;
-    displayPoints.randomPerGeneration.innerText = randomPerGeneration;
-    displayPoints.allowDuplicates.innerText = allowDuplicates ? "YES" : "NO";
+    for (let p of ["populationSize", "childrenPerParent", "randomPerGeneration"]) {
+      tempSpan = document.createElement("span");
+      tempSpan.slot = p
+      tempSpan.innerText = evolutionConfig[p];
+      page.appendChild(tempSpan);
+    };
+    tempSpan = document.createElement("span");
+    tempSpan.slot = "allowDuplicates";
+    tempSpan.innerText = evolutionConfig.allowDuplicates ? "YES" : "NO";
+
+    /* page.populationSize = populationSize;
+    page.childrenPerParent = childrenPerParent;
+    page.randomPerGeneration = randomPerGeneration;
+    page.allowDuplicates = allowDuplicates; */
 
     // Messages
     for (let message of config.messages) {
@@ -368,25 +396,13 @@ class Population {
   }
 }
 
-const populations = [];
+const populations = [],
+  numTabs = 3;
 var numPopulations = 0,
   openPopulationNum = -1,
   openPopulation = null,
-  openButton = null;
-
-function changeOpenPopulation(n) {
-  if (n != openPopulationNum) {
-    if (0 <= n && n < numPopulations) {
-      openPopulation.closePage();
-      populationButtonCollection[openPopulationNum].classList.remove("open");
-      openPopulationNum = n;
-      openPopulation = populations[n];
-      populationButtonCollection[openPopulationNum].classList.add("open");
-      openPopulation.openPage();
-    } else return false;
-  };
-  return openPopulation;
-}
+  openButton = null,
+  openTab = 0; // which of the config, decryptions and populations pages is open
 
 function setupPopulation(populationData) {
   // console.log(JSON.stringify(populationData));
@@ -406,3 +422,104 @@ function setupPopulation(populationData) {
 
   changeOpenPopulation(thisPopulationNum);
 }
+
+function changeOpenPopulation(newVal) {
+  if (newVal != openPopulationNum) {
+    if (0 <= newVal && newVal < numPopulations) {
+      openPopulation.closePage();
+      populationButtonCollection[openPopulationNum].classList.remove("open");
+      openPopulationNum = newVal;
+      openPopulation = populations[newVal];
+      populationButtonCollection[openPopulationNum].classList.add("open");
+      openPopulation.openPage();
+    } else return false;
+  };
+  return openPopulation;
+}
+
+function changeOpenTab(newVal) {
+  if (newVal != openTab) {
+    if (0 <= newVal && newVal < numTabs) {
+      openTab = newVal;
+    }
+  }
+}
+
+const display = {
+  _redrawInterval: null,
+  _redrawTimoutID: null,
+
+  get redrawInterval() { return this._redrawInterval },
+  set redrawInterval(newVal) {
+    if (this._redrawTimeoutID) clearTimeout(this._redrawTimoutID);
+    this._redrawInterval = newVal;
+    if (newVal != null) this._redrawLoop(); // null stops the display updating
+  },
+
+  _scheduleRedraw() {
+    this._redrawTimoutID = setTimeout(this._redrawLoop, this._redrawInterval);
+  },
+
+  _redrawLoop() {
+    this.redraw();
+    this._scheduleRedraw()
+  },
+
+  redraw() {
+    this._openPopulation.redraw();
+  },
+
+  _populations: [], // todo
+  _openPopulationNum: -1,
+  _openPopulation: null,
+
+  _populationButtons: [],
+  _openPopulationButton: null,
+
+  get openPopulationNum() { return this._openPopulationNum },
+  set openPopulationNum(newVal) {
+    // Checks newVal within range
+    if (numPopulations <= newVal || newVal < 0) throw new RangeError("Not enough populations");
+
+    this._openPopulation.closePage();
+    this._openPopulationButton.classList.remove("open");
+
+    this._openPopulationNum = newVal;
+    const newOpenPopulation = this._openPopulation = this._populations[newVal],
+      newOpenButton = this._openButton = this._populationButtons[newVal];
+
+    newOpenPopulation.open(this._openTabNum);
+    newOpenButton.classList.add("open");
+  },
+
+  addPopulationPage() {
+    const newPopulationPage = new PopulationPage();
+
+    this._populations.push(newPopulationPage);
+
+    // uhhhhhhh
+  },
+
+  _tabButtons: [], // todo!
+  _numTabs: 3,
+  _openTabNum: -1,
+  _openTabButton: null,
+
+  get openTabNum() { return this._openTabNum },
+  set openTabNum(newVal) {
+    if (this._numTabs <= newVal || newVal < 0) throw new RangeError("Not enough tabs");
+
+    // Removes highlight from old tab button
+    this._openTabButton.close();
+
+    this._openTabNum = newVal;
+
+    // Redraws
+    this._openPopulation.open(this._openTabNum);
+
+    // Adds highlight to new tab button
+  }
+}
+
+// sets the display to redraw
+display.redrawInterval = 100;

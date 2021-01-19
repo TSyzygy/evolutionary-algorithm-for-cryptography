@@ -168,7 +168,7 @@ function () {
       thisPopulation.stop(); // Stop acts as a step
     }); // Nav buttons
 
-    this.openSubPage = page.querySelector("div.config");
+    this.openTab = page.querySelector("div.config");
     this.openNavButton = page.querySelector("nav button[data-target='config']");
     var _iteratorNormalCompletion = true;
     var _didIteratorError = false;
@@ -177,11 +177,11 @@ function () {
     try {
       var _loop = function _loop() {
         var navButton = _step.value;
-        var targetSubPage = page.querySelector("div." + navButton.dataset.target);
+        var targetTab = page.querySelector("div." + navButton.dataset.target);
         navButton.addEventListener("click", function () {
-          thisPopulation.openSubPage.classList.remove("open");
-          targetSubPage.classList.add("open");
-          thisPopulation.openSubPage = targetSubPage;
+          thisPopulation.openTab.classList.remove("open");
+          targetTab.classList.add("open");
+          thisPopulation.openTab = targetTab;
           thisPopulation.openNavButton.classList.remove("open");
           this.classList.add("open");
           thisPopulation.openNavButton = this;
