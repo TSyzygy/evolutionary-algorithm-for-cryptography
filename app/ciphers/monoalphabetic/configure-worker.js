@@ -29,7 +29,7 @@ async function configure(messages, { n }) {
       Y: 24,
       Z: 25,
     },
-    { NgramScore } = await import("../standard-configure-worker-functions"),
+    { NgramScore } = await import("../standard-configure-worker-functions.js"),
     scorePlaintext = await NgramScore(n);
 
   // Gets a random number between min and max-1

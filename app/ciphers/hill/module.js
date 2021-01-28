@@ -169,16 +169,8 @@ function modularInverse(a, n) {
     newR = tempR - quot * newR;
   }
 
-  return r > 1
-    ? false
-    : a < 0
-    ? t > 0
-      ? -t + n
-      : -t
-    : t < 0
-    ? t + n
-    : t;
-};
+  return r > 1 ? false : a < 0 ? (t > 0 ? -t + n : -t) : t < 0 ? t + n : t;
+}
 
 function invertMatrix(A, mod = 26) {
   // Checks det != 0 and is coprime with 26
@@ -209,16 +201,26 @@ function invertMatrix(A, mod = 26) {
         )
       )
     : false;
-};
+}
+
+const factorReciprocals = [1 / 2, 1 / 13];
+function keyspace({ m }) {
+  var keyspace = 26 ** (m ** 2);
+  for (let r of factorReciprocals)
+    for (let n = m; n > 0; n--) keyspace *= 1 - r ** n;
+  return keyspace;
+}
+
+function validateConfig(_config) {
+  return { valid: true };
+}
 
 function MessageDecrypter(message, { m }) {
   var i;
 
-  const numbers = message
-      .split("")
-      .flatMap((c) => {
-        return (i = value[c]) > -1 ? [i] : [];
-      }),
+  const numbers = message.split("").flatMap((c) => {
+      return (i = value[c]) > -1 ? [i] : [];
+    }),
     convertedMessage = [];
 
   // Pads message to multiple of g length
@@ -234,39 +236,44 @@ function MessageDecrypter(message, { m }) {
     convertedMessage.reduce(
       // Goes through each character
       (t, cipherRow) =>
-        t + key.reduce(
+        t +
+        key.reduce(
           (plainRow, keyRow) =>
             plainRow +
             // Gets character for that row
-            alphabet[
-              keyRow.reduce((t, c, i) => t + c * cipherRow[i], 0) % 26
-            ],
+            alphabet[keyRow.reduce((t, c, i) => t + c * cipherRow[i], 0) % 26],
           ""
         ),
       ""
     );
-};
+}
 
 function KeyToString(_config) {
   return (key) => key.join(";");
-};
+}
 
 function KeyToText(_config) {
   return (key) => {
     var inv = invertMatrix(key);
     return inv ? inv.join(";") : "non-invertible matrix";
   };
-};
+}
 
 function TextToKey({ m }) {
   return (key) => {
-    var mat = key
-      .split(";")
-      .map((row) => row.split(",").map((i) => Number(i)));
+    var mat = key.split(";").map((row) => row.split(",").map((i) => Number(i)));
     return mat.length == m && mat.every((row) => row.length == m)
       ? invertMatrix(mat)
       : false;
   };
-};
+}
 
-export { setup, MessageDecrypter, KeyToString, KeyToText, TextToKey };
+export {
+  setup,
+  keyspace,
+  validateConfig,
+  MessageDecrypter,
+  KeyToString,
+  KeyToText,
+  TextToKey,
+};

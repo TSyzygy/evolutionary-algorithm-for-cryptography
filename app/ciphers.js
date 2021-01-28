@@ -21,6 +21,10 @@ const availableCiphers = [
     cipherName: "transposition",
     displayName: "Transposition",
   },
+  {
+    cipherName: "otp",
+    displayName: "One-time pad",
+  },
 ];
 const addPopulationModal = document.getElementById("add-population-modal"),
   cipherSpecificOptions = document.getElementById("cipher-specific-options"),

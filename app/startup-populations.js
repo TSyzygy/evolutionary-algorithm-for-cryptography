@@ -3,6 +3,7 @@
 // TEMPORARY
 const startupPopulations = [
   {
+    include: false,
     name: "Vigenere test 1",
     description: "one",
     config: {
@@ -21,6 +22,7 @@ const startupPopulations = [
     knownScores: {},
   },
   {
+    include: false,
     name: "Vigenere test 2",
     description: "two",
     config: {
@@ -93,6 +95,7 @@ const startupPopulations = [
     knownScores: {},
   },
   {
+    include: false,
     name: "Hill test 1",
     description: "five",
     config: {
@@ -111,6 +114,7 @@ const startupPopulations = [
     knownScores: {},
   },
   {
+    include: false,
     name: "Hill test 2",
     description: "five",
     config: {
@@ -129,6 +133,7 @@ const startupPopulations = [
     knownScores: {},
   },
   {
+    include: false,
     name: "Hill test 3",
     description: "six",
     config: {
@@ -148,6 +153,7 @@ const startupPopulations = [
     // decrypt key: 21,18,5;25,2,24;14,13,7
   },
   {
+    include: false,
     name: "Hill test 4",
     description: "six",
     config: {
@@ -186,6 +192,7 @@ const startupPopulations = [
     knownScores: {}
   },
   {
+    include: false,
     name: "6B1",
     description: "",
     config: {
@@ -204,6 +211,7 @@ const startupPopulations = [
     knownScores: {}
   },
   {
+    include: false,
     name: "6B2",
     description: "",
     config: {
@@ -222,6 +230,7 @@ const startupPopulations = [
     knownScores: {}
   },
   {
+    include: false,
     name: "6B3",
     description: "",
     config: {
@@ -240,6 +249,7 @@ const startupPopulations = [
     knownScores: {}
   },
   {
+    include: false,
     name: "ADFGVX test",
     description: "",
     config: {
@@ -292,7 +302,45 @@ const startupPopulations = [
     },
     history: [],
     knownScores: {}
-  }
+  },
+  {
+    name: "2TP test 1",
+    description: "",
+    config: {
+      messages: [
+        "PPHKLXETAGOTLJGODXRODJBSJQGYGXJLGTKSGPHBTFEJSDXKEESUWLDDPVCVPKPZQMGFAEFTQLUKSBEJLHHHSKZFXNOYIDGMQOICSMZQQIUFYQBGCEZXVDJTBOGTXDRPWRIDTORXABUGDGIRGGBYHYRIRIJEKTLOMKIMKERZHFGZVCMOORRAMIHIRERZCPLCYFJKWPQRSHKTQIHBAYZXLBZOUJZRXNYBGIEVWJUXBSTOGWABQHGHPUCRISHTSTHDCCRAWABIZPEOWQVOBJYYSCNUUPYUFOVBZAOSCSODBKWGWRRVUQQRHDVHTJYSLGZRHWAKWYWTNPITYMPCQSRUKAHSJLKCZYEIDOEDVAHFIQGHNYODMLOTWANYAGXIHUVSNMGVLKYHBJTNUSVFFAFNKNMBMZPCN",
+        "HRETWPKMQUJEBMKEIMIKXNEEMHOZIETHUNQFKTKWPERUSDTRDTWJIARUGMOSLDCRFTHPMOJTRHWDEIYUKUCQNRFGRJDGFOABXJCMPNRPBUUPRHMKXOGFCFJEJFWPKGRPMGPGCKHBTFPVUPIIKBQSBFEJQQCENZWDUWIXUOVXSMMVACYCYRWCAQOGICTCKWXJGIVPVQQUNYXJBMHDIIXDLYJQRTGECARZHPPCHMFDRCUPJHIXDRXNPRUDQGVRPDQTVEEFBZVNNZEPCURLANGYFOPVUBLRPVAEUMJZHAUDAKQUBHLKBSFLEGYJCFDSXDCXHUULMIAWDJXESREIEWQCGECWCFLGMMEDTXFCMSFSDWTSZWAXCIZEJIJANPAWLWTFMCAEBKMZFUUYVPVAPPDCPTLVXOMROVANDAUH"
+      ],
+      cipher: { name: "otp", options: { n: 4 } },
+      evolution: {
+        populationSize: "20",
+        childrenPerParent: "5",
+        randomPerGeneration: "0",
+        allowDuplicates: false,
+      },
+    },
+    history: [],
+    knownScores: {}
+  },
+  {
+    name: "2TP test 1",
+    description: "",
+    config: {
+      messages: [
+        "PPHKLXETAGOTLJGODXRODJBSJQGYGXJLGTKSGPHBTFEJSDXKEESUWLDDPVCVPKPZQMGFAEFTQLUKSBEJLHHHSKZFXNOYIDGMQOICSMZQQIUFYQBGCEZXVDJTBOGTXDRPWRIDTORXABUGDGIRGGBYHYRIRIJEKTLOMKIMKERZHFGZVCMOORRAMIHIRERZCPLCYFJKWPQRSHKTQIHBAYZXLBZOUJZRXNYBGIEVWJUXBSTOGWABQHGHPUCRISHTSTHDCCRAWABIZPEOWQVOBJYYSCNUUPYUFOVBZAOSCSODBKWGWRRVUQQRHDVHTJYSLGZRHWAKWYWTNPITYMPCQSRUKAHSJLKCZYEIDOEDVAHFIQGHNYODMLOTWANYAGXIHUVSNMGVLKYHBJTNUSVFFAFNKNMBMZPCN",
+        "HRETWPKMQUJEBMKEIMIKXNEEMHOZIETHUNQFKTKWPERUSDTRDTWJIARUGMOSLDCRFTHPMOJTRHWDEIYUKUCQNRFGRJDGFOABXJCMPNRPBUUPRHMKXOGFCFJEJFWPKGRPMGPGCKHBTFPVUPIIKBQSBFEJQQCENZWDUWIXUOVXSMMVACYCYRWCAQOGICTCKWXJGIVPVQQUNYXJBMHDIIXDLYJQRTGECARZHPPCHMFDRCUPJHIXDRXNPRUDQGVRPDQTVEEFBZVNNZEPCURLANGYFOPVUBLRPVAEUMJZHAUDAKQUBHLKBSFLEGYJCFDSXDCXHUULMIAWDJXESREIEWQCGECWCFLGMMEDTXFCMSFSDWTSZWAXCIZEJIJANPAWLWTFMCAEBKMZFUUYVPVAPPDCPTLVXOMROVANDAUH"
+      ],
+      cipher: { name: "otp", options: { n: 6 } },
+      evolution: {
+        populationSize: "20",
+        childrenPerParent: "5",
+        randomPerGeneration: "0",
+        allowDuplicates: false,
+      },
+    },
+    history: [],
+    knownScores: {}
+  },
 ];
 
-if (true) startupPopulations.forEach(setupPopulation);
+if (true) startupPopulations.forEach((p) => { if (p.include !== false) setupPopulation(p) });

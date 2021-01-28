@@ -105,6 +105,16 @@ const setup = {
   ],
 };
 
+function keyspace({ keylength }) {
+  var keyspace = 1, n = 1;
+  while (n < keylength) keyspace *= ++n;
+  return keyspace
+}
+
+function validateConfig(_config) {
+  return { valid: true };
+}
+
 function MessageDecrypter(message, { keylength }) {
   while (message.length % keylength) message += "X";
   const filteredMessage = message
@@ -135,4 +145,4 @@ function TextToKey() {
   return text => text.split(",").map(Number)
 }
 
-export { setup, MessageDecrypter, KeyToString, KeyToText, TextToKey };
+export { setup, keyspace, validateConfig, MessageDecrypter, KeyToString, KeyToText, TextToKey };

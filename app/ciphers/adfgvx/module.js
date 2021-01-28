@@ -1,43 +1,43 @@
 "use strict";
 
 const alphabet = [
-    "A",
-    "B",
-    "C",
-    "D",
-    "E",
-    "F",
-    "G",
-    "H",
-    "I",
-    "J",
-    "K",
-    "L",
-    "M",
-    "N",
-    "O",
-    "P",
-    "Q",
-    "R",
-    "S",
-    "T",
-    "U",
-    "V",
-    "W",
-    "X",
-    "Y",
-    "Z",
-    "0",
-    "1",
-    "2",
-    "3",
-    "4",
-    "5",
-    "6",
-    "7",
-    "8",
-    "9",
-  ];
+  "A",
+  "B",
+  "C",
+  "D",
+  "E",
+  "F",
+  "G",
+  "H",
+  "I",
+  "J",
+  "K",
+  "L",
+  "M",
+  "N",
+  "O",
+  "P",
+  "Q",
+  "R",
+  "S",
+  "T",
+  "U",
+  "V",
+  "W",
+  "X",
+  "Y",
+  "Z",
+  "0",
+  "1",
+  "2",
+  "3",
+  "4",
+  "5",
+  "6",
+  "7",
+  "8",
+  "9",
+];
 
 const setup = {
   displayName: "ADFGVX",
@@ -76,6 +76,14 @@ const setup = {
   ],
 };
 
+function keyspace(_config) {
+  return 371993326789901217467999448150835200000000; // 36!
+}
+
+function validateConfig(_config) {
+  return { valid: true };
+}
+
 function MessageDecrypter(message) {
   // Todo: remove non-ADFGVX characters
   const l = message.length,
@@ -103,7 +111,7 @@ function KeyToString() {
 
 function KeyToText() {
   return (key) => {
-    return key.join("")
+    return key.join("");
     /*
     var encryptionKey = "";
     for (let l of alphabet) {
@@ -140,8 +148,16 @@ function TextToKey() {
         encryptionKey.push(lastLetter);
     }
 
-    return encryptionKey /* inverts: alphabet.map((char) => alphabet[encryptionKey.indexOf(char)]); */
+    return encryptionKey; /* inverts: alphabet.map((char) => alphabet[encryptionKey.indexOf(char)]); */
   };
 }
 
-export { setup, MessageDecrypter, KeyToString, KeyToText, TextToKey };
+export {
+  setup,
+  keyspace,
+  validateConfig,
+  MessageDecrypter,
+  KeyToString,
+  KeyToText,
+  TextToKey,
+};

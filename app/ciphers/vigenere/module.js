@@ -210,6 +210,14 @@ const setup = {
   ],
 };
 
+function keyspace({ m }) {
+  return 26 ** m
+}
+
+function validateConfig(_config) {
+  return { valid: true };
+}
+
 function MessageDecrypter(message, { keylength }) {
   const convertedMessage = message
     .split("")
@@ -243,4 +251,4 @@ function TextToKey({ keylength }) {
   };
 }
 
-export { setup, MessageDecrypter, KeyToString, KeyToText, TextToKey };
+export { setup, keyspace, validateConfig, MessageDecrypter, KeyToString, KeyToText, TextToKey };

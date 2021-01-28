@@ -113,6 +113,7 @@ class Population {
             worker.onmessage = function ({
               data: { candidates, newKnownScores },
             }) {
+
               // Adds the newly discovered scores to the knownScores object
               Object.assign(knownScores, newKnownScores);
 
@@ -199,16 +200,22 @@ class Population {
     displayPoints.randomPerGeneration.innerText = randomPerGeneration;
     displayPoints.allowDuplicates.innerText = allowDuplicates ? "YES" : "NO";
 
+    this.bestDecryptions = [];
     // Messages
     for (let message of config.messages) {
-      const m = document.createElement("code"),
+      const p1 = document.createElement("p"),
+        m = document.createElement("code"),
+        p2 = document.createElement("p"),
         d = document.createElement("code");
 
       m.innerText = message;
-      messagesDisplay.appendChild(m);
+      p1.appendChild(m);
+      messagesDisplay.appendChild(p1);
 
-      d.innerText = "run program to see decryptions";
-      keyDecryptions.appendChild(d);
+      d.innerText = "Decryptions will be shown once configured";
+      p2.appendChild(d);
+      keyDecryptions.appendChild(p2);
+      this.bestDecryptions.push(d);
     }
 
     // Sets up exports
@@ -354,7 +361,7 @@ class Population {
 
   displayDecryption(key) {
     const displayPoints = this.displayPoints,
-      bestDecryptions = displayPoints.keyDecryptions.children,
+      bestDecryptions = this.bestDecryptions,
       messageDecypters = this.messageDecypters,
       knownScores = this.knownScores,
       keyString = this.keyToString(key);
@@ -377,31 +384,39 @@ var numPopulations = 0,
 
 function setupPopulation(populationData) {
   // console.log(JSON.stringify(populationData));
-  const thisPopulationNum = numPopulations++,
-    thisPopulation = new Population(populationData),
-    button = document.createElement("button");
-  populations.push(thisPopulation);
 
-  button.setAttribute("type", "button");
-  button.innerText = populationData.name;
+  // Checks config is valid for cipher
+  const config = populationData.config,
+    cipherOptions = config.cipher.options;
+  return ciphers[config.cipher.name].module.then(({ keyspace, validateConfig }) => {
+    if (keyspace(cipherOptions) > config.evolution.populationSize && validateConfig(cipherOptions).valid) {
+      const thisPopulationNum = numPopulations++,
+        thisPopulation = new Population(populationData),
+        button = document.createElement("button");
+      populations.push(thisPopulation);
 
-  function openThisPopulation () {
-    if (openPopulation) {
-      openPopulation.closePage();
-      openButton.classList.remove("open");
-    };
-    this.classList.add("open");
-    openButton = this;
+      button.setAttribute("type", "button");
+      button.innerText = populationData.name;
 
-    thisPopulation.openPage();
-    openPopulationNum = thisPopulationNum;
-    openPopulation = thisPopulation;
-    closeSidebar();
-  }
+      function openThisPopulation() {
+        if (openPopulation) {
+          openPopulation.closePage();
+          openButton.classList.remove("open");
+        }
+        this.classList.add("open");
+        openButton = this;
 
-  // Sets up event listener to open this population on sidebar button click
-  button.addEventListener("click", openThisPopulation);
-  populationButtons.appendChild(button);
+        thisPopulation.openPage();
+        openPopulationNum = thisPopulationNum;
+        openPopulation = thisPopulation;
+        closeSidebar();
+      }
 
-  openThisPopulation.call(button);
+      // Sets up event listener to open this population on sidebar button click
+      button.addEventListener("click", openThisPopulation);
+      populationButtons.appendChild(button);
+
+      openThisPopulation.call(button);
+    } else return false;
+  });
 }

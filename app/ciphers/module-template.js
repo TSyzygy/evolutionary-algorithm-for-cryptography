@@ -49,6 +49,14 @@ const setup = {
   ],
 };
 
+function keyspace(_config) {
+  
+};
+
+function validateConfig(_config) {
+  
+};
+
 function MessageDecrypter(_message, _config) {
   
 };
@@ -65,4 +73,4 @@ function TextToKey(_config) {
   
 };
 
-export { setup, MessageDecrypter, KeyToString, KeyToText, TextToKey };
+export { setup, keyspace, validateConfig, MessageDecrypter, KeyToString, KeyToText, TextToKey };

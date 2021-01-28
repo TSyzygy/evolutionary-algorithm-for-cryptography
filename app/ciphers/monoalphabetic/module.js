@@ -226,6 +226,14 @@ const setup = {
   ],
 };
 
+function keyspace(_config) {
+  return 403291461126605635584000000; // 26!
+}
+
+function validateConfig(_config) {
+  return { valid: true };
+}
+
 function MessageDecrypter(message, _config) {
   const convertedMessage = message
     .split("")
@@ -241,11 +249,11 @@ function MessageDecrypter(message, _config) {
           : val),
       ""
     );
-};
+}
 
 function KeyToString(_config) {
   return (key) => key.join("");
-};
+}
 
 function KeyToText(_config) {
   return (key) => {
@@ -255,7 +263,7 @@ function KeyToText(_config) {
     }
     return encryptionKey;
   };
-};
+}
 
 function TextToKey(_config) {
   return (text) => {
@@ -285,6 +293,14 @@ function TextToKey(_config) {
 
     return alphabet.map((char) => letter[encryptionKey.indexOf(char)]);
   };
-};
+}
 
-export { setup, MessageDecrypter, KeyToString, KeyToText, TextToKey };
+export {
+  setup,
+  keyspace,
+  validateConfig,
+  MessageDecrypter,
+  KeyToString,
+  KeyToText,
+  TextToKey,
+};

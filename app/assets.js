@@ -13,8 +13,7 @@ const getAsset = (function () {
     // If data is not stored centrally, gets it from the server-side json files
     return directory.hasOwnProperty(fileName)
       ? directory[fileName]
-      : fetch("../assets/" + directoryPath.join("/") + "/" + fileName)
-          .then((response) => response.json())
-          .then((json) => (directory[fileName] = json));
+      : (directory[fileName] = fetch(`../assets/${directoryPath.join("/")}/${fileName}`)
+          .then((response) => response.json()));
   };
 })();

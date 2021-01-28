@@ -98,27 +98,34 @@ const getAsset = (function () {
 
     // Gets cipher functions
     importScripts("ciphers/" + name + "/configure-worker.js");
-    ({
-      fitness,
-      randomCandidate,
-      permuteCandidate,
-      keyToString,
-    } = await configure(messages, options));
 
-    importCandidates.forEach(evaluateCandidate);
-    knownScores = importKnownScores;
+    configure(messages, options).then((configFunctions) => {
+      ({
+        fitness,
+        randomCandidate,
+        permuteCandidate,
+        keyToString,
+      } = configFunctions);
 
-    while (candidates.length < populationSize)
-      evaluateCandidate(randomCandidate());
+      importCandidates.forEach(evaluateCandidate);
 
-    // Once config complete, message events toggle the population on/off.
-    onmessage = function ({ data: run }) {
-      running = run;
-      nextGeneration();
-    };
+      knownScores = importKnownScores;
 
-    postMessage("config-complete");
-    postStatusUpdate();
+      // Infinite loop when n(keyspace) < populationSize
+      while (candidates.length < populationSize)
+        evaluateCandidate(randomCandidate());
+
+      // Once config complete, message events toggle the population on/off.
+      onmessage = function ({ data: run }) {
+        running = run;
+        nextGeneration();
+      };
+  
+      postMessage("config-complete");
+      postStatusUpdate();
+
+      return configFunctions;
+    });
   };
 
   // IIFE for localAssets
