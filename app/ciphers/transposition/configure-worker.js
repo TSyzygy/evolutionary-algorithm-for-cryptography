@@ -1,7 +1,7 @@
 "use strict";
 
 async function configure(messages, { keylength, n }) {
-  const { NgramScore } = await import("../standard-configure-worker-functions"),
+  const { NgramScore } = await import("../standard-configure-worker-functions.js"),
     scorePlaintext = await NgramScore(n);
   return {
     fitness: (function () {

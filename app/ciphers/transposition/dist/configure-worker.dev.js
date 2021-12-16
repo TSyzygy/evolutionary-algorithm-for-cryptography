@@ -24,7 +24,7 @@ function configure(messages, _ref) {
           keylength = _ref.keylength, n = _ref.n;
           _context.next = 3;
           return regeneratorRuntime.awrap(Promise.resolve().then(function () {
-            return _interopRequireWildcard(require("../standard-configure-worker-functions"));
+            return _interopRequireWildcard(require("../standard-configure-worker-functions.js"));
           }));
 
         case 3:

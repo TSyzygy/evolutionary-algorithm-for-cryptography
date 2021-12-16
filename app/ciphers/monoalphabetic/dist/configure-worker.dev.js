@@ -15,8 +15,7 @@ function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { "default": obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj["default"] = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
 function configure(messages, _ref) {
-  var n, value, _ref2, NgramScore, scorePlaintext, rand;
-
+  var n, value, rand;
   return regeneratorRuntime.async(function configure$(_context) {
     while (1) {
       switch (_context.prev = _context.next) {
@@ -49,90 +48,80 @@ function configure(messages, _ref) {
             X: 23,
             Y: 24,
             Z: 25
-          };
-          _context.next = 4;
-          return regeneratorRuntime.awrap(Promise.resolve().then(function () {
-            return _interopRequireWildcard(require("../standard-configure-worker-functions"));
-          }));
-
-        case 4:
-          _ref2 = _context.sent;
-          NgramScore = _ref2.NgramScore;
-          _context.next = 8;
-          return regeneratorRuntime.awrap(NgramScore(n));
-
-        case 8:
-          scorePlaintext = _context.sent;
-
-          // Gets a random number between min and max-1
-          rand = function rand(max) {
+          }, rand = function rand(max) {
             return Math.floor(Math.random() * max);
           };
-
-          return _context.abrupt("return", {
-            fitness: function () {
-              var convertMessage = function convertMessage(message) {
-                return message.toUpperCase().split("").flatMap(function (c) {
-                  return value.hasOwnProperty(c) ? [value[c]] : [];
-                });
-              },
-                  scoreMessage = function scoreMessage(message, key) {
-                return scorePlaintext(message.reduce(function (t, c) {
-                  return t + key[c];
-                }, ""));
-              }; // If multiple messages provided
-
-
-              if (messages.length > 1) {
-                messages = messages.map(convertMessage); // Converts messages to numerical form
-
-                return function (key) {
-                  return messages.reduce(function (t, message) {
-                    return t + scoreMessage(message, key);
+          return _context.abrupt("return", Promise.resolve().then(function () {
+            return _interopRequireWildcard(require("../standard-configure-worker-functions.js"));
+          }).then(function (_ref2) {
+            var NgramScore = _ref2.NgramScore;
+            return NgramScore(n);
+          }).then(function (scorePlaintext) {
+            return {
+              fitness: function () {
+                var convertMessage = function convertMessage(message) {
+                  return message.toUpperCase().split("").flatMap(function (c) {
+                    return value.hasOwnProperty(c) ? [value[c]] : [];
                   });
-                }; // If only one message provided
-              } else {
-                var message = convertMessage(messages[0]);
-                return function (key) {
-                  return scoreMessage(message, key);
-                };
+                },
+                    scoreMessage = function scoreMessage(message, key) {
+                  return scorePlaintext(message.reduce(function (t, c) {
+                    return t + key[c];
+                  }, ""));
+                }; // If multiple messages provided
+
+
+                if (messages.length > 1) {
+                  messages = messages.map(convertMessage); // Converts messages to numerical form
+
+                  return function (key) {
+                    return messages.reduce(function (t, message) {
+                      return t + scoreMessage(message, key);
+                    });
+                  }; // If only one message provided
+                } else {
+                  var message = convertMessage(messages[0]);
+                  return function (key) {
+                    return scoreMessage(message, key);
+                  };
+                }
+              }(),
+              randomCandidate: function randomCandidate() {
+                var j, x, i;
+                var a = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
+
+                for (i = 25; i > 0; i--) {
+                  j = rand(i + 1);
+                  x = a[i];
+                  a[i] = a[j];
+                  a[j] = x;
+                }
+
+                return a;
+              },
+              permuteCandidate: function permuteCandidate(key) {
+                var posA, posB, temp;
+
+                var permutedKey = _toConsumableArray(key);
+
+                for (var numSwaps = rand(4) + 1; numSwaps > 0; numSwaps--) {
+                  posA = rand(26);
+                  posB = rand(26); // TODO: ensure posA != posB?
+
+                  temp = permutedKey[posA];
+                  permutedKey[posA] = permutedKey[posB];
+                  permutedKey[posB] = temp;
+                }
+
+                return permutedKey;
+              },
+              keyToString: function keyToString(key) {
+                return key.join("");
               }
-            }(),
-            randomCandidate: function randomCandidate() {
-              var j, x, i;
-              var a = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
+            };
+          }));
 
-              for (i = 25; i > 0; i--) {
-                j = rand(i + 1);
-                x = a[i];
-                a[i] = a[j];
-                a[j] = x;
-              }
-
-              return a;
-            },
-            permuteCandidate: function permuteCandidate(key) {
-              var posA, posB, temp;
-
-              var permutedKey = _toConsumableArray(key);
-
-              for (var numSwaps = rand(4) + 1; numSwaps > 0; numSwaps--) {
-                posA = rand(26);
-                posB = rand(26); // TODO: ensure posA != posB?
-
-                temp = permutedKey[posA];
-                permutedKey[posA] = permutedKey[posB];
-                permutedKey[posB] = temp;
-              }
-
-              return permutedKey;
-            },
-            keyToString: function keyToString(key) {
-              return key.join("");
-            }
-          });
-
-        case 11:
+        case 3:
         case "end":
           return _context.stop();
       }
