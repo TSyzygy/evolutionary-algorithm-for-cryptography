@@ -21,6 +21,10 @@ const availableCiphers = [
     cipherName: "transposition",
     displayName: "Transposition",
   },
+  {
+    cipherName: "playfair",
+    displayName: "Playfair",
+  }
 ];
 const addPopulationModal = document.getElementById("add-population-modal"),
   cipherSpecificOptions = document.getElementById("cipher-specific-options"),
@@ -80,12 +84,17 @@ class Cipher {
 
           labelElement.innerText = label;
 
+          function addAttributes(inputElement, params, supportedParams) {
+            for (let param of supportedParams)
+              if (params.hasOwnProperty(param))
+                inputElement.setAttribute(param, params[param])
+          }
+
           switch (type) {
             case "number":
               inputElement = document.createElement("input");
               inputElement.setAttribute("type", "number");
-              inputElement.setAttribute("name", optionName);
-              inputElement.setAttribute("id", id);
+              addAttributes(inputElement, params, ["min", "max", "default"]);
               if (params.hasOwnProperty("min"))
                 inputElement.setAttribute("min", params.min);
               if (params.hasOwnProperty("max"))
@@ -95,8 +104,6 @@ class Cipher {
               break;
             case "select":
               inputElement = document.createElement("select");
-              inputElement.setAttribute("name", optionName);
-              inputElement.setAttribute("id", id);
               for (let { value, name } of params.options) {
                 let optionElement = document.createElement("option");
                 optionElement.setAttribute("value", value);
@@ -104,7 +111,15 @@ class Cipher {
                 inputElement.appendChild(optionElement);
               }
               break;
+            case "string":
+              inputElement = document.createElement("input");
+              inputElement.setAttribute("type", "text");
+              addAttributes(inputElement, params, ["minlength", "maxlength", "pattern", "placeholder"]);
+              break;
           }
+
+          inputElement.setAttribute("name", optionName);
+          inputElement.setAttribute("id", id);
 
           div.appendChild(labelElement);
           div.appendChild(inputElement);

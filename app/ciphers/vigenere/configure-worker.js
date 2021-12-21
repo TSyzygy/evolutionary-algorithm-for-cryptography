@@ -2,8 +2,9 @@
 
 async function configure(messages, { keylength, n }) {
   const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
-    scores = await getAsset(["ngrams"], n + ".json");
-
+    scores = (n == 1)
+      ? await getAsset(["ngrams", "by-index"], "1.json")
+      : await getAsset(["ngrams", "by-letter"], n + ".json");
   // Gets a random number up to and including max-1
   function rand(max) {
     return Math.floor(Math.random() * max);

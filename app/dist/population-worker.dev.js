@@ -25,19 +25,20 @@ var getAsset = function () {
     if (existingLocation > -1) {
       if (allowDuplicates) candidates.splice(existingLocation, 0, candidate);
     } // Adds the candidate if it has not been evaluated before
-    else if (!knownScores.hasOwnProperty(keyString)) {
-        var numCandidates = candidates.length,
-            score = knownScores[keyString] = fitness(candidate); // Rounds the score to be sent to control to save space in exports
-
-        newKnownScores[keyString] = Math.round(score); // Finds position in ordered list of candidates
-
-        for (var i = 0; i < numCandidates && score > knownScores[keyToString(candidates[i])]; i++) {
-          ;
-        } // Adds to candidates list and removes worst candidate if length exceeds maximum
+    // else if (!knownScores.hasOwnProperty(keyString)) {
 
 
-        candidates.splice(i, 0, candidate);
-      }
+    var numCandidates = candidates.length,
+        score = knownScores[keyString] = fitness(candidate); // Rounds the score to be sent to control to save space in exports
+
+    newKnownScores[keyString] = Math.round(score); // Finds position in ordered list of candidates
+
+    for (var i = 0; i < numCandidates && score > knownScores[keyToString(candidates[i])]; i++) {
+      ;
+    } // Adds to candidates list and removes worst candidate if length exceeds maximum
+
+
+    candidates.splice(i, 0, candidate); // }
 
     if (candidates.length > populationSize) candidates.shift(); // If the candidate is not currently a candidate but had been in the past, it must be worse than all current candidates so is ignored.
   } // Evolve the population by one generation
@@ -54,7 +55,8 @@ var getAsset = function () {
         var parent = _step.value;
 
         for (var _n = 0; _n < childrenPerParent; _n++) {
-          evaluateCandidate(permuteCandidate(parent));
+          var child = permuteCandidate(parent);
+          evaluateCandidate(child);
         }
       }
     } catch (err) {
@@ -162,7 +164,7 @@ var getAsset = function () {
                 return t.hasOwnProperty(v) ? t[v] : t[v] = {};
               }, localAssets);
               return _context2.abrupt("return", directory.hasOwnProperty(fileName) ? directory[fileName] // If the asset is not already stored locally, requests it from control
-              : new Promise(function (resolve, reject) {
+              : new Promise(function (resolve, _reject) {
                 // Waits for a message returning the data
                 onmessage = function onmessage(_ref4) {
                   var asset = _ref4.data;

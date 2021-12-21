@@ -12,7 +12,7 @@ function configure(messages, _ref) {
 
           keylength = _ref.keylength, n = _ref.n;
           _context.next = 4;
-          return regeneratorRuntime.awrap(getAsset(["ngrams"], n + ".json"));
+          return regeneratorRuntime.awrap(getAsset(["ngrams", "by-letter"], n + ".json"));
 
         case 4:
           scores = _context.sent;
@@ -44,6 +44,7 @@ function configure(messages, _ref) {
             randomCandidate: function randomCandidate() {// Random candidate function goes here
             },
             permuteCandidate: function permuteCandidate(_key) {// Permute candidate function goes here
+              // Must not edit the input key (if key is a mutable type)
             },
             keyToString: function keyToString(_key) {// Candidate to string function goes here
               // Candidates which are the same should always result in the same string

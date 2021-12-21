@@ -3,10 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.MessageDecrypter = MessageDecrypter;
-exports.KeyToString = KeyToString;
-exports.KeyToText = KeyToText;
-exports.TextToKey = TextToKey;
+exports.cipherFunctions = cipherFunctions;
 exports.setup = void 0;
 var alphabet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"],
     value = {
@@ -157,72 +154,117 @@ function invertMatrix(A) {
 }
 
 ;
-
-function MessageDecrypter(message, _ref) {
-  var m = _ref.m;
+/* 
+function MessageDecrypter(message, { m }) {
   var i;
-  var numbers = message.split("").flatMap(function (c) {
-    return (i = value[c]) > -1 ? [i] : [];
-  }),
-      convertedMessage = []; // Pads message to multiple of g length
 
+  const numbers = message
+      .split("")
+      .flatMap((c) => {
+        return (i = value[c]) > -1 ? [i] : [];
+      }),
+    convertedMessage = [];
+
+  // Pads message to multiple of g length
   var r = numbers.length % m;
-  if (r) for (; r < m; r++) {
-    numbers.push(0);
-  }
-  var l = numbers.length;
+  if (r) for (; r < m; r++) numbers.push(0);
+
+  const l = numbers.length;
   i = 0;
+  while (i < l) convertedMessage.push(numbers.slice(i, (i += m)));
 
-  while (i < l) {
-    convertedMessage.push(numbers.slice(i, i += m));
-  }
-
-  return function (key) {
-    return (// Goes through each row of the message
-      convertedMessage.reduce( // Goes through each character
-      function (t, cipherRow) {
-        return t + key.reduce(function (plainRow, keyRow) {
-          return plainRow + // Gets character for that row
-          alphabet[keyRow.reduce(function (t, c, i) {
-            return t + c * cipherRow[i];
-          }, 0) % 26];
-        }, "");
-      }, "")
+  return (key) =>
+    // Goes through each row of the message
+    convertedMessage.reduce(
+      // Goes through each character
+      (t, cipherRow) =>
+        t + key.reduce(
+          (plainRow, keyRow) =>
+            plainRow +
+            // Gets character for that row
+            alphabet[
+              keyRow.reduce((t, c, i) => t + c * cipherRow[i], 0) % 26
+            ],
+          ""
+        ),
+      ""
     );
-  };
-}
-
-;
+};
 
 function KeyToString(_config) {
-  return function (key) {
-    return key.join(";");
-  };
-}
-
-;
+  return (key) => key.join(";");
+};
 
 function KeyToText(_config) {
-  return function (key) {
+  return (key) => {
     var inv = invertMatrix(key);
     return inv ? inv.join(";") : "non-invertible matrix";
   };
-}
+};
 
-;
+function TextToKey({ m }) {
+  return (key) => {
+    var mat = key
+      .split(";")
+      .map((row) => row.split(",").map((i) => Number(i)));
+    return mat.length == m && mat.every((row) => row.length == m)
+      ? invertMatrix(mat)
+      : false;
+  };
+};
+*/
 
-function TextToKey(_ref2) {
-  var m = _ref2.m;
-  return function (key) {
-    var mat = key.split(";").map(function (row) {
-      return row.split(",").map(function (i) {
-        return Number(i);
+function cipherFunctions(_ref) {
+  var m = _ref.m;
+  return {
+    MessageDecrypter: function MessageDecrypter(message) {
+      var i;
+      var numbers = message.split("").flatMap(function (c) {
+        return (i = value[c]) > -1 ? [i] : [];
+      }),
+          convertedMessage = []; // Pads message to multiple of g length
+
+      var r = numbers.length % m;
+      if (r) for (; r < m; r++) {
+        numbers.push(0);
+      }
+      var l = numbers.length;
+      i = 0;
+
+      while (i < l) {
+        convertedMessage.push(numbers.slice(i, i += m));
+      }
+
+      return function (key) {
+        return (// Goes through each row of the message
+          convertedMessage.reduce( // Goes through each character
+          function (t, cipherRow) {
+            return t + key.reduce(function (plainRow, keyRow) {
+              return plainRow + // Gets character for that row
+              alphabet[keyRow.reduce(function (t, c, i) {
+                return t + c * cipherRow[i];
+              }, 0) % 26];
+            }, "");
+          }, "")
+        );
+      };
+    },
+    keyToString: function keyToString(key) {
+      return key.join(";");
+    },
+    keyToText: function keyToText(key) {
+      var inv = invertMatrix(key);
+      return inv ? inv.join(";") : "non-invertible matrix";
+    },
+    textToKey: function textToKey(key) {
+      var mat = key.split(";").map(function (row) {
+        return row.split(",").map(function (i) {
+          return Number(i);
+        });
       });
-    });
-    return mat.length == m && mat.every(function (row) {
-      return row.length == m;
-    }) ? invertMatrix(mat) : false;
+      return mat.length == m && mat.every(function (row) {
+        return row.length == m;
+      }) ? invertMatrix(mat) : false;
+    }
   };
 }
-
-;

@@ -105,6 +105,7 @@ const setup = {
   ],
 };
 
+/*
 function MessageDecrypter(message, { keylength }) {
   while (message.length % keylength) message += "X";
   const filteredMessage = message
@@ -134,5 +135,31 @@ function KeyToText() {
 function TextToKey() {
   return text => text.split(",").map(Number)
 }
+*/
 
-export { setup, MessageDecrypter, KeyToString, KeyToText, TextToKey };
+function cipherFunctions({ keylength }) {
+  return {
+    MessageDecrypter(message) {
+      while (message.length % keylength) message += "X";
+      const filteredMessage = message
+        .split("")
+        .filter((c) => alphabet.has(c));
+      return (key) => {
+        var p = 0,
+          b = 0;
+        return filteredMessage.reduce((plaintext, _c, _i, ciphertext) => {
+          if (p == keylength) {
+            p = 0;
+            b += keylength;
+          };
+          return plaintext + ciphertext[b + key[p++]];
+        }, "");
+      };
+    },
+    keyToString: (key) => key.join(","),
+    keyToText: (key) => key.join(","),
+    textToKey: (text) => text.split(",").map(Number),
+  }
+}
+
+export { setup, cipherFunctions };

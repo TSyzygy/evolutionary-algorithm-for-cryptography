@@ -211,6 +211,7 @@ function invertMatrix(A, mod = 26) {
     : false;
 };
 
+/* 
 function MessageDecrypter(message, { m }) {
   var i;
 
@@ -268,5 +269,59 @@ function TextToKey({ m }) {
       : false;
   };
 };
+*/
 
-export { setup, MessageDecrypter, KeyToString, KeyToText, TextToKey };
+function cipherFunctions({ m }) {
+  return {
+    MessageDecrypter(message) {
+      var i;
+
+      const numbers = message
+          .split("")
+          .flatMap((c) => {
+            return (i = value[c]) > -1 ? [i] : [];
+          }),
+        convertedMessage = [];
+
+      // Pads message to multiple of g length
+      var r = numbers.length % m;
+      if (r) for (; r < m; r++) numbers.push(0);
+
+      const l = numbers.length;
+      i = 0;
+      while (i < l) convertedMessage.push(numbers.slice(i, (i += m)));
+
+      return (key) =>
+        // Goes through each row of the message
+        convertedMessage.reduce(
+          // Goes through each character
+          (t, cipherRow) =>
+            t + key.reduce(
+              (plainRow, keyRow) =>
+                plainRow +
+                // Gets character for that row
+                alphabet[
+                  keyRow.reduce((t, c, i) => t + c * cipherRow[i], 0) % 26
+                ],
+              ""
+            ),
+          ""
+        );
+    },
+    keyToString: (key) => key.join(";"),
+    keyToText: (key) => {
+      var inv = invertMatrix(key);
+      return inv ? inv.join(";") : "non-invertible matrix";
+    },
+    textToKey: (key) => {
+      var mat = key
+        .split(";")
+        .map((row) => row.split(",").map((i) => Number(i)));
+      return mat.length == m && mat.every((row) => row.length == m)
+        ? invertMatrix(mat)
+        : false;
+    },
+  }
+}
+
+export { setup, cipherFunctions };

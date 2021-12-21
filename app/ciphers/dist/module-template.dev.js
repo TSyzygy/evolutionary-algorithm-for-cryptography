@@ -3,10 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.MessageDecrypter = MessageDecrypter;
-exports.KeyToString = KeyToString;
-exports.KeyToText = KeyToText;
-exports.TextToKey = TextToKey;
+exports.cipherFunctions = cipherFunctions;
 exports.setup = void 0;
 var setup = {
   displayName: "Example",
@@ -48,18 +45,21 @@ var setup = {
 };
 exports.setup = setup;
 
-function MessageDecrypter(_message, _config) {}
-
-;
-
-function KeyToString(_config) {}
-
-;
-
-function KeyToText(_config) {}
-
-;
-
-function TextToKey(_config) {}
-
-;
+function cipherFunctions(_config) {
+  return {
+    MessageDecrypter: function MessageDecrypter(_message) {
+      return function (key) {// Returns the message decrypted with the given key.
+      };
+    },
+    keyToString: function keyToString(_key) {// Candidate to string function goes here
+      // Candidates which are the same should always result in the same string
+      // Different candidates should always result in a different string
+      // Same as keyToString function in configure-worker
+    },
+    keyToText: function keyToText(_key) {// Returns the key formatted as as string in a way that is readable to the user
+    },
+    textToKey: function textToKey(_text) {// Takes in a string and returns the key in the format used by the algorithm
+      // Returns false if invalid key
+    }
+  };
+}

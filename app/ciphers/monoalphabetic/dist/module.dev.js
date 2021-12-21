@@ -3,10 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.MessageDecrypter = MessageDecrypter;
-exports.KeyToString = KeyToString;
-exports.KeyToText = KeyToText;
-exports.TextToKey = TextToKey;
+exports.cipherFunctions = cipherFunctions;
 exports.setup = void 0;
 var alphabet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"],
     letter = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"],
@@ -91,82 +88,132 @@ var setup = {
     }
   }]
 };
-exports.setup = setup;
-
+/*
 function MessageDecrypter(message, _config) {
-  var convertedMessage = message.split("").map(function (c) {
-    return value.hasOwnProperty(c) ? value[c] : c;
-  });
-  return function (key) {
-    return convertedMessage.reduce(function (plaintext, val) {
-      return plaintext + (typeof val == "number" ? val >= 52 ? key[val - 52].toLowerCase() : key[val] : val);
-    }, "");
-  };
-}
-
-;
+  const convertedMessage = message
+    .split("")
+    .map((c) => (value.hasOwnProperty(c) ? value[c] : c));
+  return (key) =>
+    convertedMessage.reduce(
+      (plaintext, val) =>
+        plaintext +
+        (typeof val == "number"
+          ? val >= 52
+            ? key[val - 52].toLowerCase()
+            : key[val]
+          : val),
+      ""
+    );
+};
 
 function KeyToString(_config) {
-  return function (key) {
-    return key.join("");
-  };
-}
-
-;
+  return (key) => key.join("");
+};
 
 function KeyToText(_config) {
-  return function (key) {
+  return (key) => {
     var encryptionKey = "";
-    var _iteratorNormalCompletion = true;
-    var _didIteratorError = false;
-    var _iteratorError = undefined;
-
-    try {
-      for (var _iterator = alphabet[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-        var l = _step.value;
-        encryptionKey += letter[key.indexOf(l)];
-      }
-    } catch (err) {
-      _didIteratorError = true;
-      _iteratorError = err;
-    } finally {
-      try {
-        if (!_iteratorNormalCompletion && _iterator["return"] != null) {
-          _iterator["return"]();
-        }
-      } finally {
-        if (_didIteratorError) {
-          throw _iteratorError;
-        }
-      }
+    for (let l of alphabet) {
+      encryptionKey += letter[key.indexOf(l)];
     }
-
     return encryptionKey;
   };
-}
-
-;
+};
 
 function TextToKey(_config) {
-  return function (text) {
-    var remainingLetters = new Set(alphabet);
+  return (text) => {
+    const remainingLetters = new Set(alphabet);
     var lastLetterIndex = -1,
-        encryptionKey = text.toUpperCase().split("").flatMap(function (_char) {
-      return (lastLetterIndex = alphabet.indexOf(_char)) > -1 && remainingLetters["delete"](_char) ? [_char] : [];
-    }),
-        lastLetter; // Adds all the remaining letters, starting from the last letter given
+      encryptionKey = text
+        .toUpperCase()
+        .split("")
+        .flatMap((char) =>
+          (lastLetterIndex = alphabet.indexOf(char)) > -1 &&
+          remainingLetters.delete(char)
+            ? [char]
+            : []
+        ),
+      lastLetter;
 
+    // Adds all the remaining letters, starting from the last letter given
     while (encryptionKey.length < 26) {
       if (++lastLetterIndex == 26) lastLetterIndex = 0;
-      lastLetter = alphabet[lastLetterIndex]; // If the letter now reached is not already in the encryptionKey, adds it
 
-      if (encryptionKey.indexOf(lastLetter) == -1) encryptionKey.push(lastLetter);
+      lastLetter = alphabet[lastLetterIndex];
+
+      // If the letter now reached is not already in the encryptionKey, adds it
+      if (encryptionKey.indexOf(lastLetter) == -1)
+        encryptionKey.push(lastLetter);
     }
 
-    return alphabet.map(function (_char2) {
-      return letter[encryptionKey.indexOf(_char2)];
-    });
+    return alphabet.map((char) => letter[encryptionKey.indexOf(char)]);
+  };
+};
+*/
+
+exports.setup = setup;
+
+function cipherFunctions(_config) {
+  return {
+    MessageDecrypter: function MessageDecrypter(message) {
+      var convertedMessage = message.split("").map(function (c) {
+        return value.hasOwnProperty(c) ? value[c] : c;
+      });
+      return function (key) {
+        return convertedMessage.reduce(function (plaintext, val) {
+          return plaintext + (typeof val == "number" ? val >= 52 ? key[val - 52].toLowerCase() : key[val] : val);
+        }, "");
+      };
+    },
+    keyToString: function keyToString(key) {
+      return key.join("");
+    },
+    keyToText: function keyToText(key) {
+      var encryptionKey = "";
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = alphabet[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var l = _step.value;
+          encryptionKey += letter[key.indexOf(l)];
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator["return"] != null) {
+            _iterator["return"]();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
+
+      return encryptionKey;
+    },
+    textToKey: function textToKey(text) {
+      var remainingLetters = new Set(alphabet);
+      var lastLetterIndex = -1,
+          encryptionKey = text.toUpperCase().split("").flatMap(function (_char) {
+        return (lastLetterIndex = alphabet.indexOf(_char)) > -1 && remainingLetters["delete"](_char) ? [_char] : [];
+      }),
+          lastLetter; // Adds all the remaining letters, starting from the last letter given
+
+      while (encryptionKey.length < 26) {
+        if (++lastLetterIndex == 26) lastLetterIndex = 0;
+        lastLetter = alphabet[lastLetterIndex]; // If the letter now reached is not already in the encryptionKey, adds it
+
+        if (encryptionKey.indexOf(lastLetter) == -1) encryptionKey.push(lastLetter);
+      }
+
+      return alphabet.map(function (_char2) {
+        return letter[encryptionKey.indexOf(_char2)];
+      });
+    }
   };
 }
-
-;

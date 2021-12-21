@@ -20,11 +20,29 @@ function configure(messages, _ref) {
 
           keylength = _ref.keylength, n = _ref.n;
           alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ";
-          _context.next = 5;
-          return regeneratorRuntime.awrap(getAsset(["ngrams"], n + ".json"));
 
-        case 5:
-          scores = _context.sent;
+          if (!(n == 1)) {
+            _context.next = 9;
+            break;
+          }
+
+          _context.next = 6;
+          return regeneratorRuntime.awrap(getAsset(["ngrams", "by-index"], "1.json"));
+
+        case 6:
+          _context.t0 = _context.sent;
+          _context.next = 12;
+          break;
+
+        case 9:
+          _context.next = 11;
+          return regeneratorRuntime.awrap(getAsset(["ngrams", "by-letter"], n + ".json"));
+
+        case 11:
+          _context.t0 = _context.sent;
+
+        case 12:
+          scores = _context.t0;
           ;
           return _context.abrupt("return", {
             fitness: function () {
@@ -92,7 +110,7 @@ function configure(messages, _ref) {
             }
           });
 
-        case 8:
+        case 15:
         case "end":
           return _context.stop();
       }

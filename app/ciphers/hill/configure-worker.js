@@ -3,10 +3,9 @@
 async function configure(messages, { m, n }) {
   // m is matrix size, n is n-gram size for scoring
   const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
-    scores =
-      n > 1
-        ? await getAsset(["ngrams"], n + ".json")
-        : await getAsset(["ngrams"], "1-by-letter.json"),
+    scores = (n == 1)
+      ? await getAsset(["ngrams", "by-index"], "1.json")
+      : await getAsset(["ngrams", "by-letter"], n + ".json"),
     mMinusOne = m - 1,
     shuffleRowsChance = Math.round(1000 / mMinusOne); // shuffles the rows more often for greater matrix sizes - 1 in [shuffleRowsChance] chance
 

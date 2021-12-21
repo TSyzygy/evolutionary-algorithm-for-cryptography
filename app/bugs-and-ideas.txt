@@ -1,0 +1,5 @@
+- Transposition doesn't finish configuring when keylength < n
+- When history given in setup, improvement is impossible unless knownScores are provided. See population-worker.js, line 42: knownScores[keyToString(candidates[i])] is undefined so score cannot be greater than it.
+- Idea:
+  - In standard-configure-worker-functions.js, add a module that deals with different possible permutation steps; to automatically change over time and settle when the algorithm is working well
+  - Potentially also link with simulated annealing / temperature

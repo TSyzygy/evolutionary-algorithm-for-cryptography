@@ -226,6 +226,7 @@ const setup = {
   ],
 };
 
+/*
 function MessageDecrypter(message, _config) {
   const convertedMessage = message
     .split("")
@@ -286,5 +287,62 @@ function TextToKey(_config) {
     return alphabet.map((char) => letter[encryptionKey.indexOf(char)]);
   };
 };
+*/
 
-export { setup, MessageDecrypter, KeyToString, KeyToText, TextToKey };
+function cipherFunctions(_config) {
+  return {
+    MessageDecrypter(message) {
+      const convertedMessage = message
+        .split("")
+        .map((c) => (value.hasOwnProperty(c) ? value[c] : c));
+      return (key) =>
+        convertedMessage.reduce(
+          (plaintext, val) =>
+            plaintext +
+            (typeof val == "number"
+              ? val >= 52
+                ? key[val - 52].toLowerCase()
+                : key[val]
+              : val),
+          ""
+    );
+    },
+    keyToString: (key) => key.join(""),
+    keyToText: (key) => {
+      var encryptionKey = "";
+      for (let l of alphabet) {
+        encryptionKey += letter[key.indexOf(l)];
+      }
+      return encryptionKey;
+    },
+    textToKey: (text) => {
+      const remainingLetters = new Set(alphabet);
+      var lastLetterIndex = -1,
+        encryptionKey = text
+          .toUpperCase()
+          .split("")
+          .flatMap((char) =>
+            (lastLetterIndex = alphabet.indexOf(char)) > -1 &&
+            remainingLetters.delete(char)
+              ? [char]
+              : []
+          ),
+        lastLetter;
+  
+      // Adds all the remaining letters, starting from the last letter given
+      while (encryptionKey.length < 26) {
+        if (++lastLetterIndex == 26) lastLetterIndex = 0;
+  
+        lastLetter = alphabet[lastLetterIndex];
+  
+        // If the letter now reached is not already in the encryptionKey, adds it
+        if (encryptionKey.indexOf(lastLetter) == -1)
+          encryptionKey.push(lastLetter);
+      }
+  
+      return alphabet.map((char) => letter[encryptionKey.indexOf(char)]);
+    },
+  }
+}
+
+export { setup, cipherFunctions };

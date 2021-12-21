@@ -33,13 +33,13 @@ function configure(messages, _ref) {
           m = _ref.m, n = _ref.n;
           alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-          if (!(n > 1)) {
+          if (!(n == 1)) {
             _context.next = 10;
             break;
           }
 
           _context.next = 7;
-          return regeneratorRuntime.awrap(getAsset(["ngrams"], n + ".json"));
+          return regeneratorRuntime.awrap(getAsset(["ngrams", "by-index"], "1.json"));
 
         case 7:
           _context.t0 = _context.sent;
@@ -48,7 +48,7 @@ function configure(messages, _ref) {
 
         case 10:
           _context.next = 12;
-          return regeneratorRuntime.awrap(getAsset(["ngrams"], "1-by-letter.json"));
+          return regeneratorRuntime.awrap(getAsset(["ngrams", "by-letter"], n + ".json"));
 
         case 12:
           _context.t0 = _context.sent;

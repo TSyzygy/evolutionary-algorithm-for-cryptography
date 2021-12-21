@@ -1,1 +1,0 @@
-- Transposition doesn't finish configuring when keylength < n

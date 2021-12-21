@@ -86,16 +86,20 @@ function () {
     this.genNum = history.length;
     this.state = "opening";
     var cipherFunctionImport = this.cipherFunctionImport = ciphers[cipherName].module.then(function (_ref2) {
-      var MessageDecrypter = _ref2.MessageDecrypter,
-          KeyToString = _ref2.KeyToString,
-          KeyToText = _ref2.KeyToText,
-          TextToKey = _ref2.TextToKey;
-      var textToKey = _this.textToKey = TextToKey(cipherOptions);
+      var cipherFunctions = _ref2.cipherFunctions;
+
+      var _cipherFunctions = cipherFunctions(cipherOptions),
+          MessageDecrypter = _cipherFunctions.MessageDecrypter,
+          keyToString = _cipherFunctions.keyToString,
+          keyToText = _cipherFunctions.keyToText,
+          textToKey = _cipherFunctions.textToKey;
+
       _this.messageDecypters = config.messages.map(function (message) {
-        return MessageDecrypter(message, cipherOptions);
+        return MessageDecrypter(message);
       });
-      _this.keyToText = KeyToText(cipherOptions);
-      _this.keyToString = KeyToString(cipherOptions);
+      _this.keyToString = keyToString;
+      _this.keyToText = keyToText;
+      _this.textToKey = textToKey;
       displayPoints.keyInput.addEventListener("change", function () {
         var keyEntered = textToKey(this.value);
 
@@ -153,6 +157,7 @@ function () {
     };
 
     worker.onerror = function (e) {
+      console.log("Error in worker");
       throw e;
     }; // Control buttons
 

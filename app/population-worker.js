@@ -29,7 +29,7 @@ const getAsset = (function () {
     }
 
     // Adds the candidate if it has not been evaluated before
-    else if (!knownScores.hasOwnProperty(keyString)) {
+    // else if (!knownScores.hasOwnProperty(keyString)) {
       const numCandidates = candidates.length,
         score = (knownScores[keyString] = fitness(candidate));
 
@@ -45,7 +45,7 @@ const getAsset = (function () {
 
       // Adds to candidates list and removes worst candidate if length exceeds maximum
       candidates.splice(i, 0, candidate);
-    }
+    // }
 
     if (candidates.length > populationSize) candidates.shift();
 
@@ -56,9 +56,13 @@ const getAsset = (function () {
   function nextGeneration() {
     newKnownScores = {};
 
+    
+
     for (let parent of candidates)
-      for (let n = 0; n < childrenPerParent; n++)
-        evaluateCandidate(permuteCandidate(parent));
+      for (let n = 0; n < childrenPerParent; n++) {
+        var child = permuteCandidate(parent)
+        evaluateCandidate(child);
+      }
 
     for (let n = 0; n < randomPerGeneration; n++)
       evaluateCandidate(randomCandidate());
@@ -135,20 +139,20 @@ const getAsset = (function () {
 
       return directory.hasOwnProperty(fileName)
         ? directory[fileName] // If the asset is not already stored locally, requests it from control
-        : new Promise(function (resolve, reject) {
-            // Waits for a message returning the data
-            onmessage = function ({ data: asset }) {
-              // Once asset is recieved from control, saves it locally in case of future use and resolves the promise
-              resolve((directory[fileName] = asset));
-            };
+        : new Promise(function (resolve, _reject) {
+          // Waits for a message returning the data
+          onmessage = function ({ data: asset }) {
+            // Once asset is recieved from control, saves it locally in case of future use and resolves the promise
+            resolve((directory[fileName] = asset));
+          };
 
-            // Posts a message requesting the desired data
-            postMessage({
-              message: "asset-request",
-              directoryPath,
-              fileName
-            });
+          // Posts a message requesting the desired data
+          postMessage({
+            message: "asset-request",
+            directoryPath,
+            fileName
           });
+        });
     };
   })();
 })();

@@ -75,13 +75,14 @@ class Population {
     const cipherFunctionImport = (this.cipherFunctionImport = ciphers[
       cipherName
     ].module
-      .then(({ MessageDecrypter, KeyToString, KeyToText, TextToKey }) => {
-        const textToKey = (this.textToKey = TextToKey(cipherOptions));
+      .then(({ cipherFunctions }) => {
+        const { MessageDecrypter, keyToString, keyToText, textToKey } = cipherFunctions(cipherOptions);
         this.messageDecypters = config.messages.map((message) =>
-          MessageDecrypter(message, cipherOptions)
+          MessageDecrypter(message)
         );
-        this.keyToText = KeyToText(cipherOptions);
-        this.keyToString = KeyToString(cipherOptions);
+        this.keyToString = keyToString;
+        this.keyToText = keyToText;
+        this.textToKey = textToKey;
 
         displayPoints.keyInput.addEventListener("change", function () {
           const keyEntered = textToKey(this.value);
@@ -140,6 +141,7 @@ class Population {
     };
 
     worker.onerror = function (e) {
+      console.log("Error in worker")
       throw e;
     };
 

@@ -49,20 +49,27 @@ const setup = {
   ],
 };
 
-function MessageDecrypter(_message, _config) {
-  
-};
+function cipherFunctions(_config) {
+  return {
+    MessageDecrypter(_message) {
+      return (key) => {
+        // Returns the message decrypted with the given key.
+      }
+    },
+    keyToString: (_key) => {
+      // Candidate to string function goes here
+      // Candidates which are the same should always result in the same string
+      // Different candidates should always result in a different string
+      // Same as keyToString function in configure-worker
+    },
+    keyToText: (_key) => {
+      // Returns the key formatted as as string in a way that is readable to the user
+    },
+    textToKey: (_text) => {
+      // Takes in a string and returns the key in the format used by the algorithm
+      // Returns false if invalid key
+    },
+  }
+}
 
-function KeyToString(_config) {
-
-};
-
-function KeyToText(_config) {
-
-};
-
-function TextToKey(_config) {
-  
-};
-
-export { setup, MessageDecrypter, KeyToString, KeyToText, TextToKey };
+export { setup, cipherFunctions };

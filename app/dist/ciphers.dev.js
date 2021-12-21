@@ -27,6 +27,9 @@ var availableCiphers = [{
 }, {
   cipherName: "transposition",
   displayName: "Transposition"
+}, {
+  cipherName: "playfair",
+  displayName: "Playfair"
 }];
 var addPopulationModal = document.getElementById("add-population-modal"),
     cipherSpecificOptions = document.getElementById("cipher-specific-options"),
@@ -116,6 +119,32 @@ function () {
 
           try {
             for (var _iterator2 = cipherModule.setup.options[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+              var addAttributes = function addAttributes(inputElement, params, supportedParams) {
+                var _iteratorNormalCompletion3 = true;
+                var _didIteratorError3 = false;
+                var _iteratorError3 = undefined;
+
+                try {
+                  for (var _iterator3 = supportedParams[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+                    var param = _step3.value;
+                    if (params.hasOwnProperty(param)) inputElement.setAttribute(param, params[param]);
+                  }
+                } catch (err) {
+                  _didIteratorError3 = true;
+                  _iteratorError3 = err;
+                } finally {
+                  try {
+                    if (!_iteratorNormalCompletion3 && _iterator3["return"] != null) {
+                      _iterator3["return"]();
+                    }
+                  } finally {
+                    if (_didIteratorError3) {
+                      throw _iteratorError3;
+                    }
+                  }
+                }
+              };
+
               var _step2$value = _step2.value,
                   optionName = _step2$value.name,
                   type = _step2$value.type,
@@ -132,8 +161,7 @@ function () {
                 case "number":
                   inputElement = document.createElement("input");
                   inputElement.setAttribute("type", "number");
-                  inputElement.setAttribute("name", optionName);
-                  inputElement.setAttribute("id", id);
+                  addAttributes(inputElement, params, ["min", "max", "default"]);
                   if (params.hasOwnProperty("min")) inputElement.setAttribute("min", params.min);
                   if (params.hasOwnProperty("max")) inputElement.setAttribute("max", params.max);
                   if (params.hasOwnProperty("default")) inputElement.setAttribute("value", params["default"]);
@@ -141,40 +169,46 @@ function () {
 
                 case "select":
                   inputElement = document.createElement("select");
-                  inputElement.setAttribute("name", optionName);
-                  inputElement.setAttribute("id", id);
-                  var _iteratorNormalCompletion3 = true;
-                  var _didIteratorError3 = false;
-                  var _iteratorError3 = undefined;
+                  var _iteratorNormalCompletion4 = true;
+                  var _didIteratorError4 = false;
+                  var _iteratorError4 = undefined;
 
                   try {
-                    for (var _iterator3 = params.options[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-                      var _step3$value = _step3.value,
-                          value = _step3$value.value,
-                          name = _step3$value.name;
+                    for (var _iterator4 = params.options[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+                      var _step4$value = _step4.value,
+                          value = _step4$value.value,
+                          name = _step4$value.name;
                       var optionElement = document.createElement("option");
                       optionElement.setAttribute("value", value);
                       optionElement.innerText = name;
                       inputElement.appendChild(optionElement);
                     }
                   } catch (err) {
-                    _didIteratorError3 = true;
-                    _iteratorError3 = err;
+                    _didIteratorError4 = true;
+                    _iteratorError4 = err;
                   } finally {
                     try {
-                      if (!_iteratorNormalCompletion3 && _iterator3["return"] != null) {
-                        _iterator3["return"]();
+                      if (!_iteratorNormalCompletion4 && _iterator4["return"] != null) {
+                        _iterator4["return"]();
                       }
                     } finally {
-                      if (_didIteratorError3) {
-                        throw _iteratorError3;
+                      if (_didIteratorError4) {
+                        throw _iteratorError4;
                       }
                     }
                   }
 
                   break;
+
+                case "string":
+                  inputElement = document.createElement("input");
+                  inputElement.setAttribute("type", "text");
+                  addAttributes(inputElement, params, ["minlength", "maxlength", "pattern", "placeholder"]);
+                  break;
               }
 
+              inputElement.setAttribute("name", optionName);
+              inputElement.setAttribute("id", id);
               div.appendChild(labelElement);
               div.appendChild(inputElement);
 
@@ -223,43 +257,14 @@ function () {
           this.optionGroup.classList.add("chosen"); // Adds 'required' attribute to each of the options
 
           if (this.loaded) {
-            var _iteratorNormalCompletion4 = true;
-            var _didIteratorError4 = false;
-            var _iteratorError4 = undefined;
-
-            try {
-              for (var _iterator4 = this.options[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-                var option = _step4.value;
-                option.input.setAttribute("required", "");
-              }
-            } catch (err) {
-              _didIteratorError4 = true;
-              _iteratorError4 = err;
-            } finally {
-              try {
-                if (!_iteratorNormalCompletion4 && _iterator4["return"] != null) {
-                  _iterator4["return"]();
-                }
-              } finally {
-                if (_didIteratorError4) {
-                  throw _iteratorError4;
-                }
-              }
-            }
-          }
-        } else {
-          this.optionGroup.classList.remove("chosen"); // Removes 'required' attribute from each of the options
-
-          if (this.loaded) {
             var _iteratorNormalCompletion5 = true;
             var _didIteratorError5 = false;
             var _iteratorError5 = undefined;
 
             try {
               for (var _iterator5 = this.options[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
-                var _option = _step5.value;
-
-                _option.input.removeAttribute("required");
+                var option = _step5.value;
+                option.input.setAttribute("required", "");
               }
             } catch (err) {
               _didIteratorError5 = true;
@@ -272,6 +277,35 @@ function () {
               } finally {
                 if (_didIteratorError5) {
                   throw _iteratorError5;
+                }
+              }
+            }
+          }
+        } else {
+          this.optionGroup.classList.remove("chosen"); // Removes 'required' attribute from each of the options
+
+          if (this.loaded) {
+            var _iteratorNormalCompletion6 = true;
+            var _didIteratorError6 = false;
+            var _iteratorError6 = undefined;
+
+            try {
+              for (var _iterator6 = this.options[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
+                var _option = _step6.value;
+
+                _option.input.removeAttribute("required");
+              }
+            } catch (err) {
+              _didIteratorError6 = true;
+              _iteratorError6 = err;
+            } finally {
+              try {
+                if (!_iteratorNormalCompletion6 && _iterator6["return"] != null) {
+                  _iterator6["return"]();
+                }
+              } finally {
+                if (_didIteratorError6) {
+                  throw _iteratorError6;
                 }
               }
             }

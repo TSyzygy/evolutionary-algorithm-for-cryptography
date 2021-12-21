@@ -3,7 +3,7 @@
 // Here is a template for a possible structure of a worker config function for a cipher
 async function configure(messages, { /* Cipher options go here, e.g: */ keylength, n }) {
   // Declare constants, e.g:
-  const scores = await getAsset(["ngrams"], n + ".json"); // The getAsset function is available to request any asset stored in 
+  const scores = await getAsset(["ngrams", "by-letter"], n + ".json"); // The getAsset function is available to request any asset stored in the assets folder
 
   // Declare functions, e.g:
   function rand(max) {
@@ -41,6 +41,7 @@ async function configure(messages, { /* Cipher options go here, e.g: */ keylengt
     },
     permuteCandidate(_key) {
       // Permute candidate function goes here
+      // Must not edit the input key (if key is a mutable type)
     },
     keyToString(_key) {
       // Candidate to string function goes here

@@ -210,6 +210,7 @@ const setup = {
   ],
 };
 
+/*
 function MessageDecrypter(message, { keylength }) {
   const convertedMessage = message
     .split("")
@@ -242,5 +243,34 @@ function TextToKey({ keylength }) {
     return key.length == keylength ? key : false;
   };
 }
+*/
 
-export { setup, MessageDecrypter, KeyToString, KeyToText, TextToKey };
+function cipherFunctions({ keylength }) {
+  return {
+    MessageDecrypter(message) {
+      const convertedMessage = message
+        .split("")
+        .map((c) => (value.hasOwnProperty(c) ? value[c] : c));
+      return (key) => {
+        var p = 0;
+        return convertedMessage.reduce((plaintext, val) => {
+          if (p == keylength) p = 0;
+          return (
+            plaintext + (typeof val == "number" ? letter[val + key[p++]] : val)
+          );
+        }, "");
+      };
+    },
+    keyToString: (key) => key.join(","),
+    keyToText: (key) => key.reduce((word, n) => word + letter[26 - n], ""),
+    textToKey: (text) => {
+      const key = [];
+      var v;
+      for (let char of text.toUpperCase())
+        if (value.hasOwnProperty(char)) key.push((v = value[char]) ? 26 - v : 0); // If v == 0, adds 0 to the key rather than 26
+      return key.length == keylength ? key : false;
+    },
+  }
+}
+
+export { setup, cipherFunctions };

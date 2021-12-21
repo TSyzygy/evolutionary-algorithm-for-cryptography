@@ -3,10 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.MessageDecrypter = MessageDecrypter;
-exports.KeyToString = KeyToString;
-exports.KeyToText = KeyToText;
-exports.TextToKey = TextToKey;
+exports.cipherFunctions = cipherFunctions;
 exports.setup = void 0;
 var value = {
   A: 0,
@@ -100,66 +97,95 @@ var setup = {
     }
   }]
 };
-exports.setup = setup;
-
-function MessageDecrypter(message, _ref) {
-  var keylength = _ref.keylength;
-  var convertedMessage = message.split("").map(function (c) {
-    return value.hasOwnProperty(c) ? value[c] : c;
-  });
-  return function (key) {
+/*
+function MessageDecrypter(message, { keylength }) {
+  const convertedMessage = message
+    .split("")
+    .map((c) => (value.hasOwnProperty(c) ? value[c] : c));
+  return (key) => {
     var p = 0;
-    return convertedMessage.reduce(function (plaintext, val) {
+    return convertedMessage.reduce((plaintext, val) => {
       if (p == keylength) p = 0;
-      return plaintext + (typeof val == "number" ? letter[val + key[p++]] : val);
+      return (
+        plaintext + (typeof val == "number" ? letter[val + key[p++]] : val)
+      );
     }, "");
   };
 }
 
 function KeyToString(_config) {
-  return function (key) {
-    return key.join(",");
-  };
+  return (key) => key.join(",");
 }
 
 function KeyToText(_config) {
-  return function (key) {
-    return key.reduce(function (word, n) {
-      return word + letter[26 - n];
-    }, "");
-  };
+  return (key) => key.reduce((word, n) => word + letter[26 - n], "");
 }
 
-function TextToKey(_ref2) {
-  var keylength = _ref2.keylength;
-  return function (text) {
-    var key = [];
+function TextToKey({ keylength }) {
+  return (text) => {
+    const key = [];
     var v;
-    var _iteratorNormalCompletion = true;
-    var _didIteratorError = false;
-    var _iteratorError = undefined;
+    for (let char of text.toUpperCase())
+      if (value.hasOwnProperty(char)) key.push((v = value[char]) ? 26 - v : 0); // If v == 0, adds 0 to the key rather than 26
+    return key.length == keylength ? key : false;
+  };
+}
+*/
 
-    try {
-      for (var _iterator = text.toUpperCase()[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-        var _char = _step.value;
-        if (value.hasOwnProperty(_char)) key.push((v = value[_char]) ? 26 - v : 0);
-      } // If v == 0, adds 0 to the key rather than 26
+exports.setup = setup;
 
-    } catch (err) {
-      _didIteratorError = true;
-      _iteratorError = err;
-    } finally {
+function cipherFunctions(_ref) {
+  var keylength = _ref.keylength;
+  return {
+    MessageDecrypter: function MessageDecrypter(message) {
+      var convertedMessage = message.split("").map(function (c) {
+        return value.hasOwnProperty(c) ? value[c] : c;
+      });
+      return function (key) {
+        var p = 0;
+        return convertedMessage.reduce(function (plaintext, val) {
+          if (p == keylength) p = 0;
+          return plaintext + (typeof val == "number" ? letter[val + key[p++]] : val);
+        }, "");
+      };
+    },
+    keyToString: function keyToString(key) {
+      return key.join(",");
+    },
+    keyToText: function keyToText(key) {
+      return key.reduce(function (word, n) {
+        return word + letter[26 - n];
+      }, "");
+    },
+    textToKey: function textToKey(text) {
+      var key = [];
+      var v;
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
       try {
-        if (!_iteratorNormalCompletion && _iterator["return"] != null) {
-          _iterator["return"]();
-        }
+        for (var _iterator = text.toUpperCase()[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var _char = _step.value;
+          if (value.hasOwnProperty(_char)) key.push((v = value[_char]) ? 26 - v : 0);
+        } // If v == 0, adds 0 to the key rather than 26
+
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
       } finally {
-        if (_didIteratorError) {
-          throw _iteratorError;
+        try {
+          if (!_iteratorNormalCompletion && _iterator["return"] != null) {
+            _iterator["return"]();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
         }
       }
-    }
 
-    return key.length == keylength ? key : false;
+      return key.length == keylength ? key : false;
+    }
   };
 }
