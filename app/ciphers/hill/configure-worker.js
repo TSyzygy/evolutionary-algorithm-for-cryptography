@@ -3,9 +3,7 @@
 async function configure(messages, { m, n }) {
   // m is matrix size, n is n-gram size for scoring
   const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
-    scores = (n == 1)
-      ? await getAsset(["ngrams", "by-index"], "1.json")
-      : await getAsset(["ngrams", "by-letter"], n + ".json"),
+    scores = await getAsset(["ngrams", "by-letter"], n + ".json"),
     mMinusOne = m - 1,
     shuffleRowsChance = Math.round(1000 / mMinusOne); // shuffles the rows more often for greater matrix sizes - 1 in [shuffleRowsChance] chance
 
@@ -62,16 +60,23 @@ async function configure(messages, { m, n }) {
                 max = message.length - n;
               var score = 0,
                 gram;
-              for (let i = 0; i < max; i++)
-                if (scores.hasOwnProperty((gram = decrypted.substr(i, n))))
+
+              for (let i = 0; i < max; i++) {
+                gram = decrypted.substr(i, n)
+                if (scores.hasOwnProperty(gram))
                   score += scores[gram];
+              };
+                
               return score / message.length;
             }
           : function (message, key) {
               return (
                 decryptMessage(message, key)
                   .split("")
-                  .reduce((t, c) => t + scores[c], 0) / message.length
+                  .reduce(
+                    (t, c) => t + scores[c],
+                    0
+                  ) / message.length
               );
             };
 

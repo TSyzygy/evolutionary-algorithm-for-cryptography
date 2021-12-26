@@ -90,8 +90,10 @@ async function configure(messages, { n }) {
         var posA, posB, temp;
         const permutedKey = [...key];
         for (let numSwaps = rand(4) + 1; numSwaps > 0; numSwaps--) {
+          // Generates two distinct positions to swap
           posA = rand(26);
-          posB = rand(26); // TODO: ensure posA != posB?
+          posB = rand(25);
+          if (posA == posB) { posB = 25 };
           temp = permutedKey[posA];
           permutedKey[posA] = permutedKey[posB];
           permutedKey[posB] = temp;
