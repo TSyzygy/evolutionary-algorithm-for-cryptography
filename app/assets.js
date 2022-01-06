@@ -1,5 +1,7 @@
 "use strict";
 
+// Update to export a proxy object instead of a function? Remember nested
+
 // Gets asset from central database
 const getAsset = (function () {
   const centralAssets = {};
@@ -18,3 +20,5 @@ const getAsset = (function () {
           .then((json) => (directory[fileName] = json));
   };
 })();
+
+export { getAsset };

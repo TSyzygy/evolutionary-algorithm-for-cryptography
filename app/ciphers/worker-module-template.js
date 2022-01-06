@@ -1,7 +1,9 @@
 "use strict";
 
+import { getAsset } from "../../assets.js";
+
 // Here is a template for a possible structure of a worker config function for a cipher
-async function configure(messages, { /* Cipher options go here, e.g: */ keylength, n }) {
+export async function configure(messages, { /* Cipher options go here, e.g: */ keylength, n }) {
   // Declare constants, e.g:
   const scores = await getAsset(["ngrams", "by-letter"], n + ".json"); // The getAsset function is available to request any asset stored in the assets folder
 

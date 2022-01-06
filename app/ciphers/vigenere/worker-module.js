@@ -1,5 +1,7 @@
 "use strict";
 
+import { getAsset } from "../../assets.js"; // THE .js IS ABSOLUTELY NECESSARY HERE. EVERYTHING WILL BREAK WITHOUT IT AND YOU WILL SPEND 3 HOURS TRYING TO WORK OUT WHAT'S GONE WRONG BECAUSE YOU CAN'T LOG THE ERRORS TO THE CONSOLE BECAUSE IT'S INSIDE A MODULE WRAPPED INSIDE A WORKER. SO LEAVE IT BE. Same thing goes for all the other '.js's by the way. Yw.  
+
 async function configure(messages, { keylength, n }) {
   const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
     scores = (n == 1)
@@ -73,3 +75,5 @@ async function configure(messages, { keylength, n }) {
     },
   };
 };
+
+export { configure }

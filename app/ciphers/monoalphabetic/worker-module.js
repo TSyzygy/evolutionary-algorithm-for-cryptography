@@ -1,37 +1,39 @@
 "use strict";
 
-async function configure(messages, { n }) {
+export async function configure(messages, { n }) {
   const value = {
-      A: 0,
-      B: 1,
-      C: 2,
-      D: 3,
-      E: 4,
-      F: 5,
-      G: 6,
-      H: 7,
-      I: 8,
-      J: 9,
-      K: 10,
-      L: 11,
-      M: 12,
-      N: 13,
-      O: 14,
-      P: 15,
-      Q: 16,
-      R: 17,
-      S: 18,
-      T: 19,
-      U: 20,
-      V: 21,
-      W: 22,
-      X: 23,
-      Y: 24,
-      Z: 25,
-    },
-    // Gets a random number between 0 and max-1
-    rand = (max) => Math.floor(Math.random() * max);
-    return import("../standard-configure-worker-functions.js").then(({ NgramScore }) => NgramScore(n)).then((scorePlaintext) => ({
+    A: 0,
+    B: 1,
+    C: 2,
+    D: 3,
+    E: 4,
+    F: 5,
+    G: 6,
+    H: 7,
+    I: 8,
+    J: 9,
+    K: 10,
+    L: 11,
+    M: 12,
+    N: 13,
+    O: 14,
+    P: 15,
+    Q: 16,
+    R: 17,
+    S: 18,
+    T: 19,
+    U: 20,
+    V: 21,
+    W: 22,
+    X: 23,
+    Y: 24,
+    Z: 25,
+  },
+  // Gets a random number between 0 and max-1
+  rand = (max) => Math.floor(Math.random() * max);
+  return import("../standard-worker-module-functions.js")
+    .then(({ NgramScore }) => NgramScore(n))
+    .then((scorePlaintext) => ({
       fitness: (function () {
         const convertMessage = (message) => message.toUpperCase().split("").flatMap((c) => (value.hasOwnProperty(c) ? [value[c]] : [])),
           scoreMessage = (message, key) => scorePlaintext(message.reduce((t, c) => t + key[c], ""));
@@ -103,5 +105,6 @@ async function configure(messages, { n }) {
       keyToString(key) {
         return key.join("");
       },
-    }))
+    })
+  )
 }

@@ -1,6 +1,8 @@
 "use strict";
 
-async function configure(messages, { m, n }) {
+import { getAsset } from "../../assets.js";
+
+export async function configure(messages, { m, n }) {
   // m is matrix size, n is n-gram size for scoring
   const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
     scores = await getAsset(["ngrams", "by-letter"], n + ".json"),

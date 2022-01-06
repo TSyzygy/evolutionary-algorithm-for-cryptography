@@ -1,6 +1,8 @@
 "use strict";
 
-async function configure(messages, {
+import { getAsset } from "../../assets.js";
+
+export async function configure(messages, {
   g, // grid size
   alphabet, // alphabet
   sameRow, // what to do when letters in same row: u, d, l or r
@@ -8,7 +10,7 @@ async function configure(messages, {
   square, // what to do when letters form corners of square: x or y (same x coord; same y coord)
   /* n */ // currently must be 2 - remember to update in module.js too
 }) {
-  return import("../standard-configure-worker-functions.js").then(async function ({ Shuffle, PermuteOperationsManager }) {
+  return import("../standard-worker-module-functions.js").then(async function ({ Shuffle, PermuteOperationsManager }) {
     // Declare constants, e.g:
     const scores = await getAsset(["ngrams", "by-index"], "2.json"); // The getAsset function is available to request any asset stored in the assets folder
     const lenAlphabet = alphabet.length;

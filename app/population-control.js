@@ -43,7 +43,10 @@
 class Population {
   constructor({ name, description, config, history, knownScores }) {
     const thisPopulation = this,
-      worker = (this.worker = new Worker("population-worker.js")),
+      worker = (this.worker = new Worker(
+        "population-worker.js",
+        { type: "module" },
+      )),
       page = (this.page = populationPageTemplate.cloneNode(true)),
       toggleButton = (this.toggleButton = page.querySelector(".toggle-button")),
       stepButton = (this.stepButton = page.querySelector(".step-button")),
@@ -140,9 +143,9 @@ class Population {
       thisPopulation.state = "configuring";
     };
 
-    worker.onerror = function (e) {
-      console.log("Error in worker")
-      throw e;
+    worker.onerror = function (error) {
+      console.log("Error in worker:")
+      console.error(error)
     };
 
     // Control buttons

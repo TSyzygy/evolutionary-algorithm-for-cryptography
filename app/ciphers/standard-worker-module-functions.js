@@ -3,19 +3,25 @@ function rand(max) {
 }
 
 async function NgramScore(n) {
-  const scores = await getAsset(["ngrams", "by-letter"], n + ".json");
-  return (plaintext) => {
-    var score = 0,
-      gram;
-    for (let i = 0, max = plaintext.length - n; i < max; i++)
-      if (scores.hasOwnProperty((gram = plaintext.substr(i, n))))
-        score += scores[gram];
-    return score / plaintext.length;
-  };
+  return import("../assets.js")
+    .then(
+      (Assets) => Assets.getAsset(["ngrams", "by-letter"], n + ".json")
+    )
+    .then(
+      (scores) => 
+        (plaintext) => {
+          var score = 0,
+            gram;
+          for (let i = 0, max = plaintext.length - n; i < max; i++)
+            if (scores.hasOwnProperty((gram = plaintext.substr(i, n))))
+              score += scores[gram];
+          return score / plaintext.length;
+        }
+    );
 }
 
 function Shuffle(baseArray) {
-  let l = baseArray.length
+  let l = baseArray.length;
   return () => {
     var j,
       x,
